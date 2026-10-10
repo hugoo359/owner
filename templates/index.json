@@ -167,12 +167,57 @@
         "padding_top": 64,
         "padding_bottom": 80
       }
+    },
+    "brand": {
+      "type": "brand-story",
+      "blocks": {
+        "t1": {
+          "type": "text",
+          "settings": {
+            "text": "<p>We are <strong>NoneofUs</strong> – a streetwear brand built on passion, persistence, and the desire to create something real.</p><p>We didn't come from fashion houses, but from garages, small warehouses, and nights full of ideas.</p><p>What began as a dream has grown into a movement.</p>"
+          }
+        },
+        "t2": {
+          "type": "text",
+          "settings": {
+            "text": "<p><strong>NoneofUs</strong> represents unity, authenticity, and quality.</p><p>We design clothing that not only looks good, but feels right – responsibly made, durable, and made to last.</p>"
+          }
+        },
+        "t3": {
+          "type": "text",
+          "settings": {
+            "text": "<p>We believe everyone has a story worth telling.</p><p>No matter where you come from, what you wear, or how you think – <strong>you belong.</strong></p>"
+          }
+        },
+        "t4": {
+          "type": "text",
+          "settings": {
+            "text": "<p><strong>NoneofUs – not one above.</strong></p>"
+          }
+        }
+      },
+      "block_order": [
+        "t1",
+        "t2",
+        "t3",
+        "t4"
+      ],
+      "settings": {
+        "heading": "NONEOFUS - STREETWEAR",
+        "font": "michroma",
+        "bg": "#eeece8",
+        "ink": "#1a1a1a",
+        "show_social": true,
+        "padding_top": 88,
+        "padding_bottom": 32
+      }
     }
   },
   "order": [
     "hero",
     "tiles",
     "carousel",
-    "popular"
+    "popular",
+    "brand"
   ]
 }

@@ -1017,3 +1017,28 @@ button.sw{padding:0;cursor:pointer}
   .strip{grid-template-columns:1fr}
   .strip .sep{display:none}
 }
+
+/* =========================================================
+   MARKEN-TEXT (Startseite)
+   ========================================================= */
+.brand-story{background:var(--bs-bg,#eeece8);color:var(--bs-ink,var(--ink));text-align:center;padding-left:var(--g);padding-right:var(--g)}
+.bs-inner{max-width:600px;margin:0 auto}
+.bs-title{margin:0 0 40px;font-size:17px;font-weight:400;letter-spacing:.06em;text-transform:uppercase}
+.bs-text{font-size:11.5px;line-height:1.35;letter-spacing:.02em}
+.bs-text p{margin:0}
+.bs-text+.bs-text{margin-top:18px}
+.bs-text strong{font-weight:700}
+.bs-text a{text-decoration:underline}
+.brand-story--wide .bs-title,.brand-story--wide .bs-text{font-family:"Michroma",var(--font)}
+.brand-story--wide .bs-text{font-size:9.5px;line-height:1.6;letter-spacing:.01em}
+.brand-story--wide .bs-title{font-size:16px;letter-spacing:.02em}
+.bs-social{display:flex;justify-content:center;align-items:center;gap:14px;margin-top:130px}
+.bs-social a{display:grid;place-items:center;width:28px;height:28px;opacity:.75;transition:opacity .2s,transform .35s var(--spring)}
+.bs-social a:hover{opacity:1;transform:translateY(-2px)}
+.bs-social svg{width:18px;height:18px}
+@media (max-width:700px){
+  .bs-title{margin-bottom:28px;font-size:14px}
+  .brand-story--wide .bs-title{font-size:13px}
+  .brand-story--wide .bs-text{font-size:10px;line-height:1.65}
+  .bs-social{margin-top:72px}
+}
