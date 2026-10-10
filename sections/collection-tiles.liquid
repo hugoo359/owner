@@ -1,0 +1,48 @@
+<style>#shopify-section-{{ section.id }} .tile{height: {{ section.settings.height }}px}</style>
+<section class="tiles" style="--tiles: {{ section.blocks.size | at_least: 1 }}">
+  {%- for block in section.blocks -%}
+    <a href="{{ block.settings.link | default: routes.all_products_collection_url }}" class="tile" data-reveal {{ block.shopify_attributes }}>
+      {%- if block.settings.image != blank -%}
+        {{ block.settings.image | image_url: width: 1400 | image_tag: class: 'tile-img', sizes: '(min-width: 700px) 33vw, 100vw', widths: '500, 800, 1100, 1400', loading: 'lazy', alt: block.settings.image.alt }}
+      {%- else -%}
+        {{ 'collection-apparel-1' | placeholder_svg_tag: 'placeholder-svg tile-img' }}
+      {%- endif -%}
+      {%- if block.settings.label_image != blank -%}
+        {{ block.settings.label_image | image_url: width: 300 | image_tag: class: 'tile-label-img', alt: '' }}
+      {%- elsif block.settings.label != blank -%}
+        <span class="logo">{{ block.settings.label }}</span>
+      {%- endif -%}
+      {%- if block.settings.title != blank -%}<strong>{{ block.settings.title }}</strong>{%- endif -%}
+    </a>
+  {%- endfor -%}
+</section>
+
+{% schema %}
+{
+  "name": "Kategorie-Kacheln",
+  "settings": [
+    { "type": "range", "id": "height", "label": "Höhe", "min": 240, "max": 700, "step": 20, "unit": "px", "default": 360 }
+  ],
+  "blocks": [
+    {
+      "type": "tile",
+      "name": "Kachel",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Bild" },
+        { "type": "url", "id": "link", "label": "Link" },
+        { "type": "image_picker", "id": "label_image", "label": "Kleines Logo über dem Titel" },
+        { "type": "text", "id": "label", "label": "Kleiner Schriftzug über dem Titel" },
+        { "type": "text", "id": "title", "label": "Titel", "default": "Basics" }
+      ]
+    }
+  ],
+  "max_blocks": 4,
+  "presets": [
+    { "name": "Kategorie-Kacheln", "blocks": [
+      { "type": "tile", "settings": { "title": "Basics" } },
+      { "type": "tile", "settings": { "title": "Women" } },
+      { "type": "tile", "settings": { "title": "Sports" } }
+    ] }
+  ]
+}
+{% endschema %}

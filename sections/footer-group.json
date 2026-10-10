@@ -1,0 +1,34 @@
+{
+  "type": "footer",
+  "name": "Footer",
+  "sections": {
+    "newsletter": {
+      "type": "newsletter",
+      "settings": { "heading": "SIGN UP FOR OUR NEWSLETTER" }
+    },
+    "footer": {
+      "type": "footer",
+      "blocks": {
+        "info-support": {
+          "type": "info",
+          "settings": { "icon": "info", "title": "SUPPORT", "text": "FOR QUESTIONS ABOUT YOUR ORDER, VISIT OUR", "link_label": "SUPPORT CENTER" }
+        },
+        "info-whatsapp": {
+          "type": "info",
+          "settings": { "icon": "chat", "title": "JOIN OUR WHATSAPP CHANNEL", "text": "EARLY ACCESS, DISCOUNTS & SPECIALS", "link_label": "JOIN NOW" }
+        },
+        "menu-service": {
+          "type": "menu",
+          "settings": { "heading": "Service", "menu": "footer", "show_policies": false }
+        },
+        "menu-legal": {
+          "type": "menu",
+          "settings": { "heading": "Legal", "show_policies": true }
+        }
+      },
+      "block_order": ["info-support", "info-whatsapp", "menu-service", "menu-legal"],
+      "settings": { "more_heading": "More", "show_payments": true, "copyright": "All rights reserved." }
+    }
+  },
+  "order": ["newsletter", "footer"]
+}

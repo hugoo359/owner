@@ -1,0 +1,74 @@
+{%- liquid
+  assign size_option = nil
+  assign size_idx = 0
+  for option in product.options_with_values
+    assign n = option.name | downcase
+    if n contains 'größe' or n contains 'grösse' or n contains 'groesse' or n contains 'size'
+      assign size_option = option
+      assign size_idx = forloop.index0
+    endif
+  endfor
+-%}
+<div class="card" data-reveal>
+  <div class="card-media">
+    <a href="{{ product.url }}" class="media{% if product.media.size > 1 %} has-hover{% endif %}" tabindex="-1" aria-hidden="true">
+      {%- if product.featured_media -%}
+        {{ product.featured_media | image_url: width: 900 | image_tag: loading: 'lazy', sizes: '(min-width: 1100px) 25vw, 50vw', widths: '300, 450, 600, 900', class: 'main-img', alt: product.title }}
+        {%- if product.media.size > 1 -%}
+          {{ product.media[1] | image_url: width: 900 | image_tag: loading: 'lazy', sizes: '(min-width: 1100px) 25vw, 50vw', widths: '300, 450, 600, 900', class: 'hover-img', alt: '' }}
+        {%- endif -%}
+      {%- else -%}
+        {{ 'product-apparel-1' | placeholder_svg_tag: 'placeholder-svg' }}
+      {%- endif -%}
+    </a>
+
+    {%- if settings.quick_add and product.available -%}
+      <div class="qa" aria-label="Quick add">
+        {%- if size_option -%}
+          <span class="qa-label">Select size</span>
+          <div class="qa-sizes">
+            {%- for value in size_option.values -%}
+              {%- assign vname = value.name | default: value -%}
+              {%- assign vid = nil -%}
+              {%- for v in product.variants -%}
+                {%- if v.available and v.options[size_idx] == vname -%}{%- assign vid = v.id -%}{%- break -%}{%- endif -%}
+              {%- endfor -%}
+              {%- if vid -%}
+                <button type="button" data-qa-variant="{{ vid }}">{{ vname }}</button>
+              {%- else -%}
+                <button type="button" disabled>{{ vname }}</button>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        {%- elsif product.has_only_default_variant -%}
+          <button type="button" class="qa-single" data-qa-variant="{{ product.first_available_variant.id }}">+ Add to cart</button>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+
+  <a href="{{ product.url }}" class="card-info">
+    <h3>{{ product.title }}</h3>
+    <div class="sz">
+      {%- if size_option -%}
+        {%- capture sizes_out -%}
+          {%- for value in size_option.values -%}
+            {%- assign vname = value.name | default: value -%}
+            {%- for v in product.variants -%}
+              {%- if v.available and v.options[size_idx] == vname -%}<span>{{ vname }}</span>{%- break -%}{%- endif -%}
+            {%- endfor -%}
+          {%- endfor -%}
+        {%- endcapture -%}
+        {% render 'icon', icon: 'cart-sm' %}
+        {%- if sizes_out != blank -%}{{ sizes_out }}{%- else -%}<span>SOLD OUT</span>{%- endif -%}
+      {%- elsif product.available == false -%}
+        <span>SOLD OUT</span>
+      {%- endif -%}
+    </div>
+    <div class="price">
+      {%- if product.price_varies -%}from {% endif -%}
+      {{ product.price | money_with_currency }}
+      {%- if product.compare_at_price > product.price %} <s>{{ product.compare_at_price | money_with_currency }}</s>{% endif -%}
+    </div>
+  </a>
+</div>

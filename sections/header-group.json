@@ -1,0 +1,28 @@
+{
+  "type": "header",
+  "name": "Header",
+  "sections": {
+    "announcement": {
+      "type": "announcement-bar",
+      "settings": {
+        "text": "Free shipping over €125 | Free exchanges",
+        "text_2": "Free 14-day exchanges",
+        "text_3": "Ships in 2–4 days",
+        "interval": 4
+      }
+    },
+    "header": {
+      "type": "header",
+      "settings": {
+        "menu": "main-menu",
+        "transparent_home": true,
+        "login_return": "account",
+        "login_text": "Log in to view your orders and check out faster."
+      }
+    }
+  },
+  "order": [
+    "announcement",
+    "header"
+  ]
+}

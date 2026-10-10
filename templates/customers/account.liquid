@@ -1,0 +1,22 @@
+<div class="wrap form-page">
+  <h1 class="ctitle">My account</h1>
+  <p>Hi {{ customer.first_name | default: customer.email }} · <a class="link-u" href="{{ routes.account_logout_url }}">Log out</a></p>
+  <h2 class="sub-title">Orders</h2>
+  {%- paginate customer.orders by 20 -%}
+    {%- if customer.orders.size > 0 -%}
+      <table class="table">
+        <thead><tr><th>Order</th><th>Date</th><th>Status</th><th>Total</th></tr></thead>
+        <tbody>
+          {%- for order in customer.orders -%}
+            <tr><td><a class="link-u" href="{{ order.customer_url }}">{{ order.name }}</a></td><td>{{ order.created_at | date: '%b %d, %Y' }}</td><td>{{ order.fulfillment_status_label }}</td><td>{{ order.total_price | money_with_currency }}</td></tr>
+          {%- endfor -%}
+        </tbody>
+      </table>
+    {%- else -%}
+      <p>You haven't placed any orders yet.</p>
+    {%- endif -%}
+  {%- endpaginate -%}
+  <h2 class="sub-title">Address</h2>
+  {%- if customer.default_address -%}{{ customer.default_address | format_address }}{%- endif -%}
+  <a class="link-u" href="{{ routes.account_addresses_url }}">Manage addresses ({{ customer.addresses_count }})</a>
+</div>

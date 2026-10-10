@@ -1,0 +1,11 @@
+<div id="search" class="layer" hidden>
+  <div class="backdrop" data-close="search"></div>
+  <div class="search-panel">
+    <form action="{{ routes.search_url }}" method="get" role="search" class="search-row">
+      {% render 'icon', icon: 'search-sm' %}
+      <input type="search" name="q" id="SearchInput" placeholder="Search..." aria-label="Search" autocomplete="off">
+      <button type="button" data-close="search" aria-label="Close search">{% render 'icon', icon: 'close' %}</button>
+    </form>
+    <div class="search-results" id="SearchResults" hidden></div>
+  </div>
+</div>

@@ -1,0 +1,19 @@
+<div class="wrap form-page">
+  <nav class="crumbs"><a href="{{ routes.account_url }}">My account</a></nav>
+  <h1 class="ctitle">Order {{ order.name }}</h1>
+  <p class="vat">{{ order.created_at | date: '%b %d, %Y %H:%M' }}</p>
+  <table class="table">
+    <thead><tr><th>Product</th><th>Price</th><th>Quantity</th><th>Total</th></tr></thead>
+    <tbody>
+      {%- for line_item in order.line_items -%}
+        <tr><td>{{ line_item.title }}</td><td>{{ line_item.final_price | money_with_currency }}</td><td>{{ line_item.quantity }}</td><td>{{ line_item.final_line_price | money_with_currency }}</td></tr>
+      {%- endfor -%}
+    </tbody>
+    <tfoot>
+      <tr><td colspan="3">Subtotal</td><td>{{ order.line_items_subtotal_price | money_with_currency }}</td></tr>
+      {%- for shipping_method in order.shipping_methods -%}<tr><td colspan="3">Shipping ({{ shipping_method.title }})</td><td>{{ shipping_method.price | money_with_currency }}</td></tr>{%- endfor -%}
+      <tr><td colspan="3"><b>Total</b></td><td><b>{{ order.total_price | money_with_currency }}</b></td></tr>
+    </tfoot>
+  </table>
+  {%- if order.shipping_address -%}<h2 class="sub-title">Shipping address</h2>{{ order.shipping_address | format_address }}{%- endif -%}
+</div>

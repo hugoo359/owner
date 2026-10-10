@@ -1,0 +1,12 @@
+<article class="wrap page-wrap">
+  <nav class="crumbs"><a href="{{ blog.url }}">{{ blog.title }}</a></nav>
+  <h1 class="ctitle">{{ article.title }}</h1>
+  <p class="vat">{{ article.published_at | date: '%b %d, %Y' }}</p>
+  {%- if article.image -%}
+    <div class="article-img">{{ article.image | image_url: width: 1800 | image_tag: sizes: '100vw', widths: '800, 1200, 1800', alt: article.title }}</div>
+  {%- endif -%}
+  <div class="rte">{{ article.content }}</div>
+</article>
+{% schema %}
+{ "name": "Blogbeitrag" }
+{% endschema %}

@@ -1,0 +1,33 @@
+<section class="newsletter">
+  {%- form 'customer', id: 'NewsletterForm', class: 'nl-form' -%}
+    <input type="hidden" name="contact[tags]" value="newsletter">
+    <button type="button" class="nl-toggle" data-nl-toggle aria-expanded="{% if form.posted_successfully? or form.errors %}true{% else %}false{% endif %}" aria-controls="NewsletterFields">
+      <span>{{ section.settings.heading }}</span>
+      <svg class="nl-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 5l4 4 4-4"/></svg>
+    </button>
+    <div class="nl-fields{% if form.posted_successfully? or form.errors %} open{% endif %}" id="NewsletterFields">
+      <div class="nl-inner">
+        {%- if form.posted_successfully? -%}
+          <p class="nl-msg">{{ section.settings.success_text }}</p>
+        {%- else -%}
+          <input type="email" name="contact[email]" id="NewsletterEmail" required placeholder="YOUR EMAIL ADDRESS" aria-label="Email address" autocomplete="email">
+          <button type="submit">SUBSCRIBE</button>
+          {%- if form.errors -%}
+            <p class="nl-msg">Please enter a valid email address.</p>
+          {%- endif -%}
+        {%- endif -%}
+      </div>
+    </div>
+  {%- endform -%}
+</section>
+
+{% schema %}
+{
+  "name": "Newsletter-Leiste",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Text", "default": "SIGN UP FOR OUR NEWSLETTER" },
+    { "type": "text", "id": "success_text", "label": "Text nach Anmeldung", "default": "Thanks! You're now subscribed." }
+  ],
+  "presets": [ { "name": "Newsletter-Leiste" } ]
+}
+{% endschema %}

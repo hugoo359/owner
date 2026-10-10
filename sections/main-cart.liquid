@@ -1,0 +1,37 @@
+<div class="wrap cart-page">
+  <h1 class="ctitle">Cart</h1>
+  {%- if cart.item_count == 0 -%}
+    <div class="cart-empty">Your cart is empty.<br><a href="{{ routes.all_products_collection_url }}">Shop now</a></div>
+  {%- else -%}
+    <form action="{{ routes.cart_url }}" method="post" class="cart-form">
+      {%- for item in cart.items -%}
+        <div class="line cart-line">
+          <a href="{{ item.url }}" class="media">{%- if item.image -%}{{ item.image | image_url: width: 300 | image_tag: alt: item.product.title, loading: 'lazy' }}{%- endif -%}</a>
+          <div>
+            <h3><a href="{{ item.url }}">{{ item.product.title }}</a></h3>
+            <div class="pr">{{ item.final_price | money_with_currency }}</div>
+            {%- unless item.product.has_only_default_variant -%}<div class="size">{{ item.variant.title }}</div>{%- endunless -%}
+            <div class="qty-row">
+              <label class="visually-hidden" for="Qty-{{ forloop.index }}">Quantity</label>
+              <input class="qty-input" type="number" min="0" name="updates[]" id="Qty-{{ forloop.index }}" value="{{ item.quantity }}">
+              <a class="link-u" href="{{ item.url_to_remove }}">Remove</a>
+            </div>
+          </div>
+          <div class="line-total">{{ item.final_line_price | money_with_currency }}</div>
+        </div>
+      {%- endfor -%}
+      <div class="cart-sum">
+        <div class="sumrow b"><span>Subtotal</span><span>{{ cart.total_price | money_with_currency }}</span></div>
+        <p class="vat">{{ settings.tax_text }} · Shipping calculated at checkout.</p>
+        <div class="cart-actions">
+          <button type="submit" name="update" class="btn-outline">Update</button>
+          <button type="submit" name="checkout" class="checkout">CHECKOUT</button>
+        </div>
+      </div>
+    </form>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{ "name": "Warenkorb-Seite" }
+{% endschema %}

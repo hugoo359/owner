@@ -1,0 +1,207 @@
+{%- liquid
+  assign current = product.selected_or_first_available_variant
+  assign featured = current.featured_media | default: product.featured_media
+  assign size_acc = false
+  for block in section.blocks
+    if block.type == 'accordion' and block.settings.is_size
+      assign size_acc = true
+    endif
+  endfor
+-%}
+<section class="pdp" data-product data-section="{{ section.id }}">
+  <div class="thumbs" data-thumbs>
+    {%- for media in product.media -%}
+      <button type="button" class="{% if media.id == featured.id %}on{% endif %}" data-media="{{ media.id }}" aria-label="Image {{ forloop.index }}">
+        {{ media.preview_image | image_url: width: 140 | image_tag: alt: '', loading: 'lazy' }}
+      </button>
+    {%- endfor -%}
+  </div>
+
+  <div class="pdp-main">
+    {%- for media in product.media -%}
+      {%- liquid
+        if media.id == featured.id
+          assign ld = 'eager'
+        else
+          assign ld = 'lazy'
+        endif
+      -%}
+      <div class="media{% unless media.id == featured.id %} is-off{% endunless %}" data-media-main="{{ media.id }}" data-zoom>
+        {{ media.preview_image | image_url: width: 1800 | image_tag: sizes: '(min-width: 1100px) 45vw, 100vw', widths: '600, 900, 1200, 1500, 1800', loading: ld, alt: media.alt }}
+      </div>
+    {%- else -%}
+      <div class="media">{{ 'product-apparel-1' | placeholder_svg_tag: 'placeholder-svg' }}</div>
+    {%- endfor -%}
+  </div>
+
+  <div class="pinfo">
+    {%- if section.settings.show_social_proof -%}
+      {%- liquid
+        assign sp_names = section.settings.sp_names | split: ','
+        assign sp_brand = section.settings.sp_brand | default: shop.name
+      -%}
+      <div class="sp" data-sp>
+        <div class="sp-top">
+          <div class="sp-avatars" aria-hidden="true">
+            {%- for i in (1..3) -%}
+              {%- assign akey = 'sp_avatar_' | append: i -%}
+              {%- assign aimg = section.settings[akey] -%}
+              {%- if aimg != blank -%}
+                <span class="sp-av" style="--i: {{ forloop.index0 }}">{{ aimg | image_url: width: 96, height: 96, crop: 'center' | image_tag: alt: '', loading: 'eager', width: 48, height: 48 }}</span>
+              {%- elsif i <= 2 and sp_names[forloop.index0] != blank -%}
+                <span class="sp-av sp-av--txt" style="--i: {{ forloop.index0 }}">{{ sp_names[forloop.index0] | strip | slice: 0 | upcase }}</span>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+          <p class="sp-text">
+            <b>{{ section.settings.sp_names | strip }}</b>
+            {%- if section.settings.sp_verified -%}
+              <svg class="sp-badge" width="16" height="16" viewBox="0 0 24 24" aria-label="verified" role="img"><path fill="currentColor" d="M12 1.5l2.6 1.9 3.2-.1 1 3 2.6 1.9-1 3.1 1 3-2.6 1.9-1 3.1-3.2-.1L12 22.5l-2.6-1.9-3.2.1-1-3.1-2.6-1.9 1-3-1-3.1 2.6-1.9 1-3 3.2.1z"/><path d="M7.8 12.3l2.8 2.7 5.6-5.8" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            {%- endif %}
+            and <b data-sp-count="{{ section.settings.sp_count }}">{{ section.settings.sp_count }}</b> {{ section.settings.sp_text }} <b>{{ sp_brand }}</b>
+          </p>
+        </div>
+        <div class="sp-rating">
+          {%- assign rpct = section.settings.sp_rating | times: 20 -%}
+          <span class="sp-stars" style="--r: {{ rpct }}%" aria-label="{{ section.settings.sp_rating }} out of 5 stars" role="img">
+            <span class="sp-stars-base">{%- for i in (1..5) -%}<svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg>{%- endfor -%}</span>
+            <span class="sp-stars-fill">{%- for i in (1..5) -%}<svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg>{%- endfor -%}</span>
+          </span>
+          {%- if section.settings.sp_rating_text != blank -%}<span class="sp-rtext">{{ section.settings.sp_rating_text }}</span>{%- endif -%}
+        </div>
+      </div>
+    {%- endif -%}
+    <h1 class="split-title" data-split>{{ product.title }}</h1>
+    <div class="pprice">
+      <span data-price>{{ current.price | money_with_currency }}</span>
+      <s data-compare{% unless current.compare_at_price > current.price %} hidden{% endunless %}>{{ current.compare_at_price | money_with_currency }}</s>
+    </div>
+    {%- if settings.tax_text != blank -%}<div class="vat">{{ settings.tax_text }}</div>{%- endif -%}
+
+    {%- unless product.has_only_default_variant -%}
+      {%- for option in product.options_with_values -%}
+        {%- assign on = option.name | downcase -%}
+        {%- if on contains 'farbe' or on contains 'color' or on contains 'colour' -%}
+          <div class="plabel">{{ option.name }}: <span data-option-label="{{ forloop.index0 }}">{{ option.selected_value }}</span></div>
+          <div class="pswatches" data-option="{{ forloop.index0 }}">
+            {%- for value in option.values -%}
+              {%- assign vname = value.name | default: value -%}
+              {%- capture swatch_bg -%}{%- if value.swatch.color -%}{{ value.swatch.color }}{%- else -%}{% render 'color-value', name: vname %}{%- endif -%}{%- endcapture -%}
+              <button type="button" class="{% if vname == option.selected_value %}on{% endif %}" data-value="{{ vname | escape }}" title="{{ vname | escape }}" aria-label="{{ vname | escape }}" style="background:#ccc;background:{{ swatch_bg | strip }}"></button>
+            {%- endfor -%}
+          </div>
+        {%- else -%}
+          {%- assign is_size = false -%}
+          {%- if on contains 'größe' or on contains 'grösse' or on contains 'groesse' or on contains 'size' -%}{%- assign is_size = true -%}{%- endif -%}
+          <div class="plabel up">
+            <span>{{ option.name }}:</span>
+            {%- if is_size and section.settings.show_size_guide -%}
+              <button type="button" class="size-link" data-open="sizeguide">{% render 'icon', icon: 'hanger' %}<span>Find your size</span></button>
+            {%- endif -%}
+          </div>
+          <div class="psizes" data-option="{{ forloop.index0 }}" data-pick="{% if option.values.size == 1 %}auto{% else %}user{% endif %}" style="--n: {{ option.values.size | at_most: 7 }}">
+            {%- for value in option.values -%}
+              {%- assign vname = value.name | default: value -%}
+              <button type="button" data-value="{{ vname | escape }}">{{ vname }}</button>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    {%- endunless -%}
+
+    <div class="avail{% unless current.available %} out{% endunless %}" data-avail>
+      <i></i>
+      <span data-avail-text>
+        {%- if current.available -%}<b>{{ settings.in_stock_text }}</b> {{ settings.delivery_text }}{%- else -%}<b>{{ settings.sold_out_text }}</b>{%- endif -%}
+      </span>
+    </div>
+
+    {%- form 'product', product, class: 'pform', novalidate: 'novalidate' -%}
+      <input type="hidden" name="id" value="{{ current.id }}" data-variant-id>
+      <button type="submit" class="atc" data-atc{% unless current.available %} disabled{% endunless %}>
+        <span class="atc-label" data-atc-label>{%- if current.available -%}Add to cart{%- else -%}Sold out{%- endif -%}</span>
+        <span class="atc-done" aria-hidden="true">{% render 'icon', icon: 'check-line' %}Added</span>
+      </button>
+      <div class="atc-msg" data-atc-msg role="status"></div>
+    {%- endform -%}
+
+    {%- if section.settings.show_payments -%}
+      <div class="ppays">{% render 'payment-icons' %}</div>
+    {%- endif -%}
+    {%- if section.settings.exchange_text != blank -%}
+      <div class="exchange">{{ section.settings.exchange_text }}</div>
+    {%- endif -%}
+    {%- if section.settings.show_logo -%}
+      <div class="plogo">{% render 'logo' %}</div>
+    {%- endif -%}
+
+    <div class="acc">
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'accordion' -%}
+            <details {{ block.shopify_attributes }}{% if block.settings.is_size %} data-size-acc{% endif %}>
+              <summary>{% render 'icon', icon: block.settings.icon %}<span>{{ block.settings.title }}</span>{% render 'icon', icon: 'plus' %}</summary>
+              <div class="body rte">
+                {%- if block.settings.use_description -%}{{ product.description }}{%- endif -%}
+                {{ block.settings.content }}
+                {%- if block.settings.page != blank -%}{{ block.settings.page.content }}{%- endif -%}
+              </div>
+            </details>
+        {%- endcase -%}
+      {%- endfor -%}
+    </div>
+  </div>
+
+  <script type="application/json" data-product-json>{{ product | json }}</script>
+</section>
+
+{%- if section.settings.show_size_guide -%}
+  {% render 'size-guide', product: product, tops: section.settings.sg_tops, bottoms: section.settings.sg_bottoms %}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Produktseite",
+  "settings": [
+    { "type": "header", "content": "Kundenstimmen über dem Namen" },
+    { "type": "checkbox", "id": "show_social_proof", "label": "Anzeigen", "default": true },
+    { "type": "image_picker", "id": "sp_avatar_1", "label": "Profilbild 1" },
+    { "type": "image_picker", "id": "sp_avatar_2", "label": "Profilbild 2" },
+    { "type": "image_picker", "id": "sp_avatar_3", "label": "Profilbild 3 (optional)" },
+    { "type": "text", "id": "sp_names", "label": "Namen", "default": "Lena, Max", "info": "Mit Komma trennen. Ohne Profilbild wird der Anfangsbuchstabe gezeigt." },
+    { "type": "checkbox", "id": "sp_verified", "label": "Verifiziert-Haken", "default": true },
+    { "type": "number", "id": "sp_count", "label": "Anzahl weiterer Kunden", "default": 2500, "info": "Nutze echte Zahlen aus deinen Bestellungen oder Bewertungen." },
+    { "type": "text", "id": "sp_text", "label": "Text nach der Zahl", "default": "others love" },
+    { "type": "text", "id": "sp_brand", "label": "Markenname", "info": "Leer = Shopname" },
+    { "type": "range", "id": "sp_rating", "label": "Sterne", "min": 1, "max": 5, "step": 0.5, "default": 5 },
+    { "type": "text", "id": "sp_rating_text", "label": "Text neben den Sternen", "default": "Over 2,500 happy customers" },
+    { "type": "header", "content": "Größenberater" },
+    { "type": "checkbox", "id": "show_size_guide", "label": "„Finde deine Größe“ anzeigen", "default": true },
+    { "type": "textarea", "id": "sg_tops", "label": "Maße Oberteile (Länge, Brustbreite, Ärmellänge in cm)", "default": "XS: 68, 52, 21\nS: 70, 55, 22\nM: 72, 58, 23\nL: 74, 61, 24\nXL: 76, 64, 25\nXXL: 78, 67, 26", "info": "Eine Zeile pro Größe: Größe: Länge, Brustbreite, Ärmellänge" },
+    { "type": "textarea", "id": "sg_bottoms", "label": "Maße Hosen & Jogger (Bundweite, Gesamtlänge, Innenbein in cm)", "default": "XS: 32, 98, 72\nS: 34, 100, 74\nM: 36, 102, 76\nL: 38, 104, 78\nXL: 40, 106, 80\nXXL: 42, 108, 81", "info": "Eine Zeile pro Größe: Größe: Bundweite, Gesamtlänge, Innenbein" },
+    { "type": "checkbox", "id": "show_payments", "label": "Zahlungsarten unter dem Button", "default": true },
+    { "type": "text", "id": "exchange_text", "label": "Hinweis-Leiste", "default": "Wrong size? No problem: free 14-day exchanges" },
+    { "type": "checkbox", "id": "show_logo", "label": "Logo über den Akkordeons", "default": true }
+  ],
+  "blocks": [
+    {
+      "type": "accordion",
+      "name": "Akkordeon",
+      "settings": [
+        { "type": "select", "id": "icon", "label": "Icon", "default": "info", "options": [
+          { "value": "info", "label": "Info" },
+          { "value": "care", "label": "Pflege" },
+          { "value": "ruler", "label": "Größe" },
+          { "value": "truck", "label": "Versand" },
+          { "value": "none", "label": "Kein Icon" }
+        ] },
+        { "type": "text", "id": "title", "label": "Titel", "default": "Product information" },
+        { "type": "checkbox", "id": "use_description", "label": "Produktbeschreibung anzeigen", "default": false },
+        { "type": "richtext", "id": "content", "label": "Inhalt" },
+        { "type": "page", "id": "page", "label": "Inhalt aus Seite" },
+        { "type": "checkbox", "id": "is_size", "label": "Ist die Größentabelle (öffnet sich bei „Finde deine Größe“)", "default": false }
+      ]
+    }
+  ]
+}
+{% endschema %}

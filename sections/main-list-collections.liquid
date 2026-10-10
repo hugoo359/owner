@@ -1,0 +1,22 @@
+<div class="wrap page-wrap">
+  <h1 class="ctitle">Collections</h1>
+  <div class="grid" style="--cols: 3">
+    {%- for collection in collections -%}
+      {%- if collection.handle == 'frontpage' -%}{%- continue -%}{%- endif -%}
+      <a class="card" href="{{ collection.url }}">
+        <div class="media">
+          {%- if collection.featured_image -%}
+            {{ collection.featured_image | image_url: width: 900 | image_tag: loading: 'lazy', alt: collection.title }}
+          {%- else -%}
+            {{ 'collection-apparel-2' | placeholder_svg_tag: 'placeholder-svg' }}
+          {%- endif -%}
+        </div>
+        <h3>{{ collection.title }}</h3>
+        <div class="price">{{ collection.products_count }} products</div>
+      </a>
+    {%- endfor -%}
+  </div>
+</div>
+{% schema %}
+{ "name": "Alle Kollektionen" }
+{% endschema %}
