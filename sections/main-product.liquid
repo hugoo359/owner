@@ -232,7 +232,7 @@
       assign size_offset = product.metafields.custom.size_offset.value
     endif
   -%}
-  {% render 'size-guide', product: product, tops: section.settings.sg_tops, bottoms: section.settings.sg_bottoms, size_offset: size_offset %}
+  {% render 'size-guide', size_offset: size_offset %}
 {%- endif -%}
 
 {% schema %}
@@ -267,8 +267,6 @@
       { "value": "0.5", "label": "Fällt etwas klein aus" },
       { "value": "1", "label": "Fällt sehr klein aus – 1 Größe größer empfehlen" }
     ], "info": "Pro Produkt überschreibbar mit Metafeld custom.size_offset (Dezimalzahl, z. B. -0.5)" },
-    { "type": "textarea", "id": "sg_tops", "label": "Maße Oberteile (Länge, Brustbreite, Ärmellänge in cm)", "default": "XS: 68, 52, 21\nS: 70, 55, 22\nM: 72, 58, 23\nL: 74, 61, 24\nXL: 76, 64, 25\nXXL: 78, 67, 26", "info": "Eine Zeile pro Größe: Größe: Länge, Brustbreite, Ärmellänge" },
-    { "type": "textarea", "id": "sg_bottoms", "label": "Maße Hosen & Jogger (Bundweite, Gesamtlänge, Innenbein in cm)", "default": "XS: 32, 98, 72\nS: 34, 100, 74\nM: 36, 102, 76\nL: 38, 104, 78\nXL: 40, 106, 80\nXXL: 42, 108, 81", "info": "Eine Zeile pro Größe: Größe: Bundweite, Gesamtlänge, Innenbein" },
     { "type": "checkbox", "id": "show_payments", "label": "Zahlungsarten unter dem Button", "default": true },
     { "type": "text", "id": "exchange_text", "label": "Hinweis-Leiste", "default": "Wrong size? No problem: free 14-day exchanges" },
     { "type": "checkbox", "id": "show_logo", "label": "Logo über den Akkordeons", "default": true }
