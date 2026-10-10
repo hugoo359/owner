@@ -17,7 +17,8 @@
     {%- endfor -%}
   </div>
 
-  <div class="pdp-main">
+  <div class="pdp-stage">
+  <div class="pdp-main" data-gallery>
     {%- for media in product.media -%}
       {%- liquid
         if media.id == featured.id
@@ -32,6 +33,15 @@
     {%- else -%}
       <div class="media">{{ 'product-apparel-1' | placeholder_svg_tag: 'placeholder-svg' }}</div>
     {%- endfor -%}
+  </div>
+  {%- if product.media.size > 1 -%}
+    <div class="pdp-dots" data-dots aria-hidden="true">
+      {%- for media in product.media -%}
+        <span class="{% if media.id == featured.id %}on{% endif %}" data-dot="{{ media.id }}"></span>
+      {%- endfor -%}
+    </div>
+    <div class="pdp-count" data-count aria-hidden="true"><b data-count-now>{% for media in product.media %}{% if media.id == featured.id %}{{ forloop.index }}{% endif %}{% endfor %}</b> / {{ product.media.size }}</div>
+  {%- endif -%}
   </div>
 
   <div class="pinfo">
@@ -78,6 +88,41 @@
     </div>
     {%- if settings.tax_text != blank -%}<div class="vat">{{ settings.tax_text }}</div>{%- endif -%}
 
+    {%- liquid
+      # Farben als eigene Produkte (wie bei 6pm): Metafeld custom.color_variants
+      # (Liste von Produkten) auf jedem Produkt der Farbfamilie. Name aus custom.color_name,
+      # Farbe aus custom.color_swatch (Farb-Metafeld) oder aus der Theme-Farbzuordnung.
+      assign has_color_option = false
+      for option in product.options
+        assign on = option | downcase
+        if on contains 'farbe' or on contains 'color' or on contains 'colour'
+          assign has_color_option = true
+        endif
+      endfor
+      assign siblings = product.metafields.custom.color_variants.value
+      assign self_in_list = false
+      for p in siblings
+        if p.id == product.id
+          assign self_in_list = true
+        endif
+      endfor
+      assign self_name = product.metafields.custom.color_name.value | default: product.title
+    -%}
+    {%- if has_color_option == false and siblings.size > 0 -%}
+      <div class="plabel">{{ section.settings.color_label | default: 'Color' }}: <span data-sib-label data-sib-default="{{ self_name | escape }}">{{ self_name }}</span></div>
+      <div class="pswatches psiblings" data-siblings>
+        {%- unless self_in_list -%}
+          {%- capture swatch_bg -%}{%- if product.metafields.custom.color_swatch != blank -%}{{ product.metafields.custom.color_swatch.value }}{%- else -%}{% render 'color-value', name: self_name %}{%- endif -%}{%- endcapture -%}
+          <a href="{{ product.url }}" class="on" aria-current="true" title="{{ self_name | escape }}" aria-label="{{ self_name | escape }}" data-sib-name="{{ self_name | escape }}" style="background:#ccc;background:{{ swatch_bg | strip }}"></a>
+        {%- endunless -%}
+        {%- for p in siblings -%}
+          {%- assign pname = p.metafields.custom.color_name.value | default: p.title -%}
+          {%- capture swatch_bg -%}{%- if p.metafields.custom.color_swatch != blank -%}{{ p.metafields.custom.color_swatch.value }}{%- else -%}{% render 'color-value', name: pname %}{%- endif -%}{%- endcapture -%}
+          <a href="{{ p.url }}" class="{% if p.id == product.id %}on{% endif %}{% unless p.available %} is-sold{% endunless %}"{% if p.id == product.id %} aria-current="true"{% endif %} title="{{ pname | escape }}" aria-label="{{ pname | escape }}" data-sib-name="{{ pname | escape }}" style="background:#ccc;background:{{ swatch_bg | strip }}"></a>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
     {%- unless product.has_only_default_variant -%}
       {%- for option in product.options_with_values -%}
         {%- assign on = option.name | downcase -%}
@@ -96,10 +141,14 @@
           <div class="plabel up">
             <span>{{ option.name }}:</span>
             {%- if is_size and section.settings.show_size_guide -%}
-              <button type="button" class="size-link" data-open="sizeguide">{% render 'icon', icon: 'hanger' %}<span>Find your size</span></button>
+              <button type="button" class="size-link" data-open="sizeguide" data-sg-link>
+                <span class="size-link-ico">{% render 'icon', icon: 'hanger' %}</span>
+                <span class="size-link-ok" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 12 12"><circle cx="6" cy="6" r="6" fill="currentColor"/><path d="M3.4 6.2l1.7 1.7 3.5-3.6" fill="none" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <span data-sg-link-text>Find your size</span>
+              </button>
             {%- endif -%}
           </div>
-          <div class="psizes" data-option="{{ forloop.index0 }}" data-pick="{% if option.values.size == 1 %}auto{% else %}user{% endif %}" style="--n: {{ option.values.size | at_most: 7 }}">
+          <div class="psizes" data-option="{{ forloop.index0 }}"{% if is_size %} data-size-group{% endif %} data-pick="{% if option.values.size == 1 %}auto{% else %}user{% endif %}" style="--n: {{ option.values.size | at_most: 7 }}">
             {%- for value in option.values -%}
               {%- assign vname = value.name | default: value -%}
               <button type="button" data-value="{{ vname | escape }}">{{ vname }}</button>
@@ -108,6 +157,27 @@
         {%- endif -%}
       {%- endfor -%}
     {%- endunless -%}
+
+    {%- liquid
+      assign model_a = product.metafields.custom.model_male.value | default: section.settings.model_male
+      assign model_b = product.metafields.custom.model_female.value | default: section.settings.model_female
+      assign show_model = false
+      if section.settings.show_model_info
+        if model_a != blank or model_b != blank
+          assign show_model = true
+        endif
+      endif
+      if product.metafields.custom.hide_model_info.value == true
+        assign show_model = false
+      endif
+    -%}
+    {%- if show_model -%}
+      <div class="strip{% if model_a == blank or model_b == blank %} strip--one{% endif %}">
+        {%- if model_a != blank -%}<span>{{ model_a }}</span>{%- endif -%}
+        {%- if model_a != blank and model_b != blank -%}<span class="sep">|</span>{%- endif -%}
+        {%- if model_b != blank -%}<span>{{ model_b }}</span>{%- endif -%}
+      </div>
+    {%- endif -%}
 
     <div class="avail{% unless current.available %} out{% endunless %}" data-avail>
       <i></i>
@@ -156,7 +226,13 @@
 </section>
 
 {%- if section.settings.show_size_guide -%}
-  {% render 'size-guide', product: product, tops: section.settings.sg_tops, bottoms: section.settings.sg_bottoms %}
+  {%- liquid
+    assign size_offset = section.settings.size_offset
+    if product.metafields.custom.size_offset != blank
+      assign size_offset = product.metafields.custom.size_offset.value
+    endif
+  -%}
+  {% render 'size-guide', product: product, tops: section.settings.sg_tops, bottoms: section.settings.sg_bottoms, size_offset: size_offset %}
 {%- endif -%}
 
 {% schema %}
@@ -175,8 +251,22 @@
     { "type": "text", "id": "sp_brand", "label": "Markenname", "info": "Leer = Shopname" },
     { "type": "range", "id": "sp_rating", "label": "Sterne", "min": 1, "max": 5, "step": 0.5, "default": 5 },
     { "type": "text", "id": "sp_rating_text", "label": "Text neben den Sternen", "default": "Over 2,500 happy customers" },
+    { "type": "header", "content": "Farben als eigene Produkte" },
+    { "type": "paragraph", "content": "Wie bei 6pm: Jede Farbe ist ein eigenes Produkt. Lege unter Einstellungen → Benutzerdefinierte Daten → Produkte diese Metafelder an: custom.color_variants (Produkt, Liste), custom.color_name (Einzeiliger Text), custom.color_swatch (Farbe). Trage bei jedem Produkt der Familie alle Farben ein." },
+    { "type": "text", "id": "color_label", "label": "Beschriftung", "default": "Color" },
+    { "type": "header", "content": "Model-Info unter den Größen" },
+    { "type": "checkbox", "id": "show_model_info", "label": "Anzeigen", "default": true },
+    { "type": "text", "id": "model_male", "label": "Links (z. B. Herren-Model)", "default": "Male: 190 cm | Size L", "info": "Pro Produkt überschreibbar mit Metafeld custom.model_male" },
+    { "type": "text", "id": "model_female", "label": "Rechts (z. B. Damen-Model)", "default": "Female: 175 cm | Size S", "info": "Pro Produkt überschreibbar mit Metafeld custom.model_female. Ausblenden pro Produkt: custom.hide_model_info (Wahr/Falsch)" },
     { "type": "header", "content": "Größenberater" },
-    { "type": "checkbox", "id": "show_size_guide", "label": "„Finde deine Größe“ anzeigen", "default": true },
+    { "type": "checkbox", "id": "show_size_guide", "label": "„Find your size“ anzeigen", "default": true },
+    { "type": "select", "id": "size_offset", "label": "Passform deiner Produkte (für den Größenrechner)", "default": "0", "options": [
+      { "value": "-1", "label": "Fällt sehr groß aus – 1 Größe kleiner empfehlen" },
+      { "value": "-0.5", "label": "Fällt etwas groß aus (Oversized)" },
+      { "value": "0", "label": "Normal / True to size" },
+      { "value": "0.5", "label": "Fällt etwas klein aus" },
+      { "value": "1", "label": "Fällt sehr klein aus – 1 Größe größer empfehlen" }
+    ], "info": "Pro Produkt überschreibbar mit Metafeld custom.size_offset (Dezimalzahl, z. B. -0.5)" },
     { "type": "textarea", "id": "sg_tops", "label": "Maße Oberteile (Länge, Brustbreite, Ärmellänge in cm)", "default": "XS: 68, 52, 21\nS: 70, 55, 22\nM: 72, 58, 23\nL: 74, 61, 24\nXL: 76, 64, 25\nXXL: 78, 67, 26", "info": "Eine Zeile pro Größe: Größe: Länge, Brustbreite, Ärmellänge" },
     { "type": "textarea", "id": "sg_bottoms", "label": "Maße Hosen & Jogger (Bundweite, Gesamtlänge, Innenbein in cm)", "default": "XS: 32, 98, 72\nS: 34, 100, 74\nM: 36, 102, 76\nL: 38, 104, 78\nXL: 40, 106, 80\nXXL: 42, 108, 81", "info": "Eine Zeile pro Größe: Größe: Bundweite, Gesamtlänge, Innenbein" },
     { "type": "checkbox", "id": "show_payments", "label": "Zahlungsarten unter dem Button", "default": true },

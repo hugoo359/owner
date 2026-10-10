@@ -1,15 +1,39 @@
 {%- liquid
   assign size_option = nil
   assign size_idx = 0
+  assign f_colors = ''
   for option in product.options_with_values
     assign n = option.name | downcase
     if n contains 'größe' or n contains 'grösse' or n contains 'groesse' or n contains 'size'
       assign size_option = option
       assign size_idx = forloop.index0
+    elsif n contains 'farbe' or n contains 'color' or n contains 'colour'
+      for value in option.values
+        assign vname = value.name | default: value
+        assign f_colors = f_colors | append: '|' | append: vname
+      endfor
     endif
   endfor
+  if product.metafields.custom.color_name != blank
+    assign f_colors = f_colors | append: '|' | append: product.metafields.custom.color_name.value
+  endif
+
+  # Daten für die Schnellfilter der Kollektionsseite (funktionieren auch ohne Search & Discovery).
+  # Werte werden mit | getrennt und klein geschrieben verglichen.
+  assign f_sizes = ''
+  if size_option
+    for v in product.variants
+      if v.available
+        assign f_sizes = f_sizes | append: '|' | append: v.options[size_idx]
+      endif
+    endfor
+  endif
 -%}
-<div class="card" data-reveal>
+<div class="card" data-reveal
+  data-f-type="{{ product.type | downcase | escape }}"
+  data-f-colors="{{ f_colors | downcase | append: '|' | escape }}"
+  data-f-sizes="{{ f_sizes | downcase | append: '|' | escape }}"
+  data-f-avail="{{ product.available }}">
   <div class="card-media">
     <a href="{{ product.url }}" class="media{% if product.media.size > 1 %} has-hover{% endif %}" tabindex="-1" aria-hidden="true">
       {%- if product.featured_media -%}

@@ -425,15 +425,53 @@
     groups.forEach(g => { picked[g.dataset.option] = !g.classList.contains('psizes') || g.dataset.pick === 'auto'; });
     let touched = false;
 
-    const showMedia = id => {
-      if (!id) return;
-      $$('[data-media-main]', sec).forEach(m => {
-        const on = m.dataset.mediaMain === String(id);
-        m.classList.toggle('is-off', !on);
-        if (!on) m.classList.remove('zooming');
-      });
+    /* Galerie: Desktop = Überblenden, Tablet/Handy = mit dem Finger wischen (Scroll-Snap) */
+    const gallery = $('[data-gallery]', sec);
+    const slides = $$('[data-media-main]', sec);
+    const swipeMQ = matchMedia('(max-width: 1100px)');
+    const isSwipe = () => swipeMQ.matches && slides.length > 1;
+    const countNow = $('[data-count-now]', sec);
+    const markActive = id => {
       $$('[data-thumbs] button', sec).forEach(b => b.classList.toggle('on', b.dataset.media === String(id)));
+      $$('[data-dot]', sec).forEach(d => d.classList.toggle('on', d.dataset.dot === String(id)));
+      const i = slides.findIndex(m => m.dataset.mediaMain === String(id));
+      if (countNow && i > -1) countNow.textContent = i + 1;
     };
+    const showMedia = (id, smooth = true) => {
+      if (!id) return;
+      const target = slides.find(m => m.dataset.mediaMain === String(id));
+      if (!target) return;
+      if (isSwipe()) {
+        gallery.scrollTo({ left: target.offsetLeft, behavior: smooth && !calm() ? 'smooth' : 'auto' });
+      } else {
+        slides.forEach(m => {
+          const on = m === target;
+          m.classList.toggle('is-off', !on);
+          if (!on) m.classList.remove('zooming');
+        });
+      }
+      markActive(id);
+    };
+    if (gallery && slides.length > 1) {
+      let raf = 0;
+      gallery.addEventListener('scroll', () => {
+        if (!isSwipe()) return;
+        cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(() => {
+          const i = Math.round(gallery.scrollLeft / Math.max(1, gallery.clientWidth));
+          const m = slides[Math.max(0, Math.min(slides.length - 1, i))];
+          if (m) markActive(m.dataset.mediaMain);
+        });
+      }, { passive: true });
+      /* Beim Wechsel Handy <-> Desktop das aktive Bild beibehalten */
+      const sync = () => {
+        const on = $('[data-thumbs] button.on', sec)?.dataset.media || slides[0].dataset.mediaMain;
+        if (!isSwipe()) slides.forEach(m => m.classList.toggle('is-off', m.dataset.mediaMain !== String(on)));
+        showMedia(on, false);
+      };
+      swipeMQ.addEventListener?.('change', sync);
+      requestAnimationFrame(() => { if (isSwipe()) showMedia($('[data-thumbs] button.on', sec)?.dataset.media, false); });
+    }
 
     function update() {
       groups.forEach(g => {
@@ -502,13 +540,21 @@
       $$('[data-zoom]', sec).forEach(m => {
         const img = $('img', m);
         if (!img) return;
-        m.addEventListener('click', () => m.classList.toggle('zooming'));
+        m.addEventListener('click', () => { if (!isSwipe()) m.classList.toggle('zooming'); });
         m.addEventListener('mousemove', e => {
           const r = m.getBoundingClientRect();
           img.style.transformOrigin = `${((e.clientX - r.left) / r.width) * 100}% ${((e.clientY - r.top) / r.height) * 100}%`;
         });
         m.addEventListener('mouseleave', () => m.classList.remove('zooming'));
       });
+    }
+
+    /* Farb-Geschwister: Name beim Drüberfahren anzeigen */
+    const sib = $('[data-siblings]', sec);
+    const sibLabel = $('[data-sib-label]', sec);
+    if (sib && sibLabel) {
+      sib.addEventListener('mouseover', e => { const a = e.target.closest('[data-sib-name]'); if (a) sibLabel.textContent = a.dataset.sibName; });
+      sib.addEventListener('mouseleave', () => { sibLabel.textContent = sibLabel.dataset.sibDefault; });
     }
 
     $('[data-open-size]', sec)?.addEventListener('click', () => {
@@ -605,12 +651,137 @@
       const next = doc.getElementById('LoadMore');
       const wrap = document.getElementById('LoadMore');
       if (next) wrap.replaceWith(next); else wrap.remove();
+      document.dispatchEvent(new CustomEvent('grid:added', { detail: { cards: added } }));
     } catch (err) {
       b.disabled = false;
       b.textContent = 'Load more';
       toast('More products could not be loaded.');
     }
   });
+
+  /* =========================================================
+     KOLLEKTION: Schnellfilter (Fallback ohne Search & Discovery)
+     Kategorie = Einzelauswahl, Farbe/Größe = Mehrfachauswahl,
+     Zeilen werden mit UND verknüpft.
+     ========================================================= */
+  (function initQuickFilters() {
+    const box = $('[data-qf]');
+    const gridEl = $('#ProductGrid');
+    if (!box || !gridEl) return;
+    const rows = $$('[data-qf-row]', box);
+    const stockBtn = $('[data-qf-stock]', box);
+    const empty = $('[data-qf-empty]', gridEl);
+    if (!rows.length && !stockBtn) return;
+
+    const SIZE_ORDER = ['XXXS', 'XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '2XL', 'XXXL', '3XL', '4XL', '5XL'];
+    const sizeRank = v => {
+      const u = v.toUpperCase().trim();
+      const i = SIZE_ORDER.indexOf(u);
+      if (i > -1) return i;
+      const n = parseFloat(u);
+      return isNaN(n) ? 999 : 100 + n;
+    };
+    const sortRow = row => {
+      const btns = $$('[data-qf-value]', row).sort((a, b) => sizeRank(a.dataset.qfValue) - sizeRank(b.dataset.qfValue));
+      btns.forEach(b => row.appendChild(b));
+    };
+    $$('[data-qf-sort]', box).forEach(sortRow);
+
+    const state = { type: '', colors: new Set(), sizes: new Set(), stock: false };
+    const active = () => state.type || state.colors.size || state.sizes.size || state.stock;
+    const has = (list, v) => (list || '').includes(`|${v}|`);
+
+    function apply() {
+      let shown = 0;
+      $$('.card', gridEl).forEach(card => {
+        const d = card.dataset;
+        const ok =
+          (!state.type || (d.fType || '') === state.type) &&
+          (!state.colors.size || [...state.colors].some(c => has(d.fColors, c))) &&
+          (!state.sizes.size || [...state.sizes].some(z => has(d.fSizes, z))) &&
+          (!state.stock || d.fAvail === 'true');
+        card.classList.toggle('qf-hide', !ok);
+        if (ok) { shown++; card.classList.add('in'); }
+      });
+      if (empty) empty.hidden = shown > 0;
+      const lm = $('#LoadMore');
+      if (lm) lm.classList.toggle('is-hidden', !!active());
+    }
+
+    /* Damit alle Produkte gefiltert werden, beim ersten Filtern restliche Seiten nachladen */
+    let loading = null;
+    async function loadAll() {
+      if (loading) return loading;
+      loading = (async () => {
+        let btn = $('#LoadMore [data-load-more]');
+        box.classList.add('is-loading');
+        while (btn) {
+          try {
+            const res = await fetch(btn.dataset.loadMore);
+            const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
+            const added = $$('#ProductGrid > .card', doc);
+            added.forEach(c => { c.classList.add('in'); gridEl.insertBefore(c, empty || null); });
+            addValues(added);
+            const next = doc.getElementById('LoadMore');
+            const wrap = document.getElementById('LoadMore');
+            if (next) wrap.replaceWith(next); else wrap.remove();
+            btn = $('#LoadMore [data-load-more]');
+          } catch (e) { break; }
+        }
+        box.classList.remove('is-loading');
+      })();
+      return loading;
+    }
+
+    /* Neue Werte (Farben/Größen) aus nachgeladenen Produkten ergänzen */
+    function addValues(cards) {
+      const rowSizes = $('[data-qf-row="sizes"]', box);
+      cards.forEach(card => {
+        if (rowSizes) (card.dataset.fSizes || '').split('|').filter(Boolean).forEach(z => {
+          if ($$('[data-qf-value]', rowSizes).some(b => b.dataset.qfValue === z)) return;
+          const b = document.createElement('button');
+          b.type = 'button'; b.className = 'size-chip'; b.dataset.qfValue = z; b.textContent = z.toUpperCase();
+          rowSizes.appendChild(b);
+        });
+      });
+      if (rowSizes) sortRow(rowSizes);
+    }
+
+    box.addEventListener('click', async e => {
+      const stock = e.target.closest('[data-qf-stock]');
+      const btn = e.target.closest('[data-qf-value],[data-qf-all]');
+      if (!stock && !btn) return;
+      e.preventDefault();
+      if (stock) {
+        state.stock = !state.stock;
+        stock.classList.toggle('on', state.stock);
+        stock.setAttribute('aria-pressed', state.stock);
+      } else {
+        const row = btn.closest('[data-qf-row]');
+        const key = row.dataset.qfRow;
+        if (key === 'type') {
+          state.type = btn.dataset.qfAll !== undefined ? '' : btn.dataset.qfValue;
+          $$('.pill', row).forEach(p => p.classList.toggle('on', p === btn));
+        } else {
+          const v = btn.dataset.qfValue;
+          const set = state[key];
+          if (set.has(v)) set.delete(v); else set.add(v);
+          btn.classList.toggle('on', set.has(v));
+        }
+      }
+      apply();
+      if (active() && $('#LoadMore [data-load-more]')) { await loadAll(); apply(); }
+    });
+
+    gridEl.addEventListener('click', e => {
+      if (!e.target.closest('[data-qf-reset]')) return;
+      state.type = ''; state.colors.clear(); state.sizes.clear(); state.stock = false;
+      $$('[data-qf-value],[data-qf-stock]', box).forEach(b => b.classList.remove('on'));
+      $$('[data-qf-all]', box).forEach(b => b.classList.add('on'));
+      apply();
+    });
+    document.addEventListener('grid:added', e => { addValues(e.detail.cards); apply(); });
+  })();
 
   /* =========================================================
      „PASST DAZU“ (Empfehlungen)
@@ -793,7 +964,7 @@
     }).filter(r => r && r.vals.length);
     const tables = { tops: parse(data.tops), bottoms: parse(data.bottoms) };
 
-    const st = { tab: root.dataset.start === 'bottoms' ? 'bottoms' : 'tops', unit: 'cm', size: null, fit: 0 };
+    const st = { tab: root.dataset.start === 'bottoms' ? 'bottoms' : 'tops', unit: 'cm', size: null, view: 'finder' };
     if (!tables[st.tab].length) st.tab = st.tab === 'tops' ? 'bottoms' : 'tops';
     const stage = $('[data-sg-stage]', root);
     const tilt = $('[data-sg-tilt]', root);
@@ -843,7 +1014,6 @@
         `<tbody>${r.map(x => `<tr data-size="${x.size}"><td>${x.size}</td>${meta.labels.map((_, i) => `<td>${x.vals[i] != null ? fmt(x.vals[i]) : '–'}</td>`).join('')}</tr>`).join('')}</tbody>`;
       renderValues(false);
       if (full) drawLines();
-      recommend();
     }
     function selectSize(size) {
       if (!size || size === st.size) return;
@@ -867,15 +1037,8 @@
       if (chip) { selectSize(chip.dataset.size); return; }
       const tr = e.target.closest('[data-sg-table] tbody tr');
       if (tr) { selectSize(tr.dataset.size); return; }
-      const fit = e.target.closest('[data-sg-fit]');
-      if (fit) { st.fit = +fit.dataset.sgFit; $$('[data-sg-fit]', root).forEach(b => b.classList.toggle('on', b === fit)); recommend(true); return; }
-      if (e.target.closest('[data-sg-calc-toggle]')) {
-        const c = $('[data-sg-calc]', root);
-        c.classList.toggle('open');
-        $('[data-sg-calc-toggle]', root).setAttribute('aria-expanded', c.classList.contains('open'));
-        return;
-      }
-      if (e.target.closest('[data-sg-reco-use]')) { selectSize($('[data-sg-reco]', root).textContent); return; }
+      const view = e.target.closest('[data-sg-view]');
+      if (view) { showView(view.dataset.sgView); return; }
       if (e.target.closest('[data-sg-apply]')) {
         const size = current()?.size;
         const btn = [...document.querySelectorAll('.psizes button[data-value]')].find(b => b.dataset.value.toUpperCase() === String(size).toUpperCase());
@@ -897,28 +1060,6 @@
       });
     });
     legend.addEventListener('mouseleave', () => $$('.sg-m', root).forEach(m => m.classList.remove('hl', 'dim')));
-
-    /* Größenrechner */
-    function recommend(animate) {
-      const h = +$('[data-sg-in="h"]', root).value;
-      const w = +$('[data-sg-in="w"]', root).value;
-      $('[data-sg-out="h"]', root).textContent = `${h} cm`;
-      $('[data-sg-out="w"]', root).textContent = `${w} kg`;
-      let idx = w < 58 ? 1 : w < 66 ? 2 : w < 76 ? 3 : w < 86 ? 4 : w < 97 ? 5 : 6;
-      if (h > 188) idx += 1;
-      if (h < 163) idx -= 1;
-      idx += st.fit;
-      const available = rows().map(r => r.size.toUpperCase());
-      let best = rows()[0]?.size || 'M', bestDist = 99;
-      available.forEach((sz, i) => {
-        const o = ORDER.indexOf(sz);
-        const d = o === -1 ? 99 : Math.abs(o - idx);
-        if (d < bestDist) { bestDist = d; best = rows()[i].size; }
-      });
-      const out = $('[data-sg-reco]', root);
-      if (out.textContent !== best) { out.textContent = best; if (animate) restartAnim(out, 'tick'); }
-    }
-    $$('[data-sg-in]', root).forEach(inp => inp.addEventListener('input', () => recommend(true)));
 
     /* Modell drehen: ziehen oder Maus bewegen */
     let drag = null, ry = 0, rx = 0, backT;
@@ -952,16 +1093,242 @@
     stage.addEventListener('pointercancel', release);
     stage.addEventListener('pointerleave', () => { if (!drag) { ry = 0; rx = 0; setRot(); stage.classList.remove('interact'); } });
 
+    /* Ansicht wechseln: Größenrechner <-> Größentabelle */
+    function showView(v) {
+      if (v !== 'chart' || !rows().length) v = 'finder';
+      st.view = v;
+      $$('[data-sg-view]', root).forEach(b => { const on = b.dataset.sgView === v; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
+      $$('[data-sg-pane]', root).forEach(p => { p.hidden = p.dataset.sgPane !== v; });
+      if (v === 'chart') requestAnimationFrame(() => render(true));
+    }
+    if (!tables.tops.length && !tables.bottoms.length) $('.sg-views', root)?.classList.add('is-hidden');
+
     /* Beim Öffnen: aktuelle Produktgröße übernehmen und Maße neu zeichnen */
     document.addEventListener('click', e => {
       if (!e.target.closest('[data-open="sizeguide"]')) return;
       const ps = productSize();
       if (ps && rows().some(r => r.size === ps)) st.size = ps;
-      requestAnimationFrame(() => render(true));
+      if (st.view === 'chart') requestAnimationFrame(() => render(true));
+      root.dispatchEvent(new CustomEvent('sg:open'));
     });
     window.addEventListener('resize', moveInk);
-    render(false);
+    if (rows().length) render(false);
+    initFinder(root);
   })();
+
+  /* =========================================================
+     GRÖSSENRECHNER „Find your size“
+     Schätzt aus Geschlecht, Körpergröße und Gewicht den Brustumfang und vergleicht ihn
+     mit gängigen Konfektionstabellen (Brustumfang am Körper, nicht am Kleidungsstück).
+
+     Brustumfang ≈ k · √(Gewicht / Größe): Gewicht/Größe entspricht dem mittleren
+     Körperquerschnitt, dessen Wurzel proportional zum Umfang ist. k ist an die
+     Mittelwerte der ANSUR-II-Körpervermessung angepasst
+     (Männer 175,6 cm / 85,5 kg / 105,9 cm Brust, Frauen 162,9 cm / 67,8 kg / 94,9 cm).
+     Größentabellen (Körper-Brustumfang in cm, Mitte der jeweiligen Spanne) gemittelt aus
+     ASOS, Schöffel, Lidl, Under Armour, Lacoste. Die Körpergröße fließt zu 20 % ein
+     (Länge von Ärmeln und Rumpf). Bundweite für Jeans = Brust minus 15 cm (Herren) bzw.
+     16 cm (Damen), wie in den ASOS-/Levi’s-Tabellen.
+     ========================================================= */
+  function initFinder(root) {
+    const form = $('[data-sgf-form]', root);
+    if (!form) return;
+    const LETTERS = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL'];
+    const BODY = {
+      men: {
+        k: 151.9, drop: 15,
+        chest: [83.5, 88.5, 93.5, 98.5, 103.5, 109, 115, 122],
+        height: [164, 168, 173, 178, 183, 188, 192, 195]
+      },
+      women: {
+        k: 147.1, drop: 16,
+        chest: [75.5, 80.5, 85.5, 91, 97, 103.5, 110.5, 117],
+        height: [154, 158, 163, 168, 172, 176, 180, 183]
+      }
+    };
+    const KEY = 'size-finder';
+    const FIT_LABEL = { '-1': 'tighter', 0: 'regular', 1: 'looser' };
+    const offset = parseFloat(root.dataset.offset) || 0;
+    const out = $('[data-sgf-out]', root);
+    const emptyBox = $('[data-sgf-empty]', root);
+    const err = $('[data-sgf-err]', root);
+    const link = $('[data-sg-link]');
+    const linkText = $('[data-sg-link-text]');
+    const linkDefault = linkText ? linkText.textContent : '';
+    const st = { g: null, fit: 0, result: null };
+
+    const load = () => { try { return JSON.parse(localStorage.getItem(KEY)) || null; } catch (e) { return null; } };
+    const save = p => { try { localStorage.setItem(KEY, JSON.stringify(p)); } catch (e) {} };
+
+    /* Stückweise lineare Position in einer Tabelle (0 = XXS, 3 = M ...), auch über die Ränder hinaus */
+    function pos(arr, x) {
+      const n = arr.length - 1;
+      if (x <= arr[0]) return (x - arr[0]) / (arr[1] - arr[0]);
+      for (let i = 0; i < n; i++) if (x <= arr[i + 1]) return i + (x - arr[i]) / (arr[i + 1] - arr[i]);
+      return n + (x - arr[n]) / (arr[n] - arr[n - 1]);
+    }
+    function valAt(arr, f) {
+      const n = arr.length - 1;
+      const i = Math.max(0, Math.min(n - 1, Math.floor(f)));
+      return arr[i] + (f - i) * (arr[i + 1] - arr[i]);
+    }
+    const norm = v => {
+      const u = String(v).toUpperCase().replace(/\s+/g, '');
+      return ({ XXXL: '3XL', '2XL': 'XXL', XXXS: 'XXS' })[u] || u;
+    };
+
+    /* Größen des Produkts (inkl. ausverkaufter) */
+    function productSizes() {
+      const btns = $$('[data-size-group] button[data-value]');
+      if (btns.length) return btns.map(b => ({ label: b.dataset.value, sold: b.disabled, btn: b }));
+      return ['XS', 'S', 'M', 'L', 'XL', 'XXL'].map(l => ({ label: l, sold: false, btn: null }));
+    }
+
+    function calc(p) {
+      const B = BODY[p.g];
+      const chest = B.k * Math.sqrt(p.w / p.h);
+      let f = 0.8 * pos(B.chest, chest) + 0.2 * pos(B.height, p.h);
+      f += offset + p.fit * 0.6;
+      const sizes = productSizes();
+      const nums = sizes.map(s => parseFloat(s.label)).filter(n => !isNaN(n));
+      const numeric = nums.length && nums.length === sizes.length;
+      let pick, alt = null, dir = 0;
+
+      const nearestBy = (score) => sizes.reduce((best, s) => (score(s) < score(best) ? s : best), sizes[0]);
+
+      if (numeric) {
+        /* Zahlengrößen: Jeans-Bundweite (Inch) oder EU/DE-Konfektionsgröße */
+        const eqChest = valAt(B.chest, f);
+        const even = nums.every(n => n % 2 === 0);
+        let target;
+        if (p.g === 'men' && Math.min(...nums) >= 42) target = eqChest / 2;               // EU Herren 44–58
+        else if (p.g === 'women' && even && Math.min(...nums) >= 30 && Math.max(...nums) <= 54) target = eqChest / 2 - 7; // DE Damen 32–48
+        else target = (eqChest - B.drop) / 2.54;                                             // Jeans W26–W38
+        pick = nearestBy(s => Math.abs(parseFloat(s.label) - target));
+        const sorted = [...sizes].sort((a, b) => parseFloat(a.label) - parseFloat(b.label));
+        const i = sorted.indexOf(pick);
+        const diff = target - parseFloat(pick.label);
+        const step = Math.abs(parseFloat((sorted[i + 1] || sorted[i - 1] || pick).label) - parseFloat(pick.label)) || 1;
+        if (Math.abs(diff) > step * 0.3) { dir = diff > 0 ? 1 : -1; alt = sorted[i + dir] || null; }
+      } else {
+        const idx = Math.round(f);
+        const rank = s => { const r = LETTERS.indexOf(norm(s.label)); return r === -1 ? 99 : r; };
+        pick = nearestBy(s => Math.abs(rank(s) - idx) + (rank(s) === 99 ? 50 : 0));
+        const d = f - Math.floor(f);
+        if (d > 0.35 && d < 0.65) {
+          dir = rank(pick) > f ? -1 : 1;
+          alt = sizes.find(s => rank(s) === rank(pick) + dir) || null;
+        }
+      }
+      return { pick, alt, dir, chest: Math.round(chest) };
+    }
+
+    function setLink(res) {
+      if (!link || !linkText) return;
+      if (res) {
+        linkText.textContent = `We recommend size ${res.pick.label}`;
+        link.classList.add('has-reco');
+      } else {
+        linkText.textContent = linkDefault;
+        link.classList.remove('has-reco');
+      }
+    }
+
+    function show(p, res, animate) {
+      st.result = res;
+      emptyBox.hidden = true;
+      out.hidden = false;
+      const sizeEl = $('[data-sgf-size]', root);
+      sizeEl.textContent = res.pick.label;
+      if (animate) restartAnim(sizeEl, 'tick');
+      const fitTxt = FIT_LABEL[p.fit];
+      let why = `Based on: ${p.g === 'men' ? 'Men' : 'Women'} · ${p.h} cm · ${p.w} kg · ${fitTxt} fit.`;
+      if (offset < 0) why += ' This item runs large – we have taken that into account.';
+      if (offset > 0) why += ' This item runs small – we have taken that into account.';
+      $('[data-sgf-why]', root).textContent = why;
+      const altEl = $('[data-sgf-alt]', root);
+      if (res.alt) {
+        altEl.hidden = false;
+        altEl.textContent = res.dir > 0
+          ? `You are between two sizes. For a looser fit choose ${res.alt.label}.`
+          : `You are between two sizes. For a closer fit choose ${res.alt.label}.`;
+      } else altEl.hidden = true;
+      $('[data-sgf-scale]', root).innerHTML = productSizes().map(s =>
+        `<span class="${s.label === res.pick.label ? 'on' : ''}${res.alt && s.label === res.alt.label ? ' alt' : ''}${s.sold ? ' sold' : ''}">${s.label}</span>`).join('');
+      const apply = $('[data-sgf-apply]', root);
+      const lab = $('[data-sgf-apply-label]', root);
+      apply.hidden = !res.pick.btn;
+      apply.disabled = !!res.pick.sold;
+      lab.textContent = res.pick.sold ? `Size ${res.pick.label} is sold out` : `Select size ${res.pick.label}`;
+      setLink(res);
+    }
+
+    /* Formular */
+    const hIn = $('[data-sgf-in="h"]', root), wIn = $('[data-sgf-in="w"]', root);
+    const hR = $('[data-sgf-range="h"]', root), wR = $('[data-sgf-range="w"]', root);
+    const setGender = g => {
+      st.g = g;
+      $$('[data-sgf-gender]', root).forEach(b => { const on = b.dataset.sgfGender === g; b.classList.toggle('on', on); b.setAttribute('aria-checked', on); });
+    };
+    const setFit = f => {
+      st.fit = f;
+      $$('[data-sgf-fit]', root).forEach(b => { const on = +b.dataset.sgfFit === f; b.classList.toggle('on', on); b.setAttribute('aria-checked', on); });
+    };
+    [[hIn, hR], [wIn, wR]].forEach(([num, rng]) => {
+      rng.addEventListener('input', () => { num.value = rng.value; live(); });
+      num.addEventListener('input', () => { if (num.value) rng.value = num.value; live(); });
+    });
+    root.addEventListener('click', e => {
+      const g = e.target.closest('[data-sgf-gender]');
+      if (g) { setGender(g.dataset.sgfGender); err.textContent = ''; live(); return; }
+      const f = e.target.closest('[data-sgf-fit]');
+      if (f) { setFit(+f.dataset.sgfFit); live(); return; }
+      if (e.target.closest('[data-sgf-edit]')) { hIn.focus(); form.scrollIntoView?.({ block: 'start', behavior: calm() ? 'auto' : 'smooth' }); return; }
+      if (e.target.closest('[data-sgf-apply]') && st.result?.pick?.btn) {
+        const btn = st.result.pick.btn;
+        closeLayer('sizeguide');
+        if (!btn.disabled) setTimeout(() => btn.click(), 200);
+      }
+    });
+
+    function read(strict) {
+      const h = Math.round(+hIn.value), w = Math.round(+wIn.value);
+      if (!st.g) return strict ? 'Please choose men or women.' : null;
+      if (!h || h < 140 || h > 215) return strict ? 'Please enter your height between 140 and 215 cm.' : null;
+      if (!w || w < 35 || w > 180) return strict ? 'Please enter your weight between 35 and 180 kg.' : null;
+      const bmi = w / Math.pow(h / 100, 2);
+      if (bmi < 14 || bmi > 55) return strict ? 'Please check your height and weight.' : null;
+      return { g: st.g, h, w, fit: st.fit };
+    }
+    let shown = false;
+    function run(strict, animate) {
+      const p = read(strict);
+      if (typeof p === 'string') { err.textContent = p; return; }
+      if (!p) return;
+      err.textContent = '';
+      save(p);
+      show(p, calc(p), animate);
+      shown = true;
+    }
+    function live() { if (shown) run(false, true); }
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      run(true, true);
+      if (shown && matchMedia('(max-width: 820px)').matches) $('[data-sgf-result]', root).scrollIntoView({ behavior: calm() ? 'auto' : 'smooth', block: 'start' });
+    });
+
+    /* Gespeicherte Angaben übernehmen -> Empfehlung direkt am Link zeigen (wie „Wir empfehlen Größe XS“) */
+    const saved = load();
+    if (saved && BODY[saved.g]) {
+      setGender(saved.g);
+      setFit([-1, 0, 1].includes(saved.fit) ? saved.fit : 0);
+      hIn.value = hR.value = saved.h;
+      wIn.value = wR.value = saved.w;
+      run(false, false);
+    }
+    /* Nach Variantenwechsel (z. B. Größe ausverkauft) Ergebnis aktualisieren */
+    root.addEventListener('sg:open', () => { if (shown) run(false, false); });
+  }
 
   /* =========================================================
      KUNDEN-SEITEN

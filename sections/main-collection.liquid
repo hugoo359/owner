@@ -7,7 +7,69 @@
   </nav>
   <h1 class="ctitle split-title" data-split>{{ collection.title }}</h1>
 
-  <div class="filters" data-reveal>
+  {%- liquid
+    # Schnellfilter-Fallback: Wenn in „Search & Discovery“ keine Filter für Kategorie,
+    # Farbe, Größe oder Verfügbarkeit eingerichtet sind, baut das Theme diese Zeilen selbst
+    # aus den Produkten der Kollektion und filtert direkt im Browser.
+    assign has_cat = false
+    assign has_color = false
+    assign has_size = false
+    if section.settings.category_menu != blank
+      assign has_cat = true
+    endif
+    for filter in collection.filters
+      assign fl = filter.label | downcase
+      if filter.param_name == 'filter.p.product_type'
+        assign has_cat = true
+      elsif filter.type == 'list'
+        if filter.presentation == 'swatch' or fl contains 'farbe' or fl contains 'color' or fl contains 'colour'
+          assign has_color = true
+        elsif fl contains 'größe' or fl contains 'grösse' or fl contains 'groesse' or fl contains 'size'
+          assign has_size = true
+        endif
+      endif
+    endfor
+
+    assign qf_colors = ''
+    assign qf_sizes = ''
+    if section.settings.auto_filters
+      for product in collection.products
+        for option in product.options_with_values
+          assign n = option.name | downcase
+          if n contains 'farbe' or n contains 'color' or n contains 'colour'
+            for value in option.values
+              assign vname = value.name | default: value
+              assign qf_colors = qf_colors | append: '|' | append: vname
+            endfor
+          elsif n contains 'größe' or n contains 'grösse' or n contains 'groesse' or n contains 'size'
+            for value in option.values
+              assign vname = value.name | default: value
+              assign qf_sizes = qf_sizes | append: '|' | append: vname
+            endfor
+          endif
+        endfor
+        if product.metafields.custom.color_name != blank
+          assign qf_colors = qf_colors | append: '|' | append: product.metafields.custom.color_name.value
+        endif
+      endfor
+    endif
+    assign qf_colors = qf_colors | remove_first: '|' | split: '|' | uniq
+    assign qf_sizes = qf_sizes | remove_first: '|' | split: '|' | uniq
+    assign qf_types = collection.all_types | sort_natural
+  -%}
+
+  <div class="filters" data-reveal{% if section.settings.auto_filters %} data-qf{% endif %}>
+    {%- if section.settings.auto_filters and has_cat == false and qf_types.size > 1 -%}
+      <div class="frow">
+        <span class="flabel">Category</span>
+        <div class="scroller" data-qf-row="type" data-qf-single>
+          <button type="button" class="pill on" data-qf-all>All</button>
+          {%- for t in qf_types -%}
+            {%- if t != blank -%}<button type="button" class="pill" data-qf-value="{{ t | downcase | escape }}">{{ t }}</button>{%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
     {%- if section.settings.category_menu != blank -%}
       <div class="frow">
         <span class="flabel">Category</span>
@@ -68,6 +130,30 @@
       {%- endif -%}
     {%- endfor -%}
 
+    {%- if section.settings.auto_filters and has_color == false and qf_colors.size > 1 -%}
+      <div class="frow">
+        <span class="flabel">Color</span>
+        <div class="scroller" data-qf-row="colors">
+          {%- for c in qf_colors -%}
+            {%- capture swatch_bg -%}{% render 'color-value', name: c %}{%- endcapture -%}
+            <button type="button" class="sw" data-qf-value="{{ c | downcase | escape }}" title="{{ c | escape }}" aria-label="{{ c | escape }}" style="background:#ccc;background:{{ swatch_bg | strip }}"></button>
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+    {%- if section.settings.auto_filters and has_size == false and qf_sizes.size > 0 -%}
+      {%- capture size_row -%}
+        <div class="frow">
+          <span class="flabel">Size</span>
+          <div class="scroller" data-qf-row="sizes" data-qf-sort>
+            {%- for z in qf_sizes -%}
+              <button type="button" class="size-chip" data-qf-value="{{ z | downcase | escape }}">{{ z }}</button>
+            {%- endfor -%}
+          </div>
+        </div>
+      {%- endcapture -%}
+    {%- endif -%}
+
     <div class="frow-split">
       <div class="size-wrap">{{ size_row }}</div>
       <div class="tools">
@@ -77,6 +163,8 @@
               <a class="toggle{% if value.active %} on{% endif %}" href="{% if value.active %}{{ value.url_to_remove }}{% else %}{{ value.url_to_add }}{% endif %}"><i></i>In stock</a>
             {%- endif -%}
           {%- endfor -%}
+        {%- elsif section.settings.auto_filters -%}
+          <button type="button" class="toggle" data-qf-stock aria-pressed="false"><i></i>In stock</button>
         {%- endif -%}
         <div class="dens" data-density>
           {%- for n in (2..4) -%}
@@ -101,6 +189,7 @@
     {%- else -%}
       <div class="empty">No products found. <a href="{{ collection.url }}">Reset filters</a></div>
     {%- endfor -%}
+    <div class="empty" data-qf-empty hidden>No products found. <button type="button" class="link-u" data-qf-reset>Reset filters</button></div>
   </div>
 
   {%- if paginate.next -%}
@@ -117,7 +206,8 @@
   "name": "Kollektion",
   "settings": [
     { "type": "range", "id": "per_page", "label": "Produkte pro Seite", "min": 8, "max": 48, "step": 4, "default": 24 },
-    { "type": "link_list", "id": "category_menu", "label": "Kategorie-Menü (Pillen oben)", "info": "Optional. Ansonsten erscheinen Filter aus der App Search & Discovery automatisch als Pillen, Farben als Kreise und Größen als Kästchen." }
+    { "type": "link_list", "id": "category_menu", "label": "Kategorie-Menü (Pillen oben)", "info": "Optional. Ansonsten erscheinen Filter aus der App Search & Discovery automatisch als Pillen, Farben als Kreise und Größen als Kästchen." },
+    { "type": "checkbox", "id": "auto_filters", "label": "Schnellfilter automatisch erzeugen", "default": true, "info": "Fehlen in Search & Discovery die Filter für Kategorie (Produkttyp), Farbe, Größe oder Verfügbarkeit, baut das Theme sie selbst aus deinen Produkten (Produkttyp, Varianten-Optionen „Farbe/Color“ und „Größe/Size“). Für sehr große Kollektionen sind die Filter aus Search & Discovery schneller." }
   ]
 }
 {% endschema %}
