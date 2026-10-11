@@ -26,6 +26,12 @@
     ]
   },
   {
+    "name": "Produktbilder",
+    "settings": [
+      { "type": "range", "id": "card_radius", "label": "Runde Ecken der Produktbilder", "min": 0, "max": 32, "step": 2, "unit": "px", "default": 14, "info": "Gilt für die Produktkarten auf Kollektionsseiten wie „Alle Düfte“, in der Suche, bei Empfehlungen und im Slider der Startseite. 0 = eckig." }
+    ]
+  },
+  {
     "name": "Duftfamilien & Farbkreise",
     "settings": [
       {
