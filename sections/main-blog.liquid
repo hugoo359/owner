@@ -8,7 +8,7 @@
           {%- if article.image -%}{{ article.image | image_url: width: 900 | image_tag: loading: 'lazy', alt: article.title }}{%- else -%}{{ 'lifestyle-2' | placeholder_svg_tag: 'placeholder-svg' }}{%- endif -%}
         </div>
         <h3>{{ article.title }}</h3>
-        <div class="price">{{ article.published_at | date: '%b %d, %Y' }}</div>
+        <div class="price">{{ article.published_at | date: format: 'short' }}</div>
       </a>
     {%- endfor -%}
   </div>

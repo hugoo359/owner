@@ -1,5 +1,5 @@
 <div class="wrap page-wrap">
-  <h1 class="ctitle">Collections</h1>
+  <h1 class="ctitle">{{ 'collection.all_collections' | t }}</h1>
   <div class="grid" style="--cols: 3">
     {%- for collection in collections -%}
       {%- if collection.handle == 'frontpage' -%}{%- continue -%}{%- endif -%}
@@ -12,7 +12,7 @@
           {%- endif -%}
         </div>
         <h3>{{ collection.title }}</h3>
-        <div class="price">{{ collection.products_count }} products</div>
+        <div class="price">{{ 'collection.products_count' | t: count: collection.products_count }}</div>
       </a>
     {%- endfor -%}
   </div>

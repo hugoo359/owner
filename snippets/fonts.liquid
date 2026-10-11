@@ -1,0 +1,16 @@
+{%- comment -%}
+  Schriften liegen im Theme (assets/) statt bei Google Fonts:
+  keine Verbindung zu Google-Servern beim Seitenaufruf (DSGVO) und schneller über das Shopify-CDN.
+  Archivo und Michroma stehen unter der SIL Open Font License 1.1.
+{%- endcomment -%}
+{{ 'archivo-500.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
+{{ 'archivo-700.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
+<style>
+  {%- for w in (4..9) -%}
+    {%- assign weight = w | times: 100 -%}
+    {%- assign file = 'archivo-' | append: weight | append: '.woff2' %}
+  @font-face{font-family:"Archivo";font-style:normal;font-weight:{{ weight }};font-display:swap;src:url("{{ file | asset_url }}") format("woff2")}
+  {%- endfor %}
+  @font-face{font-family:"Archivo";font-style:italic;font-weight:900;font-display:swap;src:url("{{ 'archivo-900-italic.woff2' | asset_url }}") format("woff2")}
+  @font-face{font-family:"Michroma";font-style:normal;font-weight:400;font-display:swap;src:url("{{ 'michroma-400.woff2' | asset_url }}") format("woff2")}
+</style>

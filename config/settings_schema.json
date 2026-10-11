@@ -2,7 +2,7 @@
   {
     "name": "theme_info",
     "theme_name": "Streetwear",
-    "theme_version": "1.0.0",
+    "theme_version": "2.0.0",
     "theme_author": "Eigenes Theme",
     "theme_documentation_url": "https://help.shopify.com/manual/online-store/themes",
     "theme_support_url": "https://help.shopify.com/"
@@ -44,18 +44,18 @@
     "settings": [
       { "type": "number", "id": "free_shipping_threshold", "label": "Kostenloser Versand ab (Betrag)", "default": 125, "info": "0 blendet den Fortschrittsbalken aus. Die echten Versandkosten stellst du unter Einstellungen > Versand ein." },
       { "type": "text", "id": "shipping_label", "label": "Angezeigte Versandkosten unter dem Mindestbetrag", "default": "€4.90" },
-      { "type": "text", "id": "cart_note_title", "label": "Hinweis-Titel", "default": "GREAT CHOICE!" },
-      { "type": "text", "id": "cart_note_text", "label": "Hinweis-Text", "default": "Here are your pieces:" },
+      { "type": "text", "id": "cart_note_title", "label": "Hinweis-Titel", "default": "GUTE WAHL!" },
+      { "type": "text", "id": "cart_note_text", "label": "Hinweis-Text", "default": "Hier sind deine Teile:" },
       { "type": "collection", "id": "cart_upsell_collection", "label": "„Passt dazu“-Kollektion im Warenkorb" }
     ]
   },
   {
     "name": "Produktseite",
     "settings": [
-      { "type": "text", "id": "tax_text", "label": "Steuerhinweis", "default": "incl. VAT" },
-      { "type": "text", "id": "in_stock_text", "label": "Verfügbar-Text", "default": "In stock." },
-      { "type": "text", "id": "delivery_text", "label": "Lieferzeit-Text", "default": "Delivered in 2–4 days" },
-      { "type": "text", "id": "sold_out_text", "label": "Ausverkauft-Text", "default": "Sold out." }
+      { "type": "text", "id": "tax_text", "label": "Steuerhinweis", "default": "inkl. MwSt." },
+      { "type": "text", "id": "in_stock_text", "label": "Verfügbar-Text", "default": "Auf Lager." },
+      { "type": "text", "id": "delivery_text", "label": "Lieferzeit-Text", "default": "Lieferung in 2–4 Werktagen" },
+      { "type": "text", "id": "sold_out_text", "label": "Ausverkauft-Text", "default": "Ausverkauft." }
     ]
   },
   {

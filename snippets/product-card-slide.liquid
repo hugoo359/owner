@@ -64,8 +64,8 @@
     {%- if badge_text != '' -%}<span class="badge{% if badge_text contains '%' %} badge--sale{% endif %}">{{ badge_text }}</span>{%- endif -%}
 
     {%- if settings.quick_add and product.available and size_option -%}
-      <div class="qa" aria-label="Quick add">
-        <span class="qa-label">Select size</span>
+      <div class="qa" aria-label="{{ 'product.quick_add' | t }}">
+        <span class="qa-label">{{ 'product.select_size' | t }}</span>
         <div class="qa-sizes">
           {%- for value in size_option.values -%}
             {%- assign vname = value.name | default: value -%}

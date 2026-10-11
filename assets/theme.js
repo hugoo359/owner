@@ -41,6 +41,9 @@
     clearTimeout(toast.t);
     toast.t = setTimeout(() => (t.hidden = true), 2800);
   }
+  const STR = T.strings || {};
+  const SF = STR.sf || {};
+  const fill = (str, vars) => String(str || '').replace(/\[(\w+)\]/g, (m, k) => (k in vars ? vars[k] : m));
   const restartAnim = (el, cls) => { if (!el) return; el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); };
 
   /* =========================================================
@@ -228,7 +231,7 @@
   document.addEventListener('click', e => {
     if (!e.target.closest('[data-cookie-settings]')) return;
     if (window.privacyBanner?.showPreferences) window.privacyBanner.showPreferences();
-    else toast('Cookie settings are currently unavailable.');
+    else toast(STR.cookieUnavailable || 'Cookie settings are currently unavailable.');
   });
 
   /* =========================================================
@@ -341,7 +344,7 @@
       if (!r.ok) throw new Error(data.description || data.message);
       updateCartDrawer(data.sections?.['cart-drawer']);
     } catch (err) {
-      toast(err.message || 'Something went wrong. Please reload the page.');
+      toast(err.message || STR.error || 'Something went wrong. Please reload the page.');
       $('#CartDrawerInner')?.classList.remove('is-busy');
     }
   }
@@ -354,7 +357,7 @@
       body: formData
     });
     const data = await r.json();
-    if (!r.ok) throw new Error(data.description || data.message || 'Could not be added to cart.');
+    if (!r.ok) throw new Error(data.description || data.message || STR.addError || 'Could not be added to cart.');
     const cartLayer = document.getElementById('cart');
     const drawerOpen = cartLayer && !cartLayer.hidden;
     await flyToCart(img);
@@ -371,7 +374,7 @@
       const fd = new FormData();
       fd.append('id', add.dataset.addVariant);
       fd.append('quantity', '1');
-      add.textContent = 'Adding …';
+      add.textContent = STR.adding || 'Adding …';
       try { await cartAdd(fd); } catch (err) { toast(err.message); }
       return;
     }
@@ -655,8 +658,8 @@
       document.dispatchEvent(new CustomEvent('grid:added', { detail: { cards: added } }));
     } catch (err) {
       b.disabled = false;
-      b.textContent = b.dataset.label || 'Load more';
-      toast('More products could not be loaded.');
+      b.textContent = b.dataset.label || '…';
+      toast(STR.loadMoreError || 'More products could not be loaded.');
     }
   });
 
@@ -919,7 +922,7 @@
   $$('[data-sp]').forEach(sp => {
     const num = $('[data-sp-count]', sp);
     const target = parseInt(num?.dataset.spCount, 10) || 0;
-    const fmtN = n => n.toLocaleString('de-DE');
+    const fmtN = n => n.toLocaleString(T.locale || 'de');
     if (num) num.textContent = calm() ? fmtN(target) : '0';
     const run = () => {
       sp.classList.add('in');
@@ -982,7 +985,6 @@
       }
     };
     const KEY = 'size-finder';
-    const FIT_LABEL = { '-1': 'tighter', 0: 'regular', 1: 'looser' };
     const offset = parseFloat(root.dataset.offset) || 0;
     const out = $('[data-sgf-out]', root);
     const emptyBox = $('[data-sgf-empty]', root);
@@ -1061,7 +1063,7 @@
     function setLink(res) {
       if (!link || !linkText) return;
       if (res) {
-        linkText.textContent = `We recommend size ${res.pick.label}`;
+        linkText.textContent = fill(SF.weRecommend || 'We recommend size [size]', { size: res.pick.label });
         link.classList.add('has-reco');
       } else {
         linkText.textContent = linkDefault;
@@ -1076,17 +1078,17 @@
       const sizeEl = $('[data-sgf-size]', root);
       sizeEl.textContent = res.pick.label;
       if (animate) restartAnim(sizeEl, 'tick');
-      const fitTxt = FIT_LABEL[p.fit];
-      let why = `Based on: ${p.g === 'men' ? 'Men' : 'Women'} · ${p.h} cm · ${p.w} kg · ${fitTxt} fit.`;
-      if (offset < 0) why += ' This item runs large – we have taken that into account.';
-      if (offset > 0) why += ' This item runs small – we have taken that into account.';
+      const fitTxt = (SF.fit || {})[String(p.fit)] || '';
+      let why = fill(SF.basedOn || 'Based on: [gender] · [height] cm · [weight] kg · [fit] fit.', {
+        gender: p.g === 'men' ? (SF.men || 'Men') : (SF.women || 'Women'), height: p.h, weight: p.w, fit: fitTxt
+      });
+      if (offset < 0) why += ' ' + (SF.runsLarge || '');
+      if (offset > 0) why += ' ' + (SF.runsSmall || '');
       $('[data-sgf-why]', root).textContent = why;
       const altEl = $('[data-sgf-alt]', root);
       if (res.alt) {
         altEl.hidden = false;
-        altEl.textContent = res.dir > 0
-          ? `You are between two sizes. For a looser fit choose ${res.alt.label}.`
-          : `You are between two sizes. For a closer fit choose ${res.alt.label}.`;
+        altEl.textContent = fill(res.dir > 0 ? SF.betweenLooser : SF.betweenCloser, { size: res.alt.label });
       } else altEl.hidden = true;
       $('[data-sgf-scale]', root).innerHTML = productSizes().map(s =>
         `<span class="${s.label === res.pick.label ? 'on' : ''}${res.alt && s.label === res.alt.label ? ' alt' : ''}${s.sold ? ' sold' : ''}">${s.label}</span>`).join('');
@@ -1094,7 +1096,7 @@
       const lab = $('[data-sgf-apply-label]', root);
       apply.hidden = !res.pick.btn;
       apply.disabled = !!res.pick.sold;
-      lab.textContent = res.pick.sold ? `Size ${res.pick.label} is sold out` : `Select size ${res.pick.label}`;
+      lab.textContent = fill(res.pick.sold ? SF.sizeSoldOut : SF.selectSize, { size: res.pick.label });
       setLink(res);
     }
 
@@ -1128,11 +1130,11 @@
 
     function read(strict) {
       const h = Math.round(+hIn.value), w = Math.round(+wIn.value);
-      if (!st.g) return strict ? 'Please choose men or women.' : null;
-      if (!h || h < 140 || h > 215) return strict ? 'Please enter your height between 140 and 215 cm.' : null;
-      if (!w || w < 35 || w > 180) return strict ? 'Please enter your weight between 35 and 180 kg.' : null;
+      if (!st.g) return strict ? SF.errGender : null;
+      if (!h || h < 140 || h > 215) return strict ? SF.errHeight : null;
+      if (!w || w < 35 || w > 180) return strict ? SF.errWeight : null;
       const bmi = w / Math.pow(h / 100, 2);
-      if (bmi < 14 || bmi > 55) return strict ? 'Please check your height and weight.' : null;
+      if (bmi < 14 || bmi > 55) return strict ? SF.errCheck : null;
       return { g: st.g, h, w, fit: st.fit };
     }
     let shown = false;
@@ -1174,5 +1176,34 @@
     e.preventDefault();
     document.getElementById('recover')?.classList.toggle('show');
   });
-  $$('select[data-default]').forEach(sel => { if (sel.dataset.default) sel.value = sel.dataset.default; });
+  /* Adressen: Land -> Bundesland/Region (Shopify-Hilfsskript aus shopify_common.js) */
+  const initAddresses = () => {
+    $$('[data-addr-country]').forEach(sel => {
+      const id = sel.dataset.addrCountry;
+      if (window.Shopify && Shopify.CountryProvinceSelector) {
+        new Shopify.CountryProvinceSelector(sel.id, `AddrProvince-${id}`, { hideElement: `AddrProvinceWrap-${id}` });
+      }
+    });
+    $$('select[data-default]').forEach(sel => { if (sel.dataset.default && !sel.value) sel.value = sel.dataset.default; });
+  };
+  /* shopify_common.js lädt (defer) nach diesem Skript – erst danach initialisieren */
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initAddresses); else initAddresses();
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-addr-edit]');
+    if (!b) return;
+    const box = document.getElementById(`EditAddress-${b.dataset.addrEdit}`);
+    if (!box) return;
+    box.hidden = !box.hidden;
+    $$(`[data-addr-edit="${b.dataset.addrEdit}"][aria-expanded]`).forEach(x => x.setAttribute('aria-expanded', !box.hidden));
+  });
+  document.addEventListener('submit', e => {
+    const f = e.target.closest('[data-addr-delete]');
+    if (f && !confirm(f.dataset.confirm)) e.preventDefault();
+  });
+  /* Geschenkgutschein: Code kopieren */
+  document.addEventListener('click', async e => {
+    const b = e.target.closest('[data-copy]');
+    if (!b) return;
+    try { await navigator.clipboard.writeText(b.dataset.copy); toast(STR.copied || 'Copied!'); } catch (err) {}
+  });
 })();

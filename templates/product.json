@@ -3,15 +3,58 @@
     "main": {
       "type": "main-product",
       "blocks": {
-        "info": { "type": "accordion", "settings": { "icon": "info", "title": "Product information", "use_description": true } },
-        "care": { "type": "accordion", "settings": { "icon": "care", "title": "Care instructions", "content": "<p>Wash inside out at 30 °C. Do not tumble dry. Do not bleach. Iron inside out.</p>" } },
-        "size": { "type": "accordion", "settings": { "icon": "ruler", "title": "Size information", "is_size": true, "content": "<p>Fits true to size. For a looser look, size up.</p>" } },
-        "shipping": { "type": "accordion", "settings": { "icon": "truck", "title": "Shipping & Returns", "content": "<p>Ships within 2–4 business days. Free exchanges within 14 days.</p>" } }
+        "info": {
+          "type": "accordion",
+          "settings": {
+            "icon": "info",
+            "title": "Produktinformationen",
+            "use_description": true
+          }
+        },
+        "care": {
+          "type": "accordion",
+          "settings": {
+            "icon": "care",
+            "title": "Pflegehinweise",
+            "content": "<p>Auf links bei 30 °C waschen. Nicht in den Trockner. Nicht bleichen. Auf links bügeln.</p>"
+          }
+        },
+        "size": {
+          "type": "accordion",
+          "settings": {
+            "icon": "ruler",
+            "title": "Größeninfo",
+            "is_size": true,
+            "content": "<p>Fällt normal aus. Für einen lockereren Look eine Größe größer wählen.</p>"
+          }
+        },
+        "shipping": {
+          "type": "accordion",
+          "settings": {
+            "icon": "truck",
+            "title": "Versand & Rückgabe",
+            "content": "<p>Versand innerhalb von 2–4 Werktagen. Kostenloser Umtausch innerhalb von 14 Tagen.</p>"
+          }
+        }
       },
-      "block_order": ["info", "care", "size", "shipping"],
+      "block_order": [
+        "info",
+        "care",
+        "size",
+        "shipping"
+      ],
       "settings": {}
     },
-    "recommendations": { "type": "product-recommendations", "settings": { "heading": "YOU MAY ALSO LIKE", "limit": 4 } }
+    "recommendations": {
+      "type": "product-recommendations",
+      "settings": {
+        "heading": "DAS KÖNNTE DIR AUCH GEFALLEN",
+        "limit": 4
+      }
+    }
   },
-  "order": ["main", "recommendations"]
+  "order": [
+    "main",
+    "recommendations"
+  ]
 }

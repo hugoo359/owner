@@ -1,0 +1,45 @@
+{%- comment -%} Video im Vollbild: hochgeladenes Shopify-Video (Autoplay, stumm, Schleife) oder YouTube/Vimeo. {%- endcomment -%}
+<section class="vhero" style="--vh-h: {{ section.settings.height }}vh; --bn-o: {{ section.settings.overlay | divided_by: 100.0 }}; --bn-ink: {{ section.settings.text_color }}">
+  <div class="vhero-media">
+    {%- if section.settings.video != blank -%}
+      {{ section.settings.video | video_tag: autoplay: true, loop: true, muted: true, controls: false, playsinline: true, image_size: '1920x', class: 'vhero-video' }}
+    {%- elsif section.settings.video_url != blank -%}
+      {%- if section.settings.video_url.type == 'youtube' -%}
+        <iframe class="vhero-video vhero-embed" src="https://www.youtube-nocookie.com/embed/{{ section.settings.video_url.id }}?autoplay=1&mute=1&loop=1&playlist={{ section.settings.video_url.id }}&controls=0&playsinline=1&rel=0&modestbranding=1" title="{{ section.settings.heading | default: shop.name | escape }}" allow="autoplay; encrypted-media" loading="lazy"></iframe>
+      {%- else -%}
+        <iframe class="vhero-video vhero-embed" src="https://player.vimeo.com/video/{{ section.settings.video_url.id }}?background=1&autoplay=1&muted=1&loop=1&dnt=1" title="{{ section.settings.heading | default: shop.name | escape }}" allow="autoplay; fullscreen" loading="lazy"></iframe>
+      {%- endif -%}
+    {%- elsif section.settings.poster != blank -%}
+      {{ section.settings.poster | image_url: width: 2400 | image_tag: class: 'vhero-video', sizes: '100vw', widths: '750, 1100, 1500, 1900, 2400', alt: section.settings.poster.alt }}
+    {%- else -%}
+      {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg vhero-video' }}
+    {%- endif -%}
+  </div>
+  {%- if section.settings.heading != blank or section.settings.button_label != blank -%}
+    <div class="banner-content banner-content--center"><div class="banner-inner" data-reveal>
+      {%- if section.settings.heading != blank -%}<h2 class="banner-title">{{ section.settings.heading }}</h2>{%- endif -%}
+      {%- if section.settings.button_label != blank -%}
+        <a class="banner-btn banner-btn--light" href="{{ section.settings.link | default: routes.all_products_collection_url }}">{{ section.settings.button_label }}</a>
+      {%- endif -%}
+    </div></div>
+  {%- endif -%}
+</section>
+
+{% schema %}
+{
+  "name": "Video",
+  "tag": "div",
+  "settings": [
+    { "type": "video", "id": "video", "label": "Video hochladen", "info": "MP4, am besten unter 20 MB. Läuft stumm in Schleife." },
+    { "type": "video_url", "id": "video_url", "label": "Oder YouTube-/Vimeo-Link", "accept": ["youtube", "vimeo"] },
+    { "type": "image_picker", "id": "poster", "label": "Ersatzbild ohne Video" },
+    { "type": "text", "id": "heading", "label": "Überschrift", "default": "DROP 01 – JETZT ERHÄLTLICH" },
+    { "type": "text", "id": "button_label", "label": "Button-Text", "default": "Jetzt shoppen" },
+    { "type": "url", "id": "link", "label": "Link" },
+    { "type": "color", "id": "text_color", "label": "Textfarbe", "default": "#ffffff" },
+    { "type": "range", "id": "overlay", "label": "Abdunkeln", "min": 0, "max": 80, "step": 5, "unit": "%", "default": 15 },
+    { "type": "range", "id": "height", "label": "Höhe", "min": 40, "max": 100, "step": 5, "unit": "vh", "default": 90 }
+  ],
+  "presets": [ { "name": "Video" } ]
+}
+{% endschema %}

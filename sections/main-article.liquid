@@ -1,7 +1,7 @@
 <article class="wrap page-wrap">
-  <nav class="crumbs"><a href="{{ blog.url }}">{{ blog.title }}</a></nav>
+  <nav class="crumbs"><a href="{{ blog.url }}">{{ 'blog.back' | t: title: blog.title }}</a></nav>
   <h1 class="ctitle">{{ article.title }}</h1>
-  <p class="vat">{{ article.published_at | date: '%b %d, %Y' }}</p>
+  <p class="vat">{{ article.published_at | date: format: 'short' }}</p>
   {%- if article.image -%}
     <div class="article-img">{{ article.image | image_url: width: 1800 | image_tag: sizes: '100vw', widths: '800, 1200, 1800', alt: article.title }}</div>
   {%- endif -%}

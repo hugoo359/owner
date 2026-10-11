@@ -1,19 +1,37 @@
 <div class="wrap form-page">
-  <nav class="crumbs"><a href="{{ routes.account_url }}">My account</a></nav>
-  <h1 class="ctitle">Order {{ order.name }}</h1>
-  <p class="vat">{{ order.created_at | date: '%b %d, %Y %H:%M' }}</p>
+  <nav class="crumbs"><a href="{{ routes.account_url }}">{{ 'customer.account.title' | t }}</a></nav>
+  <h1 class="ctitle">{{ 'customer.order.title' | t: name: order.name }}</h1>
+  <p class="vat">{{ order.created_at | date: format: 'long' }}</p>
+  <p>{{ 'customer.order.payment_status' | t }}: <b>{{ order.financial_status_label }}</b> · {{ 'customer.order.fulfillment_status' | t }}: <b>{{ order.fulfillment_status_label }}</b></p>
   <table class="table">
-    <thead><tr><th>Product</th><th>Price</th><th>Quantity</th><th>Total</th></tr></thead>
+    <thead><tr><th>{{ 'customer.order.product' | t }}</th><th>{{ 'customer.order.price' | t }}</th><th>{{ 'customer.order.quantity' | t }}</th><th>{{ 'customer.order.total' | t }}</th></tr></thead>
     <tbody>
       {%- for line_item in order.line_items -%}
-        <tr><td>{{ line_item.title }}</td><td>{{ line_item.final_price | money_with_currency }}</td><td>{{ line_item.quantity }}</td><td>{{ line_item.final_line_price | money_with_currency }}</td></tr>
+        <tr>
+          <td>
+            <a class="link-u" href="{{ line_item.url }}">{{ line_item.title }}</a>
+            {%- if line_item.fulfillment.tracking_url -%}
+              <br><a class="link-u" href="{{ line_item.fulfillment.tracking_url }}" target="_blank" rel="noopener">{{ 'customer.order.tracking' | t }}</a>
+            {%- endif -%}
+          </td>
+          <td>{{ line_item.final_price | money_with_currency }}</td>
+          <td>{{ line_item.quantity }}</td>
+          <td>{{ line_item.final_line_price | money_with_currency }}</td>
+        </tr>
       {%- endfor -%}
     </tbody>
     <tfoot>
-      <tr><td colspan="3">Subtotal</td><td>{{ order.line_items_subtotal_price | money_with_currency }}</td></tr>
-      {%- for shipping_method in order.shipping_methods -%}<tr><td colspan="3">Shipping ({{ shipping_method.title }})</td><td>{{ shipping_method.price | money_with_currency }}</td></tr>{%- endfor -%}
-      <tr><td colspan="3"><b>Total</b></td><td><b>{{ order.total_price | money_with_currency }}</b></td></tr>
+      <tr><td colspan="3">{{ 'customer.order.subtotal' | t }}</td><td>{{ order.line_items_subtotal_price | money_with_currency }}</td></tr>
+      {%- for discount_application in order.cart_level_discount_applications -%}
+        <tr><td colspan="3">{{ 'customer.order.discount' | t }} ({{ discount_application.title }})</td><td>-{{ discount_application.total_allocated_amount | money_with_currency }}</td></tr>
+      {%- endfor -%}
+      {%- for shipping_method in order.shipping_methods -%}<tr><td colspan="3">{{ 'customer.order.shipping' | t: title: shipping_method.title }}</td><td>{{ shipping_method.price | money_with_currency }}</td></tr>{%- endfor -%}
+      {%- for tax_line in order.tax_lines -%}<tr><td colspan="3">{{ 'customer.order.tax' | t }} {{ tax_line.title }} ({{ tax_line.rate_percentage }} %)</td><td>{{ tax_line.price | money_with_currency }}</td></tr>{%- endfor -%}
+      <tr><td colspan="3"><b>{{ 'customer.order.total' | t }}</b></td><td><b>{{ order.total_price | money_with_currency }}</b></td></tr>
     </tfoot>
   </table>
-  {%- if order.shipping_address -%}<h2 class="sub-title">Shipping address</h2>{{ order.shipping_address | format_address }}{%- endif -%}
+  <div class="addr-cols">
+    {%- if order.shipping_address -%}<div><h2 class="sub-title">{{ 'customer.order.shipping_address' | t }}</h2>{{ order.shipping_address | format_address }}</div>{%- endif -%}
+    {%- if order.billing_address -%}<div><h2 class="sub-title">{{ 'customer.order.billing_address' | t }}</h2>{{ order.billing_address | format_address }}</div>{%- endif -%}
+  </div>
 </div>

@@ -47,9 +47,9 @@
     </a>
 
     {%- if settings.quick_add and product.available -%}
-      <div class="qa" aria-label="Quick add">
+      <div class="qa" aria-label="{{ 'product.quick_add' | t }}">
         {%- if size_option -%}
-          <span class="qa-label">Select size</span>
+          <span class="qa-label">{{ 'product.select_size' | t }}</span>
           <div class="qa-sizes">
             {%- for value in size_option.values -%}
               {%- assign vname = value.name | default: value -%}
@@ -65,7 +65,7 @@
             {%- endfor -%}
           </div>
         {%- elsif product.has_only_default_variant -%}
-          <button type="button" class="qa-single" data-qa-variant="{{ product.first_available_variant.id }}">+ Add to cart</button>
+          <button type="button" class="qa-single" data-qa-variant="{{ product.first_available_variant.id }}">{{ 'product.add_short' | t }}</button>
         {%- endif -%}
       </div>
     {%- endif -%}
@@ -84,13 +84,13 @@
           {%- endfor -%}
         {%- endcapture -%}
         {% render 'icon', icon: 'cart-sm' %}
-        {%- if sizes_out != blank -%}{{ sizes_out }}{%- else -%}<span>{{ settings.sold_out_text | default: "Sold out" | upcase }}</span>{%- endif -%}
+        {%- if sizes_out != blank -%}{{ sizes_out }}{%- else -%}<span>{{ 'product.sold_out' | t | upcase }}</span>{%- endif -%}
       {%- elsif product.available == false -%}
-        <span>{{ settings.sold_out_text | default: "Sold out" | upcase }}</span>
+        <span>{{ 'product.sold_out' | t | upcase }}</span>
       {%- endif -%}
     </div>
     <div class="price">
-      {%- if product.price_varies -%}from {% endif -%}
+      {%- if product.price_varies -%}{{ 'product.from' | t }} {% endif -%}
       {{ product.price | money_with_currency }}
       {%- if product.compare_at_price > product.price %} <s>{{ product.compare_at_price | money_with_currency }}</s>{% endif -%}
     </div>

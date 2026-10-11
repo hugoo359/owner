@@ -35,7 +35,7 @@
             {%- assign odd = forloop.index | modulo: 2 -%}
             {%- if odd == 1 -%}{{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}{%- else -%}{{ 'lifestyle-2' | placeholder_svg_tag: 'placeholder-svg' }}{%- endif -%}
           {%- endif -%}
-          <span class="ft-cta">Discover <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 6h8M7 3l3 3-3 3"/></svg></span>
+          <span class="ft-cta">{{ 'general.discover' | t }} <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 6h8M7 3l3 3-3 3"/></svg></span>
         </div>
         <h3>{{ block.settings.title }}</h3>
         {%- if block.settings.text != blank -%}<p>{{ block.settings.text }}</p>{%- endif -%}
@@ -48,9 +48,9 @@
 {
   "name": "Bildkarten mit Tabs",
   "settings": [
-    { "type": "text", "id": "heading", "label": "Überschrift", "default": "TRENDING NOW" },
-    { "type": "text", "id": "tab_1", "label": "Tab 1", "default": "Women" },
-    { "type": "text", "id": "tab_2", "label": "Tab 2", "default": "Men" },
+    { "type": "text", "id": "heading", "label": "Überschrift", "default": "JETZT IM TREND" },
+    { "type": "text", "id": "tab_1", "label": "Tab 1", "default": "Damen" },
+    { "type": "text", "id": "tab_2", "label": "Tab 2", "default": "Herren" },
     { "type": "text", "id": "tab_3", "label": "Tab 3", "info": "Leer lassen, wenn du nur zwei Tabs willst. Nur ein Tab = keine Tab-Buttons." },
     { "type": "range", "id": "columns", "label": "Karten nebeneinander (Desktop)", "min": 2, "max": 5, "step": 1, "default": 4 },
     { "type": "range", "id": "padding_top", "label": "Abstand oben", "min": 0, "max": 140, "step": 4, "unit": "px", "default": 64 },
@@ -65,18 +65,18 @@
           { "value": "1", "label": "Tab 1" }, { "value": "2", "label": "Tab 2" }, { "value": "3", "label": "Tab 3" }
         ] },
         { "type": "image_picker", "id": "image", "label": "Bild", "info": "Hochformat, z. B. 900 × 1125 px" },
-        { "type": "text", "id": "title", "label": "Titel", "default": "New: Essentials" },
-        { "type": "textarea", "id": "text", "label": "Text", "default": "Our everyday basics. Heavyweight fabric, clean cut." },
+        { "type": "text", "id": "title", "label": "Titel", "default": "Neu: Essentials" },
+        { "type": "textarea", "id": "text", "label": "Text", "default": "Unsere Basics für jeden Tag. Schwerer Stoff, cleaner Schnitt." },
         { "type": "url", "id": "link", "label": "Link" }
       ]
     }
   ],
   "presets": [
     { "name": "Bildkarten mit Tabs", "blocks": [
-      { "type": "card", "settings": { "tab": "1", "title": "New: Essentials" } },
-      { "type": "card", "settings": { "tab": "1", "title": "Bestsellers" } },
-      { "type": "card", "settings": { "tab": "2", "title": "New: Essentials" } },
-      { "type": "card", "settings": { "tab": "2", "title": "Bestsellers" } }
+      { "type": "card", "settings": { "tab": "1", "title": "Neu: Essentials" } },
+      { "type": "card", "settings": { "tab": "1", "title": "Bestseller" } },
+      { "type": "card", "settings": { "tab": "2", "title": "Neu: Essentials" } },
+      { "type": "card", "settings": { "tab": "2", "title": "Bestseller" } }
     ] }
   ]
 }

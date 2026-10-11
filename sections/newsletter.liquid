@@ -10,10 +10,10 @@
         {%- if form.posted_successfully? -%}
           <p class="nl-msg">{{ section.settings.success_text }}</p>
         {%- else -%}
-          <input type="email" name="contact[email]" id="NewsletterEmail" required placeholder="YOUR EMAIL ADDRESS" aria-label="Email address" autocomplete="email">
-          <button type="submit">SUBSCRIBE</button>
+          <input type="email" name="contact[email]" id="NewsletterEmail" required placeholder="{{ 'newsletter.placeholder' | t }}" aria-label="{{ 'newsletter.label' | t }}" autocomplete="email">
+          <button type="submit">{{ 'newsletter.subscribe' | t }}</button>
           {%- if form.errors -%}
-            <p class="nl-msg">Please enter a valid email address.</p>
+            <p class="nl-msg">{{ 'newsletter.error' | t }}</p>
           {%- endif -%}
         {%- endif -%}
       </div>
@@ -25,8 +25,8 @@
 {
   "name": "Newsletter-Leiste",
   "settings": [
-    { "type": "text", "id": "heading", "label": "Text", "default": "SIGN UP FOR OUR NEWSLETTER" },
-    { "type": "text", "id": "success_text", "label": "Text nach Anmeldung", "default": "Thanks! You're now subscribed." }
+    { "type": "text", "id": "heading", "label": "Text", "default": "MELDE DICH FÜR UNSEREN NEWSLETTER AN" },
+    { "type": "text", "id": "success_text", "label": "Text nach Anmeldung", "default": "Danke! Du bist jetzt angemeldet." }
   ],
   "presets": [ { "name": "Newsletter-Leiste" } ]
 }

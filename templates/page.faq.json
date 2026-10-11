@@ -1,0 +1,23 @@
+{
+  "sections": {
+    "main": { "type": "main-page", "settings": {} },
+    "faq": {
+      "type": "faq",
+      "blocks": {
+        "g1": { "type": "group", "settings": { "title": "Bestellung & Versand" } },
+        "q1": { "type": "question", "settings": { "question": "Wie lange dauert der Versand?", "answer": "<p>Bestellungen verschicken wir innerhalb von 1–2 Werktagen. Die Lieferung dauert in Deutschland meist 2–4 Werktage.</p>" } },
+        "q2": { "type": "question", "settings": { "question": "Was kostet der Versand?", "answer": "<p>Ab 125 € Bestellwert ist der Versand kostenlos, darunter berechnen wir 4,90 €.</p>" } },
+        "q3": { "type": "question", "settings": { "question": "Kann ich meine Bestellung verfolgen?", "answer": "<p>Ja. Sobald dein Paket unterwegs ist, bekommst du eine E-Mail mit dem Tracking-Link.</p>" } },
+        "g2": { "type": "group", "settings": { "title": "Umtausch & Rückgabe" } },
+        "q4": { "type": "question", "settings": { "question": "Kann ich meine Bestellung umtauschen?", "answer": "<p>Ja, innerhalb von 14 Tagen nach Erhalt kannst du ungetragene Artikel kostenlos umtauschen.</p>" } },
+        "q5": { "type": "question", "settings": { "question": "Wann bekomme ich mein Geld zurück?", "answer": "<p>Sobald deine Rücksendung geprüft wurde, erstatten wir den Betrag innerhalb von 5 Werktagen auf dein ursprüngliches Zahlungsmittel.</p>" } },
+        "g3": { "type": "group", "settings": { "title": "Größen & Pflege" } },
+        "q6": { "type": "question", "settings": { "question": "Welche Größe passt mir?", "answer": "<p>Auf jeder Produktseite findest du den Größenrechner „Finde deine Größe“. Gib Körpergröße und Gewicht ein und du bekommst eine Empfehlung.</p>" } },
+        "q7": { "type": "question", "settings": { "question": "Wie wasche ich meine Teile?", "answer": "<p>Auf links bei 30 °C waschen und nicht in den Trockner geben – so bleiben Farbe und Form lange erhalten.</p>" } }
+      },
+      "block_order": ["g1", "q1", "q2", "q3", "g2", "q4", "q5", "g3", "q6", "q7"],
+      "settings": { "heading": "HÄUFIGE FRAGEN", "schema": true, "padding_top": 16, "padding_bottom": 80 }
+    }
+  },
+  "order": ["main", "faq"]
+}
