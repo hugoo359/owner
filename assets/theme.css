@@ -955,3 +955,39 @@ button.sw{padding:0;cursor:pointer}
   .brand-story--wide .bs-text{font-size:10px;line-height:1.65}
   .bs-social{margin-top:72px}
 }
+
+/* =========================================================
+   KOLLEKTION 1:1 WIE 6PM (ausgemessen bei 1902px Breite)
+   ========================================================= */
+.crumbs{margin-top:27px;font-size:9.5px;letter-spacing:.03em;gap:7px}
+.crumbs a{color:#222}
+.crumbs span{color:#777}
+.ctitle{margin:2px 0 11px;font-size:19px;letter-spacing:0}
+.frow{gap:8px;margin-bottom:10px}
+.flabel{width:auto;min-width:0;font-size:9.5px;letter-spacing:.1em;color:#aaa}
+.scroller{gap:5px;padding:2px}
+.pill{height:33px;padding:0 16px;font-size:11.5px;letter-spacing:.085em;border-radius:17px}
+.scroller:has(.pill){gap:5px}
+.sw{width:21px;height:21px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)}
+.scroller--colors{gap:7px}
+.size-chip{height:26px;min-width:32px;padding:0 12px;background:#f2f2f2;font-size:12.5px;font-weight:400;color:#333}
+.scroller--sizes{gap:3px}
+.size-chip.on{background:var(--ink);color:#fff}
+.frow-split .frow{margin:0}
+.tools{gap:22px}
+.toggle{gap:6px;font-size:9.5px;letter-spacing:.08em;color:#999}
+.toggle i{width:36px;height:15px;border-radius:8px;background:#d6d6d6}
+.toggle i::after{top:2px;left:2px;width:11px;height:11px}
+.toggle.on i::after{transform:translateX(21px)}
+.dens{gap:7px}
+.dens button{opacity:1;color:#cfcfcf;transition:color .2s}
+.dens button:hover{color:#888}
+.dens button.on{color:var(--ink)}
+.grid{gap:30px 16px;margin:54px 0 70px}
+.card h3{margin:13px 0 9px;font-size:11.5px;font-weight:600;letter-spacing:.015em}
+.card .sz{font-size:9.5px;color:#555;gap:6px}
+.card .price{margin-top:9px;font-size:11.5px;color:#444}
+@media (max-width:700px){
+  .flabel{font-size:9px}
+  .grid{gap:26px 10px;margin-top:36px}
+}

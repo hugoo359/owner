@@ -1,8 +1,8 @@
 {%- paginate collection.products by section.settings.per_page -%}
 <div class="wrap collection-wrap">
   <nav class="crumbs" aria-label="Breadcrumb">
-    <a href="{{ routes.root_url }}">Home</a><span>/</span>
-    <a href="{{ routes.all_products_collection_url }}">Shop</a><span>/</span>
+    <a href="{{ routes.root_url }}">{{ section.settings.t_home }}</a><span>/</span>
+    <a href="{{ routes.all_products_collection_url }}">{{ section.settings.t_shop }}</a><span>/</span>
     <span>{{ collection.title }}</span>
   </nav>
   <h1 class="ctitle split-title" data-split>{{ collection.title }}</h1>
@@ -61,9 +61,9 @@
   <div class="filters" data-reveal{% if section.settings.auto_filters %} data-qf{% endif %}>
     {%- if section.settings.auto_filters and has_cat == false and qf_types.size > 1 -%}
       <div class="frow">
-        <span class="flabel">Category</span>
+        <span class="flabel">{{ section.settings.t_category }}</span>
         <div class="scroller" data-qf-row="type" data-qf-single>
-          <button type="button" class="pill on" data-qf-all>All</button>
+          <button type="button" class="pill on" data-qf-all>{{ section.settings.t_all }}</button>
           {%- for t in qf_types -%}
             {%- if t != blank -%}<button type="button" class="pill" data-qf-value="{{ t | downcase | escape }}">{{ t }}</button>{%- endif -%}
           {%- endfor -%}
@@ -72,7 +72,7 @@
     {%- endif -%}
     {%- if section.settings.category_menu != blank -%}
       <div class="frow">
-        <span class="flabel">Category</span>
+        <span class="flabel">{{ section.settings.t_category }}</span>
         <div class="scroller">
           {%- for link in section.settings.category_menu.links -%}
             <a class="pill{% if link.active or link.current %} on{% endif %}" href="{{ link.url }}">{{ link.title }}</a>
@@ -94,7 +94,7 @@
       {%- if filter.presentation == 'swatch' or fl contains 'farbe' or fl contains 'color' or fl contains 'colour' -%}
         <div class="frow">
           <span class="flabel">{{ filter.label }}</span>
-          <div class="scroller">
+          <div class="scroller scroller--colors">
             {%- for value in filter.values -%}
               {%- capture swatch_bg -%}{%- if value.swatch.color -%}{{ value.swatch.color }}{%- else -%}{% render 'color-value', name: value.label %}{%- endif -%}{%- endcapture -%}
               <a class="sw{% if value.active %} on{% endif %}{% if value.count == 0 and value.active == false %} is-empty{% endif %}"
@@ -108,7 +108,7 @@
         {%- capture size_row -%}
           <div class="frow">
             <span class="flabel">{{ filter.label }}</span>
-            <div class="scroller">
+            <div class="scroller scroller--sizes">
               {%- for value in filter.values -%}
                 <a class="size-chip{% if value.active %} on{% endif %}{% if value.count == 0 and value.active == false %} is-empty{% endif %}"
                    href="{% if value.active %}{{ value.url_to_remove }}{% else %}{{ value.url_to_add }}{% endif %}">{{ value.label }}</a>
@@ -120,7 +120,7 @@
         <div class="frow">
           <span class="flabel">{{ filter.label }}</span>
           <div class="scroller">
-            <a class="pill{% if filter.active_values.size == 0 %} on{% endif %}" href="{{ filter.url_to_remove }}">All</a>
+            <a class="pill{% if filter.active_values.size == 0 %} on{% endif %}" href="{{ filter.url_to_remove }}">{{ section.settings.t_all }}</a>
             {%- for value in filter.values -%}
               <a class="pill{% if value.active %} on{% endif %}{% if value.count == 0 and value.active == false %} is-empty{% endif %}"
                  href="{% if value.active %}{{ value.url_to_remove }}{% else %}{{ value.url_to_add }}{% endif %}">{{ value.label }}</a>
@@ -132,8 +132,8 @@
 
     {%- if section.settings.auto_filters and has_color == false and qf_colors.size > 1 -%}
       <div class="frow">
-        <span class="flabel">Color</span>
-        <div class="scroller" data-qf-row="colors">
+        <span class="flabel">{{ section.settings.t_color }}</span>
+        <div class="scroller scroller--colors" data-qf-row="colors">
           {%- for c in qf_colors -%}
             {%- capture swatch_bg -%}{% render 'color-value', name: c %}{%- endcapture -%}
             <button type="button" class="sw" data-qf-value="{{ c | downcase | escape }}" title="{{ c | escape }}" aria-label="{{ c | escape }}" style="background:#ccc;background:{{ swatch_bg | strip }}"></button>
@@ -144,8 +144,8 @@
     {%- if section.settings.auto_filters and has_size == false and qf_sizes.size > 0 -%}
       {%- capture size_row -%}
         <div class="frow">
-          <span class="flabel">Size</span>
-          <div class="scroller" data-qf-row="sizes" data-qf-sort>
+          <span class="flabel">{{ section.settings.t_size }}</span>
+          <div class="scroller scroller--sizes" data-qf-row="sizes" data-qf-sort>
             {%- for z in qf_sizes -%}
               <button type="button" class="size-chip" data-qf-value="{{ z | downcase | escape }}">{{ z }}</button>
             {%- endfor -%}
@@ -160,42 +160,40 @@
         {%- if stock_filter -%}
           {%- for value in stock_filter.values -%}
             {%- if value.value == '1' -%}
-              <a class="toggle{% if value.active %} on{% endif %}" href="{% if value.active %}{{ value.url_to_remove }}{% else %}{{ value.url_to_add }}{% endif %}"><i></i>In stock</a>
+              <a class="toggle{% if value.active %} on{% endif %}" href="{% if value.active %}{{ value.url_to_remove }}{% else %}{{ value.url_to_add }}{% endif %}"><i></i>{{ section.settings.t_stock }}</a>
             {%- endif -%}
           {%- endfor -%}
         {%- elsif section.settings.auto_filters -%}
-          <button type="button" class="toggle" data-qf-stock aria-pressed="false"><i></i>In stock</button>
+          <button type="button" class="toggle" data-qf-stock aria-pressed="false"><i></i>{{ section.settings.t_stock }}</button>
         {%- endif -%}
-        <div class="dens" data-density>
-          {%- for n in (2..4) -%}
-            <button type="button" data-cols="{{ n }}" aria-label="{{ n }} columns">
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor" aria-hidden="true">
-                {%- assign s = 18 | minus: n | minus: n | plus: 2 | divided_by: n -%}
-                {%- assign last = n | minus: 1 -%}
-                {%- for r in (0..last) -%}{%- for c in (0..last) -%}
-                  <rect x="{{ c | times: s | plus: c | plus: c }}" y="{{ r | times: s | plus: r | plus: r }}" width="{{ s }}" height="{{ s }}"/>
-                {%- endfor -%}{%- endfor -%}
-              </svg>
-            </button>
-          {%- endfor -%}
+        <div class="dens" data-density data-default="{{ section.settings.cols_default }}">
+          <button type="button" data-cols="2" aria-label="2 columns">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor" aria-hidden="true"><rect x="0" y="0" width="8" height="8"/><rect x="10" y="0" width="8" height="8"/><rect x="0" y="10" width="8" height="8"/><rect x="10" y="10" width="8" height="8"/></svg>
+          </button>
+          <button type="button" data-cols="4" aria-label="4 columns">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor" aria-hidden="true">{%- for r in (0..2) -%}{%- for c in (0..2) -%}<rect x="{{ c | times: 6.5 | plus: 0.5 }}" y="{{ r | times: 6.5 | plus: 0.5 }}" width="4" height="4"/>{%- endfor -%}{%- endfor -%}</svg>
+          </button>
+          <button type="button" data-cols="6" aria-label="6 columns">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor" aria-hidden="true">{%- for r in (0..3) -%}{%- for c in (0..3) -%}<rect x="{{ c | times: 5 }}" y="{{ r | times: 5 }}" width="3" height="3"/>{%- endfor -%}{%- endfor -%}</svg>
+          </button>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="grid" id="ProductGrid" data-grid style="--cols: 4">
+  <div class="grid" id="ProductGrid" data-grid style="--cols: {{ section.settings.cols_default }}">
     {%- for product in collection.products -%}
       {% render 'product-card', product: product %}
     {%- else -%}
-      <div class="empty">No products found. <a href="{{ collection.url }}">Reset filters</a></div>
+      <div class="empty">{{ section.settings.t_empty }} <a href="{{ collection.url }}">{{ section.settings.t_reset }}</a></div>
     {%- endfor -%}
-    <div class="empty" data-qf-empty hidden>No products found. <button type="button" class="link-u" data-qf-reset>Reset filters</button></div>
+    <div class="empty" data-qf-empty hidden>{{ section.settings.t_empty }} <button type="button" class="link-u" data-qf-reset>{{ section.settings.t_reset }}</button></div>
   </div>
 
   {%- if paginate.next -%}
     <div class="loadmore" id="LoadMore">
-      <button type="button" data-load-more="{{ paginate.next.url }}">Load more</button>
-      <p>{{ paginate.current_offset | plus: collection.products.size }} / {{ collection.products_count }} products</p>
+      <button type="button" data-load-more="{{ paginate.next.url }}" data-label="{{ section.settings.t_more | escape }}">{{ section.settings.t_more }}</button>
+      <p>{{ paginate.current_offset | plus: collection.products.size }} / {{ collection.products_count }} {{ section.settings.t_products }}</p>
     </div>
   {%- endif -%}
 </div>
@@ -207,6 +205,20 @@
   "settings": [
     { "type": "range", "id": "per_page", "label": "Produkte pro Seite", "min": 8, "max": 48, "step": 4, "default": 24 },
     { "type": "link_list", "id": "category_menu", "label": "Kategorie-Menü (Pillen oben)", "info": "Optional. Ansonsten erscheinen Filter aus der App Search & Discovery automatisch als Pillen, Farben als Kreise und Größen als Kästchen." },
+    { "type": "select", "id": "cols_default", "label": "Spalten (Desktop, Standard)", "default": "4", "options": [ { "value": "2", "label": "2" }, { "value": "4", "label": "4" }, { "value": "6", "label": "6" } ] },
+    { "type": "header", "content": "Texte" },
+    { "type": "text", "id": "t_home", "label": "Startseite", "default": "Startseite" },
+    { "type": "text", "id": "t_shop", "label": "Shop", "default": "Shop" },
+    { "type": "text", "id": "t_category", "label": "Kategorie", "default": "Kategorie" },
+    { "type": "text", "id": "t_all", "label": "Alle", "default": "Alle" },
+    { "type": "text", "id": "t_color", "label": "Farbe", "default": "Farbe" },
+    { "type": "text", "id": "t_size", "label": "Größe", "default": "Größe" },
+    { "type": "text", "id": "t_stock", "label": "Auf Lager", "default": "Auf Lager" },
+    { "type": "text", "id": "t_empty", "label": "Keine Produkte", "default": "Keine Produkte gefunden." },
+    { "type": "text", "id": "t_reset", "label": "Filter zurücksetzen", "default": "Filter zurücksetzen" },
+    { "type": "text", "id": "t_more", "label": "Mehr laden", "default": "Mehr laden" },
+    { "type": "text", "id": "t_products", "label": "Produkte", "default": "Produkte" },
+    { "type": "header", "content": "Filter" },
     { "type": "checkbox", "id": "auto_filters", "label": "Schnellfilter automatisch erzeugen", "default": true, "info": "Fehlen in Search & Discovery die Filter für Kategorie (Produkttyp), Farbe, Größe oder Verfügbarkeit, baut das Theme sie selbst aus deinen Produkten (Produkttyp, Varianten-Optionen „Farbe/Color“ und „Größe/Size“). Für sehr große Kollektionen sind die Filter aus Search & Discovery schneller." }
   ]
 }

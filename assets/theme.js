@@ -620,8 +620,9 @@
   const grid = $('[data-grid]');
   const dens = $('[data-density]');
   if (grid && dens) {
-    let cols = 4;
-    try { cols = +localStorage.getItem('grid-cols') || 4; } catch (e) {}
+    const allowed = $$('button[data-cols]', dens).map(b => +b.dataset.cols);
+    let cols = +dens.dataset.default || 4;
+    try { const saved = +localStorage.getItem('grid-cols'); if (allowed.includes(saved)) cols = saved; } catch (e) {}
     const set = (n, animate) => {
       cols = n;
       grid.style.setProperty('--cols', n);
@@ -640,7 +641,7 @@
     const b = e.target.closest('[data-load-more]');
     if (!b) return;
     b.disabled = true;
-    b.textContent = 'Loading …';
+    b.textContent = '…';
     try {
       const res = await fetch(b.dataset.loadMore);
       const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
@@ -654,7 +655,7 @@
       document.dispatchEvent(new CustomEvent('grid:added', { detail: { cards: added } }));
     } catch (err) {
       b.disabled = false;
-      b.textContent = 'Load more';
+      b.textContent = b.dataset.label || 'Load more';
       toast('More products could not be loaded.');
     }
   });

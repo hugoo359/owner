@@ -84,9 +84,9 @@
           {%- endfor -%}
         {%- endcapture -%}
         {% render 'icon', icon: 'cart-sm' %}
-        {%- if sizes_out != blank -%}{{ sizes_out }}{%- else -%}<span>SOLD OUT</span>{%- endif -%}
+        {%- if sizes_out != blank -%}{{ sizes_out }}{%- else -%}<span>{{ settings.sold_out_text | default: "Sold out" | upcase }}</span>{%- endif -%}
       {%- elsif product.available == false -%}
-        <span>SOLD OUT</span>
+        <span>{{ settings.sold_out_text | default: "Sold out" | upcase }}</span>
       {%- endif -%}
     </div>
     <div class="price">
