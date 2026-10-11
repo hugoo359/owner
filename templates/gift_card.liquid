@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Gift card – {{ shop.name }}</title>
+  <title>Geschenkkarte – {{ shop.name }}</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;1,900&display=swap">
   {{ 'theme.css' | asset_url | stylesheet_tag }}
   <style>:root{--bg:{{ settings.color_background }};--ink:{{ settings.color_text }};--accent:{{ settings.color_accent }};--logo-w:{{ settings.logo_width }}px}</style>
@@ -13,17 +13,17 @@
 <body>
   <main class="wrap page-wrap center gift">
     <div class="logo-link">{% render 'logo' %}</div>
-    <h1 class="ctitle">Your gift card</h1>
+    <h1 class="ctitle">Deine Geschenkkarte</h1>
     <p class="gift-value">{{ gift_card.initial_value | money_with_currency }}</p>
     {%- if gift_card.enabled == false or gift_card.expired -%}
-      <p>This gift card is no longer valid.</p>
+      <p>Diese Geschenkkarte ist nicht mehr gültig.</p>
     {%- endif -%}
     <p class="gift-code">{{ gift_card.code | format_code }}</p>
     {%- if gift_card.balance != gift_card.initial_value -%}
-      <p>Remaining balance: {{ gift_card.balance | money_with_currency }}</p>
+      <p>Restguthaben: {{ gift_card.balance | money_with_currency }}</p>
     {%- endif -%}
-    {%- if gift_card.expires_on -%}<p class="vat">Valid until {{ gift_card.expires_on | date: '%b %d, %Y' }}</p>{%- endif -%}
-    <a class="atc inline" href="{{ shop.url }}">Redeem now</a>
+    {%- if gift_card.expires_on -%}<p class="vat">Gültig bis {{ gift_card.expires_on | date: '%d.%m.%Y' }}</p>{%- endif -%}
+    <a class="atc inline" href="{{ shop.url }}">Jetzt einlösen</a>
   </main>
 </body>
 </html>

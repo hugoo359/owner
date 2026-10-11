@@ -11,7 +11,7 @@
 
 <header class="nav{% if transparent %} over{% endif %}" id="SiteNav">
   <div class="nav-left">
-    <button class="burger" type="button" data-open="mnav" aria-label="Open menu">{% render 'icon', icon: 'burger' %}</button>
+    <button class="burger" type="button" data-open="mnav" aria-label="Menü öffnen">{% render 'icon', icon: 'burger' %}</button>
     <ul class="nav-links">
       {%- for link in menu.links -%}
         {%- if link.links.size > 0 -%}
@@ -62,12 +62,12 @@
 
   <div class="nav-right">
     {%- if shop.customer_accounts_enabled -%}
-      <a href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}" data-open="account" class="account-icon{% if customer %} is-in{% endif %}" aria-label="{% if customer %}My account{% else %}Log in{% endif %}" rel="nofollow">
+      <a href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}" data-open="account" class="account-icon{% if customer %} is-in{% endif %}" aria-label="{% if customer %}Mein Konto{% else %}Anmelden{% endif %}" rel="nofollow">
         {% render 'icon', icon: 'account' %}
       </a>
     {%- endif -%}
-    <button type="button" data-open="search" aria-label="Open search">{% render 'icon', icon: 'search' %}</button>
-    <a href="{{ routes.cart_url }}" data-open="cart" class="cart-icon" id="CartIcon" aria-label="Open cart">
+    <button type="button" data-open="search" aria-label="Suche öffnen">{% render 'icon', icon: 'search' %}</button>
+    <a href="{{ routes.cart_url }}" data-open="cart" class="cart-icon" id="CartIcon" aria-label="Warenkorb öffnen">
       {% render 'icon', icon: 'cart' %}
       <span class="cart-count" id="CartCount"{% if cart.item_count == 0 %} hidden{% endif %}>{{ cart.item_count }}</span>
     </a>
@@ -76,8 +76,8 @@
 
 <div id="mnav" class="layer" hidden>
   <div class="backdrop" data-close="mnav"></div>
-  <nav class="panel" aria-label="Menu">
-    <button type="button" class="mnav-close" data-close="mnav" aria-label="Close menu">{% render 'icon', icon: 'close' %}</button>
+  <nav class="panel" aria-label="Menü">
+    <button type="button" class="mnav-close" data-close="mnav" aria-label="Menü schließen">{% render 'icon', icon: 'close' %}</button>
     {%- for link in menu.links -%}
       {%- if link.links.size > 0 -%}
         <h4>{{ link.title }}</h4>
@@ -92,8 +92,8 @@
       {%- endif -%}
     {%- endfor -%}
     {%- if shop.customer_accounts_enabled -%}
-      <h4>Account</h4>
-      <a href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}" data-open="account" data-no-transition>{% if customer %}My account{% else %}Log in{% endif %}</a>
+      <h4>Konto</h4>
+      <a href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}" data-open="account" data-no-transition>{% if customer %}Mein Konto{% else %}Anmelden{% endif %}</a>
     {%- endif -%}
   </nav>
 </div>
@@ -114,50 +114,50 @@
   -%}
   <div id="account" class="layer" hidden>
     <div class="backdrop" data-close="account"></div>
-    <aside class="drawer account-drawer" aria-label="Account" role="dialog">
+    <aside class="drawer account-drawer" aria-label="Konto" role="dialog">
       <div class="d-head">
-        <h2>{% if customer %}MY ACCOUNT{% else %}LOG IN{% endif %}</h2>
-        <button type="button" data-close="account" aria-label="Close">{% render 'icon', icon: 'close-thin' %}</button>
+        <h2>{% if customer %}MEIN KONTO{% else %}ANMELDEN{% endif %}</h2>
+        <button type="button" data-close="account" aria-label="Schließen">{% render 'icon', icon: 'close-thin' %}</button>
       </div>
       <div class="d-scroll account-body">
         {%- if customer -%}
           <div class="acc-hello">
             <span class="acc-avatar" aria-hidden="true">{{ customer.first_name | default: customer.email | slice: 0 | upcase }}</span>
             <div>
-              <p class="acc-name">Hi {{ customer.first_name | default: 'there' }}!</p>
+              <p class="acc-name">Hallo{% if customer.first_name != blank %} {{ customer.first_name }}{% endif %}!</p>
               <p class="acc-mail">{{ customer.email }}</p>
             </div>
           </div>
           {%- assign last_order = customer.orders.first -%}
           {%- if last_order -%}
             <a class="acc-order" href="{{ last_order.customer_url | default: routes.account_url }}" data-no-transition>
-              <span class="acc-label">Latest order</span>
-              <span class="acc-order-row"><b>{{ last_order.name }}</b><span>{{ last_order.created_at | date: '%b %d, %Y' }}</span></span>
+              <span class="acc-label">Letzte Bestellung</span>
+              <span class="acc-order-row"><b>{{ last_order.name }}</b><span>{{ last_order.created_at | date: '%d.%m.%Y' }}</span></span>
               <span class="acc-order-row"><span>{{ last_order.fulfillment_status_label }}</span><span>{{ last_order.total_price | money_with_currency }}</span></span>
             </a>
           {%- endif -%}
           <nav class="acc-links">
-            <a href="{{ routes.account_url }}" data-no-transition>Orders <span aria-hidden="true">→</span></a>
-            <a href="{{ base_url }}/profile{{ query }}" data-no-transition>Profile &amp; addresses <span aria-hidden="true">→</span></a>
+            <a href="{{ routes.account_url }}" data-no-transition>Bestellungen <span aria-hidden="true">→</span></a>
+            <a href="{{ base_url }}/profile{{ query }}" data-no-transition>Profil &amp; Adressen <span aria-hidden="true">→</span></a>
           </nav>
-          <a class="btn-outline acc-logout" href="{{ routes.account_logout_url }}" data-no-transition>Log out</a>
+          <a class="btn-outline acc-logout" href="{{ routes.account_logout_url }}" data-no-transition>Abmelden</a>
         {%- else -%}
           <p class="acc-intro">{{ section.settings.login_text }}</p>
           {%- capture shop_btn -%}{{ shop | login_button }}{%- endcapture -%}
           {%- if shop_btn != blank -%}
             <div class="shop-login">{{ shop_btn }}</div>
-            <div class="acc-or"><span>or</span></div>
+            <div class="acc-or"><span>oder</span></div>
           {%- endif -%}
           <a class="atc acc-email" href="{{ login_url }}" rel="nofollow" data-no-transition>
-            <span class="atc-label">Log in with email</span>
+            <span class="atc-label">Mit E-Mail anmelden</span>
           </a>
           {%- if routes.account_register_url != blank -%}
-            <a class="acc-register link-u" href="{{ routes.account_register_url }}" data-no-transition>No account yet? Create one</a>
+            <a class="acc-register link-u" href="{{ routes.account_register_url }}" data-no-transition>Noch kein Konto? Jetzt erstellen</a>
           {%- endif -%}
           <ul class="acc-perks">
-            <li>{% render 'icon', icon: 'check' %}Track your orders anytime</li>
-            <li>{% render 'icon', icon: 'check' %}Check out faster with saved details</li>
-            <li>{% render 'icon', icon: 'check' %}Early access to new drops</li>
+            <li>{% render 'icon', icon: 'check' %}Bestellungen jederzeit verfolgen</li>
+            <li>{% render 'icon', icon: 'check' %}Schneller bezahlen mit gespeicherten Daten</li>
+            <li>{% render 'icon', icon: 'check' %}Früher Zugang zu neuen Düften</li>
           </ul>
         {%- endif -%}
       </div>
@@ -177,7 +177,7 @@
       { "value": "account", "label": "Bestellübersicht im Kundenkonto" },
       { "value": "storefront", "label": "Zurück zur Seite im Shop" }
     ] },
-    { "type": "text", "id": "login_text", "label": "Text in der Anmelde-Leiste", "default": "Log in to view your orders and check out faster." }
+    { "type": "text", "id": "login_text", "label": "Text in der Anmelde-Leiste", "default": "Melde dich an, um deine Bestellungen zu sehen und schneller zu bezahlen." }
   ],
   "enabled_on": { "groups": ["header"] }
 }

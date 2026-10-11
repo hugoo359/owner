@@ -5,9 +5,9 @@
     "announcement": {
       "type": "announcement-bar",
       "settings": {
-        "text": "Free shipping over €125 | Free exchanges",
-        "text_2": "Free 14-day exchanges",
-        "text_3": "Ships in 2–4 days",
+        "text": "Kostenloser Versand ab 125 €",
+        "text_2": "14 Tage Rückgaberecht (versiegelt)",
+        "text_3": "Versand in 2–4 Tagen",
         "interval": 4
       }
     },
@@ -17,7 +17,7 @@
         "menu": "main-menu",
         "transparent_home": true,
         "login_return": "account",
-        "login_text": "Log in to view your orders and check out faster."
+        "login_text": "Melde dich an, um deine Bestellungen zu sehen und schneller zu bezahlen."
       }
     }
   },

@@ -1,0 +1,7 @@
+{%- comment -%}
+  Metafeld als Text: Listen werden mit Komma verbunden.
+  Parameter: mf (Metafeld)
+{%- endcomment -%}
+{%- if mf != blank -%}
+  {%- if mf.type contains 'list.' -%}{{ mf.value | join: ', ' }}{%- else -%}{{ mf.value }}{%- endif -%}
+{%- endif -%}

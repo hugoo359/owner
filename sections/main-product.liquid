@@ -1,17 +1,11 @@
 {%- liquid
   assign current = product.selected_or_first_available_variant
   assign featured = current.featured_media | default: product.featured_media
-  assign size_acc = false
-  for block in section.blocks
-    if block.type == 'accordion' and block.settings.is_size
-      assign size_acc = true
-    endif
-  endfor
 -%}
 <section class="pdp" data-product data-section="{{ section.id }}">
   <div class="thumbs" data-thumbs>
     {%- for media in product.media -%}
-      <button type="button" class="{% if media.id == featured.id %}on{% endif %}" data-media="{{ media.id }}" aria-label="Image {{ forloop.index }}">
+      <button type="button" class="{% if media.id == featured.id %}on{% endif %}" data-media="{{ media.id }}" aria-label="Bild {{ forloop.index }}">
         {{ media.preview_image | image_url: width: 140 | image_tag: alt: '', loading: 'lazy' }}
       </button>
     {%- endfor -%}
@@ -31,7 +25,7 @@
         {{ media.preview_image | image_url: width: 1800 | image_tag: sizes: '(min-width: 1100px) 45vw, 100vw', widths: '600, 900, 1200, 1500, 1800', loading: ld, alt: media.alt }}
       </div>
     {%- else -%}
-      <div class="media">{{ 'product-apparel-1' | placeholder_svg_tag: 'placeholder-svg' }}</div>
+      <div class="media">{{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}</div>
     {%- endfor -%}
   </div>
   {%- if product.media.size > 1 -%}
@@ -66,14 +60,14 @@
           <p class="sp-text">
             <b>{{ section.settings.sp_names | strip }}</b>
             {%- if section.settings.sp_verified -%}
-              <svg class="sp-badge" width="16" height="16" viewBox="0 0 24 24" aria-label="verified" role="img"><path fill="currentColor" d="M12 1.5l2.6 1.9 3.2-.1 1 3 2.6 1.9-1 3.1 1 3-2.6 1.9-1 3.1-3.2-.1L12 22.5l-2.6-1.9-3.2.1-1-3.1-2.6-1.9 1-3-1-3.1 2.6-1.9 1-3 3.2.1z"/><path d="M7.8 12.3l2.8 2.7 5.6-5.8" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <svg class="sp-badge" width="16" height="16" viewBox="0 0 24 24" aria-label="verifiziert" role="img"><path fill="currentColor" d="M12 1.5l2.6 1.9 3.2-.1 1 3 2.6 1.9-1 3.1 1 3-2.6 1.9-1 3.1-3.2-.1L12 22.5l-2.6-1.9-3.2.1-1-3.1-2.6-1.9 1-3-1-3.1 2.6-1.9 1-3 3.2.1z"/><path d="M7.8 12.3l2.8 2.7 5.6-5.8" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             {%- endif %}
-            and <b data-sp-count="{{ section.settings.sp_count }}">{{ section.settings.sp_count }}</b> {{ section.settings.sp_text }} <b>{{ sp_brand }}</b>
+            und <b data-sp-count="{{ section.settings.sp_count }}">{{ section.settings.sp_count }}</b> {{ section.settings.sp_text }} <b>{{ sp_brand }}</b>
           </p>
         </div>
         <div class="sp-rating">
           {%- assign rpct = section.settings.sp_rating | times: 20 -%}
-          <span class="sp-stars" style="--r: {{ rpct }}%" aria-label="{{ section.settings.sp_rating }} out of 5 stars" role="img">
+          <span class="sp-stars" style="--r: {{ rpct }}%" aria-label="{{ section.settings.sp_rating }} von 5 Sternen" role="img">
             <span class="sp-stars-base">{%- for i in (1..5) -%}<svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg>{%- endfor -%}</span>
             <span class="sp-stars-fill">{%- for i in (1..5) -%}<svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg>{%- endfor -%}</span>
           </span>
@@ -86,12 +80,16 @@
       <span data-price>{{ current.price | money_with_currency }}</span>
       <s data-compare{% unless current.compare_at_price > current.price %} hidden{% endunless %}>{{ current.compare_at_price | money_with_currency }}</s>
     </div>
-    {%- if settings.tax_text != blank -%}<div class="vat">{{ settings.tax_text }}</div>{%- endif -%}
+    {%- capture unit_out -%}{% render 'unit-price', variant: current %}{%- endcapture -%}
+    <div class="vat">
+      {%- if settings.tax_text != blank -%}<span>{{ settings.tax_text }}</span>{%- endif -%}
+      <span class="unit-price" data-unit-price{% if unit_out == blank %} hidden{% endif %}>{{ section.settings.t_unit_price }} <span data-unit-price-value>{{ unit_out }}</span></span>
+    </div>
 
     {%- liquid
-      # Farben als eigene Produkte (wie bei 6pm): Metafeld custom.color_variants
-      # (Liste von Produkten) auf jedem Produkt der Farbfamilie. Name aus custom.color_name,
-      # Farbe aus custom.color_swatch (Farb-Metafeld) oder aus der Theme-Farbzuordnung.
+      # Düfte einer Linie als eigene Produkte (wie die Farben bei 6pm): Metafeld custom.color_variants
+      # (Liste von Produkten) auf jedem Produkt der Linie. Name aus custom.color_name,
+      # Kreisfarbe aus custom.color_swatch (Farb-Metafeld) oder aus der Theme-Farbzuordnung.
       assign has_color_option = false
       for option in product.options
         assign on = option | downcase
@@ -109,7 +107,7 @@
       assign self_name = product.metafields.custom.color_name.value | default: product.title
     -%}
     {%- if has_color_option == false and siblings.size > 0 -%}
-      <div class="plabel">{{ section.settings.color_label | default: 'Color' }}: <span data-sib-label data-sib-default="{{ self_name | escape }}">{{ self_name }}</span></div>
+      <div class="plabel">{{ section.settings.color_label | default: 'Duft' }}: <span data-sib-label data-sib-default="{{ self_name | escape }}">{{ self_name }}</span></div>
       <div class="pswatches psiblings" data-siblings>
         {%- unless self_in_list -%}
           {%- capture swatch_bg -%}{%- if product.metafields.custom.color_swatch != blank -%}{{ product.metafields.custom.color_swatch.value }}{%- else -%}{% render 'color-value', name: self_name %}{%- endif -%}{%- endcapture -%}
@@ -137,14 +135,14 @@
           </div>
         {%- else -%}
           {%- assign is_size = false -%}
-          {%- if on contains 'größe' or on contains 'grösse' or on contains 'groesse' or on contains 'size' -%}{%- assign is_size = true -%}{%- endif -%}
+          {%- if on contains 'größe' or on contains 'grösse' or on contains 'groesse' or on contains 'size' or on contains 'inhalt' or on contains 'füllmenge' or on contains 'volum' -%}{%- assign is_size = true -%}{%- endif -%}
           <div class="plabel up">
             <span>{{ option.name }}:</span>
             {%- if is_size and section.settings.show_size_guide -%}
               <button type="button" class="size-link" data-open="sizeguide" data-sg-link>
-                <span class="size-link-ico">{% render 'icon', icon: 'hanger' %}</span>
+                <span class="size-link-ico">{% render 'icon', icon: 'bottle' %}</span>
                 <span class="size-link-ok" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 12 12"><circle cx="6" cy="6" r="6" fill="currentColor"/><path d="M3.4 6.2l1.7 1.7 3.5-3.6" fill="none" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-                <span data-sg-link-text>Find your size</span>
+                <span data-sg-link-text>{{ section.settings.t_size_link }}</span>
               </button>
             {%- endif -%}
           </div>
@@ -158,25 +156,23 @@
       {%- endfor -%}
     {%- endunless -%}
 
-    {%- liquid
-      assign model_a = product.metafields.custom.model_male.value | default: section.settings.model_male
-      assign model_b = product.metafields.custom.model_female.value | default: section.settings.model_female
-      assign show_model = false
-      if section.settings.show_model_info
-        if model_a != blank or model_b != blank
-          assign show_model = true
+    {%- if section.settings.show_scent_info -%}
+      {%- capture fams -%}{% render 'scent-families', product: product %}{%- endcapture -%}
+      {%- capture conc -%}{% render 'mf-text', mf: product.metafields.custom.concentration %}{%- endcapture -%}
+      {%- liquid
+        assign fam_text = fams | strip | split: '|' | uniq | join: ' · '
+        assign conc = conc | strip
+        if conc == blank
+          assign conc = product.type
         endif
-      endif
-      if product.metafields.custom.hide_model_info.value == true
-        assign show_model = false
-      endif
-    -%}
-    {%- if show_model -%}
-      <div class="strip{% if model_a == blank or model_b == blank %} strip--one{% endif %}">
-        {%- if model_a != blank -%}<span>{{ model_a }}</span>{%- endif -%}
-        {%- if model_a != blank and model_b != blank -%}<span class="sep">|</span>{%- endif -%}
-        {%- if model_b != blank -%}<span>{{ model_b }}</span>{%- endif -%}
-      </div>
+      -%}
+      {%- if fam_text != blank or conc != blank -%}
+        <div class="strip{% if fam_text == blank or conc == blank %} strip--one{% endif %}">
+          {%- if fam_text != blank -%}<span>{% if section.settings.t_family != blank %}{{ section.settings.t_family }}: {% endif %}{{ fam_text }}</span>{%- endif -%}
+          {%- if fam_text != blank and conc != blank -%}<span class="sep">|</span>{%- endif -%}
+          {%- if conc != blank -%}<span>{{ conc }}</span>{%- endif -%}
+        </div>
+      {%- endif -%}
     {%- endif -%}
 
     <div class="avail{% unless current.available %} out{% endunless %}" data-avail>
@@ -189,8 +185,8 @@
     {%- form 'product', product, class: 'pform', novalidate: 'novalidate' -%}
       <input type="hidden" name="id" value="{{ current.id }}" data-variant-id>
       <button type="submit" class="atc" data-atc{% unless current.available %} disabled{% endunless %}>
-        <span class="atc-label" data-atc-label>{%- if current.available -%}Add to cart{%- else -%}Sold out{%- endif -%}</span>
-        <span class="atc-done" aria-hidden="true">{% render 'icon', icon: 'check-line' %}Added</span>
+        <span class="atc-label" data-atc-label>{%- if current.available -%}In den Warenkorb{%- else -%}Ausverkauft{%- endif -%}</span>
+        <span class="atc-done" aria-hidden="true">{% render 'icon', icon: 'check-line' %}Hinzugefügt</span>
       </button>
       <div class="atc-msg" data-atc-msg role="status"></div>
     {%- endform -%}
@@ -209,30 +205,55 @@
       {%- for block in section.blocks -%}
         {%- case block.type -%}
           {%- when 'accordion' -%}
-            <details {{ block.shopify_attributes }}{% if block.settings.is_size %} data-size-acc{% endif %}>
-              <summary>{% render 'icon', icon: block.settings.icon %}<span>{{ block.settings.title }}</span>{% render 'icon', icon: 'plus' %}</summary>
-              <div class="body rte">
-                {%- if block.settings.use_description -%}{{ product.description }}{%- endif -%}
-                {{ block.settings.content }}
-                {%- if block.settings.page != blank -%}{{ block.settings.page.content }}{%- endif -%}
-              </div>
-            </details>
+            {%- liquid
+              assign mf_html = ''
+              if block.settings.metafield != blank
+                assign mfo = product.metafields.custom[block.settings.metafield]
+                if mfo != blank
+                  capture mf_html
+                    echo mfo | metafield_tag
+                  endcapture
+                endif
+              endif
+              assign has_body = false
+              if block.settings.use_description and product.description != blank
+                assign has_body = true
+              endif
+              if mf_html != blank or block.settings.content != blank or block.settings.page != blank
+                assign has_body = true
+              endif
+            -%}
+            {%- if has_body or request.design_mode -%}
+              <details {{ block.shopify_attributes }}>
+                <summary>{% render 'icon', icon: block.settings.icon %}<span>{{ block.settings.title }}</span>{% render 'icon', icon: 'plus' %}</summary>
+                <div class="body rte">
+                  {%- if block.settings.use_description -%}{{ product.description }}{%- endif -%}
+                  {%- if mf_html != blank -%}{{ mf_html }}{%- else -%}{{ block.settings.content }}{%- endif -%}
+                  {%- if block.settings.page != blank -%}{{ block.settings.page.content }}{%- endif -%}
+                </div>
+              </details>
+            {%- endif -%}
+
+          {%- when 'notes' -%}
+            {% render 'scent-notes', product: product, block: block %}
         {%- endcase -%}
       {%- endfor -%}
     </div>
   </div>
 
   <script type="application/json" data-product-json>{{ product | json }}</script>
+  <script type="application/json" data-unit-prices>
+    {
+      {%- for v in product.variants -%}
+        {%- capture u -%}{% render 'unit-price', variant: v %}{%- endcapture -%}
+        "{{ v.id }}": {{ u | strip | json }}{% unless forloop.last %},{% endunless %}
+      {%- endfor -%}
+    }
+  </script>
 </section>
 
 {%- if section.settings.show_size_guide -%}
-  {%- liquid
-    assign size_offset = section.settings.size_offset
-    if product.metafields.custom.size_offset != blank
-      assign size_offset = product.metafields.custom.size_offset.value
-    endif
-  -%}
-  {% render 'size-guide', size_offset: size_offset %}
+  {% render 'size-guide', sprays_per_ml: section.settings.sprays_per_ml %}
 {%- endif -%}
 
 {% schema %}
@@ -247,28 +268,24 @@
     { "type": "text", "id": "sp_names", "label": "Namen", "default": "Lena, Max", "info": "Mit Komma trennen. Ohne Profilbild wird der Anfangsbuchstabe gezeigt." },
     { "type": "checkbox", "id": "sp_verified", "label": "Verifiziert-Haken", "default": true },
     { "type": "number", "id": "sp_count", "label": "Anzahl weiterer Kunden", "default": 2500, "info": "Nutze echte Zahlen aus deinen Bestellungen oder Bewertungen." },
-    { "type": "text", "id": "sp_text", "label": "Text nach der Zahl", "default": "others love" },
+    { "type": "text", "id": "sp_text", "label": "Text nach der Zahl", "default": "weitere lieben" },
     { "type": "text", "id": "sp_brand", "label": "Markenname", "info": "Leer = Shopname" },
     { "type": "range", "id": "sp_rating", "label": "Sterne", "min": 1, "max": 5, "step": 0.5, "default": 5 },
-    { "type": "text", "id": "sp_rating_text", "label": "Text neben den Sternen", "default": "Over 2,500 happy customers" },
-    { "type": "header", "content": "Farben als eigene Produkte" },
-    { "type": "paragraph", "content": "Wie bei 6pm: Jede Farbe ist ein eigenes Produkt. Lege unter Einstellungen → Benutzerdefinierte Daten → Produkte diese Metafelder an: custom.color_variants (Produkt, Liste), custom.color_name (Einzeiliger Text), custom.color_swatch (Farbe). Trage bei jedem Produkt der Familie alle Farben ein." },
-    { "type": "text", "id": "color_label", "label": "Beschriftung", "default": "Color" },
-    { "type": "header", "content": "Model-Info unter den Größen" },
-    { "type": "checkbox", "id": "show_model_info", "label": "Anzeigen", "default": true },
-    { "type": "text", "id": "model_male", "label": "Links (z. B. Herren-Model)", "default": "Male: 190 cm | Size L", "info": "Pro Produkt überschreibbar mit Metafeld custom.model_male" },
-    { "type": "text", "id": "model_female", "label": "Rechts (z. B. Damen-Model)", "default": "Female: 175 cm | Size S", "info": "Pro Produkt überschreibbar mit Metafeld custom.model_female. Ausblenden pro Produkt: custom.hide_model_info (Wahr/Falsch)" },
-    { "type": "header", "content": "Größenberater" },
-    { "type": "checkbox", "id": "show_size_guide", "label": "„Find your size“ anzeigen", "default": true },
-    { "type": "select", "id": "size_offset", "label": "Passform deiner Produkte (für den Größenrechner)", "default": "0", "options": [
-      { "value": "-1", "label": "Fällt sehr groß aus – 1 Größe kleiner empfehlen" },
-      { "value": "-0.5", "label": "Fällt etwas groß aus (Oversized)" },
-      { "value": "0", "label": "Normal / True to size" },
-      { "value": "0.5", "label": "Fällt etwas klein aus" },
-      { "value": "1", "label": "Fällt sehr klein aus – 1 Größe größer empfehlen" }
-    ], "info": "Pro Produkt überschreibbar mit Metafeld custom.size_offset (Dezimalzahl, z. B. -0.5)" },
+    { "type": "text", "id": "sp_rating_text", "label": "Text neben den Sternen", "default": "Über 2.500 zufriedene Kunden" },
+    { "type": "header", "content": "Preis" },
+    { "type": "text", "id": "t_unit_price", "label": "Text vor dem Grundpreis", "default": "Grundpreis:", "info": "Der Grundpreis (z. B. pro 100 ml) erscheint, wenn du ihn bei der Variante unter „Grundpreis anzeigen“ hinterlegst. In Deutschland ist er für Parfum Pflicht." },
+    { "type": "header", "content": "Düfte einer Linie als eigene Produkte" },
+    { "type": "paragraph", "content": "Wie die Farben bei 6pm: Jeder Duft einer Linie ist ein eigenes Produkt und erscheint als Farbkreis. Lege unter Einstellungen → Benutzerdefinierte Daten → Produkte diese Metafelder an: custom.color_variants (Produkt, Liste), custom.color_name (Einzeiliger Text, Name des Dufts), custom.color_swatch (Farbe des Kreises). Trage bei jedem Produkt der Linie alle Düfte ein." },
+    { "type": "text", "id": "color_label", "label": "Beschriftung", "default": "Duft" },
+    { "type": "header", "content": "Duft-Info unter den Größen" },
+    { "type": "checkbox", "id": "show_scent_info", "label": "Anzeigen", "default": true, "info": "Zeigt die Duftfamilie (Metafeld custom.scent_family oder Tags wie „Duftfamilie: Holzig“) und die Konzentration (Metafeld custom.concentration, sonst Produkttyp)." },
+    { "type": "text", "id": "t_family", "label": "Beschriftung Duftfamilie", "default": "Duftfamilie" },
+    { "type": "header", "content": "Größenberater (ml)" },
+    { "type": "checkbox", "id": "show_size_guide", "label": "„Welche Größe passt?“ anzeigen", "default": true, "info": "Rechnet aus, wie lange jede Flaschengröße reicht, und empfiehlt eine Größe. Die Größen-Option sollte ml-Werte enthalten, z. B. 30 ml, 50 ml, 100 ml." },
+    { "type": "text", "id": "t_size_link", "label": "Link-Text", "default": "Welche Größe passt?" },
+    { "type": "range", "id": "sprays_per_ml", "label": "Sprühstöße pro ml", "min": 6, "max": 16, "step": 1, "default": 10, "info": "Richtwert für die Berechnung. Üblich sind etwa 10 Sprühstöße pro ml." },
     { "type": "checkbox", "id": "show_payments", "label": "Zahlungsarten unter dem Button", "default": true },
-    { "type": "text", "id": "exchange_text", "label": "Hinweis-Leiste", "default": "Wrong size? No problem: free 14-day exchanges" },
+    { "type": "text", "id": "exchange_text", "label": "Hinweis-Leiste", "default": "Versiegelt & originalverpackt: 14 Tage Rückgaberecht" },
     { "type": "checkbox", "id": "show_logo", "label": "Logo über den Akkordeons", "default": true }
   ],
   "blocks": [
@@ -278,16 +295,37 @@
       "settings": [
         { "type": "select", "id": "icon", "label": "Icon", "default": "info", "options": [
           { "value": "info", "label": "Info" },
-          { "value": "care", "label": "Pflege" },
-          { "value": "ruler", "label": "Größe" },
+          { "value": "spray", "label": "Zerstäuber (Anwendung)" },
+          { "value": "leaf", "label": "Blatt (Inhaltsstoffe)" },
+          { "value": "notes", "label": "Duftpyramide" },
           { "value": "truck", "label": "Versand" },
           { "value": "none", "label": "Kein Icon" }
         ] },
-        { "type": "text", "id": "title", "label": "Titel", "default": "Product information" },
+        { "type": "text", "id": "title", "label": "Titel", "default": "Produktinformation" },
         { "type": "checkbox", "id": "use_description", "label": "Produktbeschreibung anzeigen", "default": false },
         { "type": "richtext", "id": "content", "label": "Inhalt" },
-        { "type": "page", "id": "page", "label": "Inhalt aus Seite" },
-        { "type": "checkbox", "id": "is_size", "label": "Ist die Größentabelle (öffnet sich bei „Finde deine Größe“)", "default": false }
+        { "type": "select", "id": "metafield", "label": "Inhalt pro Produkt aus Metafeld", "default": "", "options": [
+          { "value": "", "label": "Kein Metafeld" },
+          { "value": "ingredients", "label": "custom.ingredients (Inhaltsstoffe)" },
+          { "value": "how_to_use", "label": "custom.how_to_use (Anwendung)" }
+        ], "info": "Ist das Metafeld beim Produkt ausgefüllt, ersetzt es den Inhalt oben." },
+        { "type": "page", "id": "page", "label": "Inhalt aus Seite" }
+      ]
+    },
+    {
+      "type": "notes",
+      "name": "Duftnoten",
+      "limit": 1,
+      "settings": [
+        { "type": "paragraph", "content": "Zeigt die Duftpyramide aus den Produkt-Metafeldern custom.top_notes, custom.heart_notes, custom.base_notes (Text oder Liste) und optional ein Duftprofil aus custom.intensity, custom.longevity, custom.sillage (Ganzzahl 1–5). Ohne Metafelder bleibt der Block unsichtbar." },
+        { "type": "text", "id": "title", "label": "Titel", "default": "Duftnoten" },
+        { "type": "checkbox", "id": "open", "label": "Geöffnet anzeigen", "default": true },
+        { "type": "text", "id": "t_top", "label": "Kopfnote", "default": "Kopfnote" },
+        { "type": "text", "id": "t_heart", "label": "Herznote", "default": "Herznote" },
+        { "type": "text", "id": "t_base", "label": "Basisnote", "default": "Basisnote" },
+        { "type": "text", "id": "t_intensity", "label": "Intensität", "default": "Intensität" },
+        { "type": "text", "id": "t_longevity", "label": "Haltbarkeit", "default": "Haltbarkeit" },
+        { "type": "text", "id": "t_sillage", "label": "Sillage", "default": "Sillage" }
       ]
     }
   ]

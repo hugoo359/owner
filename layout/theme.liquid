@@ -12,7 +12,7 @@
   <title>
     {{ page_title }}
     {%- if current_tags %} – {{ current_tags | join: ', ' }}{% endif -%}
-    {%- if current_page != 1 %} – Page {{ current_page }}{% endif -%}
+    {%- if current_page != 1 %} – Seite {{ current_page }}{% endif -%}
     {%- unless page_title contains shop.name %} | {{ shop.name }}{% endunless -%}
   </title>
   {%- if page_description -%}
@@ -54,13 +54,13 @@
         respectReducedMotion: {{ settings.respect_reduced_motion | json }}
       },
       strings: {
-        added: "Added",
-        addToCart: "Add to cart",
-        soldOut: "Sold out",
-        unavailable: "Unavailable",
-        chooseSize: "Please select a size.",
-        inStock: {{ 'In stock.' | json }},
-        noResults: "No results"
+        added: "Hinzugefügt",
+        addToCart: "In den Warenkorb",
+        soldOut: "Ausverkauft",
+        unavailable: "Nicht verfügbar",
+        chooseSize: "Bitte wähle eine Größe.",
+        inStock: {{ settings.in_stock_text | json }},
+        noResults: "Keine Ergebnisse"
       }
     };
   </script>
@@ -70,7 +70,7 @@
 </head>
 
 <body class="template-{{ template.name }}">
-  <a class="skip-link" href="#MainContent">Skip to content</a>
+  <a class="skip-link" href="#MainContent">Zum Inhalt springen</a>
 
   {% sections 'header-group' %}
 

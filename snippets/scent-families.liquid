@@ -1,0 +1,33 @@
+{%- comment -%}
+  Gibt die Duftfamilien eines Produkts mit | getrennt aus (z. B. „Holzig|Orientalisch“).
+  Quellen: Metafeld custom.scent_family (Text mit Kommas oder Liste) und Tags wie „Duftfamilie: Holzig“.
+  Parameter: product
+{%- endcomment -%}
+{%- liquid
+  assign out = ''
+  assign mf = product.metafields.custom.scent_family
+  if mf != blank
+    if mf.type contains 'list.'
+      assign raw = mf.value | join: ','
+    else
+      assign raw = mf.value
+    endif
+    assign parts = raw | split: ','
+    for p in parts
+      assign v = p | strip
+      if v != blank
+        assign out = out | append: '|' | append: v
+      endif
+    endfor
+  endif
+  for tag in product.tags
+    assign t = tag | downcase
+    if t contains 'duftfamilie:'
+      assign v = tag | split: ':' | last | strip
+      if v != blank
+        assign out = out | append: '|' | append: v
+      endif
+    endif
+  endfor
+  echo out | remove_first: '|'
+-%}

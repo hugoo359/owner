@@ -25,7 +25,7 @@
   {%- if section.blocks.size > 1 -%}
     <div class="dots">
       {%- for block in section.blocks -%}
-        <button type="button" aria-label="Slide {{ forloop.index }}" class="{% if forloop.first %}on{% endif %}" data-slide="{{ forloop.index0 }}"><i></i></button>
+        <button type="button" aria-label="Bild {{ forloop.index }}" class="{% if forloop.first %}on{% endif %}" data-slide="{{ forloop.index0 }}"><i></i></button>
       {%- endfor -%}
     </div>
   {%- endif -%}

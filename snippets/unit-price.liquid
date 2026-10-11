@@ -1,0 +1,8 @@
+{%- comment -%}
+  Grundpreis einer Variante, z. B. „25,80 € / 100 ml“ (Preisangabenverordnung).
+  Pflegen: Produkt → Variante → „Grundpreis anzeigen“ (Gesamtmenge z. B. 50 ml, Basiseinheit 100 ml).
+  Parameter: variant
+{%- endcomment -%}
+{%- if variant.unit_price_measurement -%}
+  {{- variant.unit_price | money }} / {{ variant.unit_price_measurement.reference_value }} {{ variant.unit_price_measurement.reference_unit -}}
+{%- endif -%}

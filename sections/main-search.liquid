@@ -1,14 +1,14 @@
 {%- paginate search.results by 24 -%}
 <div class="wrap search-page">
-  <h1 class="ctitle">Search</h1>
+  <h1 class="ctitle">Suche</h1>
   <form action="{{ routes.search_url }}" method="get" role="search" class="search-form">
     {% render 'icon', icon: 'search-sm' %}
-    <input type="search" name="q" value="{{ search.terms | escape }}" placeholder="Search..." aria-label="Search">
+    <input type="search" name="q" value="{{ search.terms | escape }}" placeholder="Duft, Marke oder Note suchen …" aria-label="Suche">
     <input type="hidden" name="options[prefix]" value="last">
-    <button type="submit">SEARCH</button>
+    <button type="submit">SUCHEN</button>
   </form>
   {%- if search.performed -%}
-    <p class="result-count">{{ search.results_count }} result{% if search.results_count != 1 %}s{% endif %} for “{{ search.terms | escape }}”</p>
+    <p class="result-count">{{ search.results_count }} {% if search.results_count == 1 %}Ergebnis{% else %}Ergebnisse{% endif %} für „{{ search.terms | escape }}“</p>
     <div class="grid" style="--cols: 4">
       {%- for item in search.results -%}
         {%- if item.object_type == 'product' -%}
@@ -17,7 +17,7 @@
           <a class="card text-card" href="{{ item.url }}"><h3>{{ item.title }}</h3><p>{{ item.content | strip_html | truncatewords: 20 }}</p></a>
         {%- endif -%}
       {%- else -%}
-        <div class="empty">No results found.</div>
+        <div class="empty">Keine Ergebnisse gefunden.</div>
       {%- endfor -%}
     </div>
     {%- if paginate.pages > 1 -%}{% render 'pagination', paginate: paginate %}{%- endif -%}

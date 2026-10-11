@@ -3,15 +3,16 @@
     "main": {
       "type": "main-product",
       "blocks": {
-        "info": { "type": "accordion", "settings": { "icon": "info", "title": "Product information", "use_description": true } },
-        "care": { "type": "accordion", "settings": { "icon": "care", "title": "Care instructions", "content": "<p>Wash inside out at 30 °C. Do not tumble dry. Do not bleach. Iron inside out.</p>" } },
-        "size": { "type": "accordion", "settings": { "icon": "ruler", "title": "Size information", "is_size": true, "content": "<p>Fits true to size. For a looser look, size up.</p>" } },
-        "shipping": { "type": "accordion", "settings": { "icon": "truck", "title": "Shipping & Returns", "content": "<p>Ships within 2–4 business days. Free exchanges within 14 days.</p>" } }
+        "info": { "type": "accordion", "settings": { "icon": "info", "title": "Produktinformation", "use_description": true } },
+        "notes": { "type": "notes", "settings": { "title": "Duftnoten", "open": true } },
+        "usage": { "type": "accordion", "settings": { "icon": "spray", "title": "Anwendung", "metafield": "how_to_use", "content": "<p>Aus etwa 15 cm Abstand auf die Pulspunkte sprühen – Handgelenke, Hals und hinter die Ohren. Nicht verreiben, damit sich Kopf-, Herz- und Basisnote nacheinander entfalten können.</p><p>Kühl, trocken und lichtgeschützt lagern.</p>" } },
+        "ingredients": { "type": "accordion", "settings": { "icon": "leaf", "title": "Inhaltsstoffe", "metafield": "ingredients", "content": "<p>Die vollständige Liste der Inhaltsstoffe (INCI) findest du auf der Verpackung.</p>" } },
+        "shipping": { "type": "accordion", "settings": { "icon": "truck", "title": "Versand & Rückgabe", "content": "<p>Versand innerhalb von 2–4 Werktagen. Versiegelte und originalverpackte Artikel kannst du innerhalb von 14 Tagen zurückgeben.</p>" } }
       },
-      "block_order": ["info", "care", "size", "shipping"],
+      "block_order": ["info", "notes", "usage", "ingredients", "shipping"],
       "settings": {}
     },
-    "recommendations": { "type": "product-recommendations", "settings": { "heading": "YOU MAY ALSO LIKE", "limit": 4 } }
+    "recommendations": { "type": "product-recommendations", "settings": { "heading": "DAS KÖNNTE DIR AUCH GEFALLEN", "limit": 4 } }
   },
   "order": ["main", "recommendations"]
 }

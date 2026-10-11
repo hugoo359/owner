@@ -4,18 +4,18 @@
   "sections": {
     "newsletter": {
       "type": "newsletter",
-      "settings": { "heading": "SIGN UP FOR OUR NEWSLETTER" }
+      "settings": { "heading": "MELDE DICH FÜR UNSEREN NEWSLETTER AN" }
     },
     "footer": {
       "type": "footer",
       "blocks": {
         "info-support": {
           "type": "info",
-          "settings": { "icon": "info", "title": "SUPPORT", "text": "FOR QUESTIONS ABOUT YOUR ORDER, VISIT OUR", "link_label": "SUPPORT CENTER" }
+          "settings": { "icon": "info", "title": "SUPPORT", "text": "BEI FRAGEN ZU DEINER BESTELLUNG BESUCHE UNSER", "link_label": "SUPPORT-CENTER" }
         },
         "info-whatsapp": {
           "type": "info",
-          "settings": { "icon": "chat", "title": "JOIN OUR WHATSAPP CHANNEL", "text": "EARLY ACCESS, DISCOUNTS & SPECIALS", "link_label": "JOIN NOW" }
+          "settings": { "icon": "chat", "title": "TRITT UNSEREM WHATSAPP-KANAL BEI", "text": "FRÜHER ZUGANG ZU NEUEN DÜFTEN, RABATTE & SPECIALS", "link_label": "JETZT BEITRETEN" }
         },
         "menu-service": {
           "type": "menu",
@@ -23,11 +23,11 @@
         },
         "menu-legal": {
           "type": "menu",
-          "settings": { "heading": "Legal", "show_policies": true }
+          "settings": { "heading": "Rechtliches", "show_policies": true }
         }
       },
       "block_order": ["info-support", "info-whatsapp", "menu-service", "menu-legal"],
-      "settings": { "more_heading": "More", "show_payments": true, "copyright": "All rights reserved." }
+      "settings": { "more_heading": "Mehr", "show_payments": true, "copyright": "Alle Rechte vorbehalten." }
     }
   },
   "order": ["newsletter", "footer"]

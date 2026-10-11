@@ -1,4 +1,4 @@
-/* Streetwear Theme – Interaktionen & Animationen */
+/* Parfum Theme – Interaktionen & Animationen */
 (() => {
   window.__themeReady = true;
   const $ = (s, r = document) => r.querySelector(s);
@@ -228,7 +228,7 @@
   document.addEventListener('click', e => {
     if (!e.target.closest('[data-cookie-settings]')) return;
     if (window.privacyBanner?.showPreferences) window.privacyBanner.showPreferences();
-    else toast('Cookie settings are currently unavailable.');
+    else toast('Die Cookie-Einstellungen sind gerade nicht verfügbar.');
   });
 
   /* =========================================================
@@ -341,7 +341,7 @@
       if (!r.ok) throw new Error(data.description || data.message);
       updateCartDrawer(data.sections?.['cart-drawer']);
     } catch (err) {
-      toast(err.message || 'Something went wrong. Please reload the page.');
+      toast(err.message || 'Etwas ist schiefgelaufen. Bitte lade die Seite neu.');
       $('#CartDrawerInner')?.classList.remove('is-busy');
     }
   }
@@ -354,7 +354,7 @@
       body: formData
     });
     const data = await r.json();
-    if (!r.ok) throw new Error(data.description || data.message || 'Could not be added to cart.');
+    if (!r.ok) throw new Error(data.description || data.message || 'Konnte nicht in den Warenkorb gelegt werden.');
     const cartLayer = document.getElementById('cart');
     const drawerOpen = cartLayer && !cartLayer.hidden;
     await flyToCart(img);
@@ -371,7 +371,7 @@
       const fd = new FormData();
       fd.append('id', add.dataset.addVariant);
       fd.append('quantity', '1');
-      add.textContent = 'Adding …';
+      add.textContent = 'Wird hinzugefügt …';
       try { await cartAdd(fd); } catch (err) { toast(err.message); }
       return;
     }
@@ -417,6 +417,10 @@
     const avail = $('[data-avail]', sec);
     const availText = $('[data-avail-text]', sec);
     const okHTML = availText ? availText.innerHTML : '';
+    const unitWrap = $('[data-unit-price]', sec);
+    const unitVal = $('[data-unit-price-value]', sec);
+    let unitMap = {};
+    try { unitMap = JSON.parse($('[data-unit-prices]', sec)?.textContent || '{}'); } catch (e) {}
     const s = T.strings;
 
     let current = variants.find(v => String(v.id) === idInput.value) || variants[0];
@@ -502,6 +506,11 @@
           compareEl.hidden = !(v.compare_at_price > v.price);
           compareEl.textContent = v.compare_at_price ? formatMoney(v.compare_at_price) : '';
         }
+        if (unitWrap && unitVal) {
+          const u = unitMap[v.id];
+          unitWrap.hidden = !u;
+          if (u) unitVal.textContent = u;
+        }
         if (v.featured_media && touched) showMedia(v.featured_media.id);
         if (touched) history.replaceState(null, '', `${location.pathname}?variant=${v.id}`);
       }
@@ -549,20 +558,13 @@
       });
     }
 
-    /* Farb-Geschwister: Name beim Drüberfahren anzeigen */
+    /* Düfte einer Linie: Name beim Drüberfahren anzeigen */
     const sib = $('[data-siblings]', sec);
     const sibLabel = $('[data-sib-label]', sec);
     if (sib && sibLabel) {
       sib.addEventListener('mouseover', e => { const a = e.target.closest('[data-sib-name]'); if (a) sibLabel.textContent = a.dataset.sibName; });
       sib.addEventListener('mouseleave', () => { sibLabel.textContent = sibLabel.dataset.sibDefault; });
     }
-
-    $('[data-open-size]', sec)?.addEventListener('click', () => {
-      const d = $('[data-size-acc]', sec);
-      if (!d) return;
-      if (!d.open) $('summary', d)?.click();
-      d.scrollIntoView({ behavior: calm() ? 'auto' : 'smooth', block: 'center' });
-    });
 
     const form = $('form.pform', sec);
     form?.addEventListener('submit', async e => {
@@ -655,14 +657,14 @@
       document.dispatchEvent(new CustomEvent('grid:added', { detail: { cards: added } }));
     } catch (err) {
       b.disabled = false;
-      b.textContent = b.dataset.label || 'Load more';
-      toast('More products could not be loaded.');
+      b.textContent = b.dataset.label || 'Mehr laden';
+      toast('Weitere Produkte konnten nicht geladen werden.');
     }
   });
 
   /* =========================================================
      KOLLEKTION: Schnellfilter (Fallback ohne Search & Discovery)
-     Kategorie = Einzelauswahl, Farbe/Größe = Mehrfachauswahl,
+     Kategorie = Einzelauswahl, Duftfamilie/Farbe/Größe = Mehrfachauswahl,
      Zeilen werden mit UND verknüpft.
      ========================================================= */
   (function initQuickFilters() {
@@ -688,8 +690,8 @@
     };
     $$('[data-qf-sort]', box).forEach(sortRow);
 
-    const state = { type: '', colors: new Set(), sizes: new Set(), stock: false };
-    const active = () => state.type || state.colors.size || state.sizes.size || state.stock;
+    const state = { type: '', families: new Set(), colors: new Set(), sizes: new Set(), stock: false };
+    const active = () => state.type || state.families.size || state.colors.size || state.sizes.size || state.stock;
     const has = (list, v) => (list || '').includes(`|${v}|`);
 
     function apply() {
@@ -698,6 +700,7 @@
         const d = card.dataset;
         const ok =
           (!state.type || (d.fType || '') === state.type) &&
+          (!state.families.size || [...state.families].some(f => has(d.fFamilies, f))) &&
           (!state.colors.size || [...state.colors].some(c => has(d.fColors, c))) &&
           (!state.sizes.size || [...state.sizes].some(z => has(d.fSizes, z))) &&
           (!state.stock || d.fAvail === 'true');
@@ -734,10 +737,17 @@
       return loading;
     }
 
-    /* Neue Werte (Farben/Größen) aus nachgeladenen Produkten ergänzen */
+    /* Neue Werte (Duftfamilien/Größen) aus nachgeladenen Produkten ergänzen */
     function addValues(cards) {
       const rowSizes = $('[data-qf-row="sizes"]', box);
+      const rowFam = $('[data-qf-row="families"]', box);
       cards.forEach(card => {
+        if (rowFam) (card.dataset.fFamilies || '').split('|').filter(Boolean).forEach(f => {
+          if ($$('[data-qf-value]', rowFam).some(b => b.dataset.qfValue === f)) return;
+          const b = document.createElement('button');
+          b.type = 'button'; b.className = 'pill'; b.dataset.qfValue = f; b.textContent = f.charAt(0).toUpperCase() + f.slice(1);
+          rowFam.appendChild(b);
+        });
         if (rowSizes) (card.dataset.fSizes || '').split('|').filter(Boolean).forEach(z => {
           if ($$('[data-qf-value]', rowSizes).some(b => b.dataset.qfValue === z)) return;
           const b = document.createElement('button');
@@ -776,7 +786,7 @@
 
     gridEl.addEventListener('click', e => {
       if (!e.target.closest('[data-qf-reset]')) return;
-      state.type = ''; state.colors.clear(); state.sizes.clear(); state.stock = false;
+      state.type = ''; state.families.clear(); state.colors.clear(); state.sizes.clear(); state.stock = false;
       $$('[data-qf-value],[data-qf-stock]', box).forEach(b => b.classList.remove('on'));
       $$('[data-qf-all]', box).forEach(b => b.classList.add('on'));
       apply();
@@ -940,7 +950,7 @@
   });
 
   /* =========================================================
-     GRÖSSENBERATER: nur noch der Größenrechner
+     GRÖSSENBERATER: Pop-up öffnen
      ========================================================= */
   (function initSizeGuide() {
     const root = $('[data-sg]');
@@ -952,116 +962,73 @@
   })();
 
   /* =========================================================
-     GRÖSSENRECHNER „Find your size“
-     Schätzt aus Geschlecht, Körpergröße und Gewicht den Brustumfang und vergleicht ihn
-     mit gängigen Konfektionstabellen (Brustumfang am Körper, nicht am Kleidungsstück).
-
-     Brustumfang ≈ k · √(Gewicht / Größe): Gewicht/Größe entspricht dem mittleren
-     Körperquerschnitt, dessen Wurzel proportional zum Umfang ist. k ist an die
-     Mittelwerte der ANSUR-II-Körpervermessung angepasst
-     (Männer 175,6 cm / 85,5 kg / 105,9 cm Brust, Frauen 162,9 cm / 67,8 kg / 94,9 cm).
-     Größentabellen (Körper-Brustumfang in cm, Mitte der jeweiligen Spanne) gemittelt aus
-     ASOS, Schöffel, Lidl, Under Armour, Lacoste. Die Körpergröße fließt zu 20 % ein
-     (Länge von Ärmeln und Rumpf). Bundweite für Jeans = Brust minus 15 cm (Herren) bzw.
-     16 cm (Damen), wie in den ASOS-/Levi’s-Tabellen.
+     GRÖSSENBERATER „Welche Größe passt?“ (ml)
+     Verbrauch pro Monat = Anwendungen pro Woche · 52/12 · Sprühstöße ÷ Düfte im Wechsel
+     ÷ Sprühstöße pro ml (Theme-Einstellung, üblich ≈ 10). Empfohlen wird die größte Flasche,
+     die in höchstens 12 Monaten aufgebraucht ist – dann duftet sie bis zum Schluss frisch.
+     Reicht schon die kleinste länger, wird die kleinste empfohlen. Ausverkaufte Größen werden
+     übersprungen (mit Hinweis, falls gerade die ideale Größe fehlt).
      ========================================================= */
   function initFinder(root) {
     const form = $('[data-sgf-form]', root);
     if (!form) return;
-    const LETTERS = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL'];
-    const BODY = {
-      men: {
-        k: 151.9, drop: 15,
-        chest: [83.5, 88.5, 93.5, 98.5, 103.5, 109, 115, 122],
-        height: [164, 168, 173, 178, 183, 188, 192, 195]
-      },
-      women: {
-        k: 147.1, drop: 16,
-        chest: [75.5, 80.5, 85.5, 91, 97, 103.5, 110.5, 117],
-        height: [154, 158, 163, 168, 172, 176, 180, 183]
-      }
-    };
-    const KEY = 'size-finder';
-    const FIT_LABEL = { '-1': 'tighter', 0: 'regular', 1: 'looser' };
-    const offset = parseFloat(root.dataset.offset) || 0;
+    const KEY = 'ml-finder';
+    const TARGET = 12;
+    const spm = parseFloat(root.dataset.spm) || 10;
+    const FREQ_LABEL = { 7: 'Täglich', 3.5: '3–4× pro Woche', 1: 'Ab und zu' };
+    const ROT_LABEL = { 1: 'nur dieser Duft', 2.5: '2–3 Düfte im Wechsel', 5: '4+ Düfte im Wechsel' };
     const out = $('[data-sgf-out]', root);
     const emptyBox = $('[data-sgf-empty]', root);
     const err = $('[data-sgf-err]', root);
     const link = $('[data-sg-link]');
     const linkText = $('[data-sg-link-text]');
     const linkDefault = linkText ? linkText.textContent : '';
-    const st = { g: null, fit: 0, result: null };
+    const st = { freq: null, rot: 1, result: null };
+    const num = (n, d = 1) => n.toLocaleString('de-DE', { maximumFractionDigits: d });
 
     const load = () => { try { return JSON.parse(localStorage.getItem(KEY)) || null; } catch (e) { return null; } };
     const save = p => { try { localStorage.setItem(KEY, JSON.stringify(p)); } catch (e) {} };
 
-    /* Stückweise lineare Position in einer Tabelle (0 = XXS, 3 = M ...), auch über die Ränder hinaus */
-    function pos(arr, x) {
-      const n = arr.length - 1;
-      if (x <= arr[0]) return (x - arr[0]) / (arr[1] - arr[0]);
-      for (let i = 0; i < n; i++) if (x <= arr[i + 1]) return i + (x - arr[i]) / (arr[i + 1] - arr[i]);
-      return n + (x - arr[n]) / (arr[n] - arr[n - 1]);
-    }
-    function valAt(arr, f) {
-      const n = arr.length - 1;
-      const i = Math.max(0, Math.min(n - 1, Math.floor(f)));
-      return arr[i] + (f - i) * (arr[i + 1] - arr[i]);
-    }
-    const norm = v => {
-      const u = String(v).toUpperCase().replace(/\s+/g, '');
-      return ({ XXXL: '3XL', '2XL': 'XXL', XXXS: 'XXS' })[u] || u;
+    /* „50 ml“, „100ML“, „3.4 oz“ -> ml */
+    const toMl = label => {
+      const t = String(label).replace(',', '.');
+      const ml = t.match(/(\d+(?:\.\d+)?)\s*ml/i);
+      if (ml) return +ml[1];
+      const oz = t.match(/(\d+(?:\.\d+)?)\s*(?:fl\.?\s*)?oz/i);
+      if (oz) return Math.round(+oz[1] * 29.5735);
+      const n = parseFloat(t);
+      return isNaN(n) ? null : n;
     };
-
-    /* Größen des Produkts (inkl. ausverkaufter) */
+    /* Größen des Produkts (inkl. ausverkaufter), aufsteigend */
     function productSizes() {
       const btns = $$('[data-size-group] button[data-value]');
-      if (btns.length) return btns.map(b => ({ label: b.dataset.value, sold: b.disabled, btn: b }));
-      return ['XS', 'S', 'M', 'L', 'XL', 'XXL'].map(l => ({ label: l, sold: false, btn: null }));
+      const list = btns.map(b => ({ label: b.dataset.value, ml: toMl(b.dataset.value), sold: b.disabled, btn: b })).filter(x => x.ml);
+      const sizes = list.length ? list : [30, 50, 100].map(ml => ({ label: `${ml} ml`, ml, sold: false, btn: null }));
+      return sizes.sort((a, b) => a.ml - b.ml);
     }
+    const duration = m => {
+      if (m < 1) return 'unter 1 Monat';
+      if (m <= 36) return `≈ ${Math.round(m)} ${Math.round(m) === 1 ? 'Monat' : 'Monate'}`;
+      return `≈ ${num(m / 12, 0)} Jahre`;
+    };
+    const short = m => (m < 1 ? '< 1 Mon.' : m <= 36 ? `≈ ${Math.round(m)} Mon.` : `≈ ${num(m / 12, 0)} J.`);
 
     function calc(p) {
-      const B = BODY[p.g];
-      const chest = B.k * Math.sqrt(p.w / p.h);
-      let f = 0.8 * pos(B.chest, chest) + 0.2 * pos(B.height, p.h);
-      f += offset + p.fit * 0.6;
-      const sizes = productSizes();
-      const nums = sizes.map(s => parseFloat(s.label)).filter(n => !isNaN(n));
-      const numeric = nums.length && nums.length === sizes.length;
-      let pick, alt = null, dir = 0;
-
-      const nearestBy = (score) => sizes.reduce((best, s) => (score(s) < score(best) ? s : best), sizes[0]);
-
-      if (numeric) {
-        /* Zahlengrößen: Jeans-Bundweite (Inch) oder EU/DE-Konfektionsgröße */
-        const eqChest = valAt(B.chest, f);
-        const even = nums.every(n => n % 2 === 0);
-        let target;
-        if (p.g === 'men' && Math.min(...nums) >= 42) target = eqChest / 2;               // EU Herren 44–58
-        else if (p.g === 'women' && even && Math.min(...nums) >= 30 && Math.max(...nums) <= 54) target = eqChest / 2 - 7; // DE Damen 32–48
-        else target = (eqChest - B.drop) / 2.54;                                             // Jeans W26–W38
-        pick = nearestBy(s => Math.abs(parseFloat(s.label) - target));
-        const sorted = [...sizes].sort((a, b) => parseFloat(a.label) - parseFloat(b.label));
-        const i = sorted.indexOf(pick);
-        const diff = target - parseFloat(pick.label);
-        const step = Math.abs(parseFloat((sorted[i + 1] || sorted[i - 1] || pick).label) - parseFloat(pick.label)) || 1;
-        if (Math.abs(diff) > step * 0.3) { dir = diff > 0 ? 1 : -1; alt = sorted[i + dir] || null; }
-      } else {
-        const idx = Math.round(f);
-        const rank = s => { const r = LETTERS.indexOf(norm(s.label)); return r === -1 ? 99 : r; };
-        pick = nearestBy(s => Math.abs(rank(s) - idx) + (rank(s) === 99 ? 50 : 0));
-        const d = f - Math.floor(f);
-        if (d > 0.35 && d < 0.65) {
-          dir = rank(pick) > f ? -1 : 1;
-          alt = sizes.find(s => rank(s) === rank(pick) + dir) || null;
-        }
-      }
-      return { pick, alt, dir, chest: Math.round(chest) };
+      const perMonth = p.freq * (52 / 12) * p.s / p.rot / spm;
+      const sizes = productSizes().map(x => ({ ...x, months: x.ml / perMonth }));
+      const best = list => { const fit = list.filter(x => x.months <= TARGET); return fit.length ? fit[fit.length - 1] : list[0]; };
+      const ideal = best(sizes);
+      const open = sizes.filter(x => !x.sold);
+      const pool = open.length ? open : sizes;
+      const pick = best(pool);
+      const alt = pick.months <= TARGET ? pool[pool.indexOf(pick) + 1] || null : null;
+      return { pick, alt, sizes, perMonth, missed: ideal !== pick && ideal.sold ? ideal : null };
     }
 
     function setLink(res) {
       if (!link || !linkText) return;
       if (res) {
-        linkText.textContent = `We recommend size ${res.pick.label}`;
+        linkText.textContent = `Wir empfehlen ${res.pick.label}`;
         link.classList.add('has-reco');
       } else {
         linkText.textContent = linkDefault;
@@ -1076,49 +1043,47 @@
       const sizeEl = $('[data-sgf-size]', root);
       sizeEl.textContent = res.pick.label;
       if (animate) restartAnim(sizeEl, 'tick');
-      const fitTxt = FIT_LABEL[p.fit];
-      let why = `Based on: ${p.g === 'men' ? 'Men' : 'Women'} · ${p.h} cm · ${p.w} kg · ${fitTxt} fit.`;
-      if (offset < 0) why += ' This item runs large – we have taken that into account.';
-      if (offset > 0) why += ' This item runs small – we have taken that into account.';
-      $('[data-sgf-why]', root).textContent = why;
+      $('[data-sgf-why]', root).textContent =
+        `${FREQ_LABEL[p.freq]} · ${p.s} ${p.s === 1 ? 'Sprühstoß' : 'Sprühstöße'} · ${ROT_LABEL[p.rot]}. Du brauchst etwa ${num(res.perMonth)} ml pro Monat – ${res.pick.label} reicht dir ${duration(res.pick.months)}.`;
       const altEl = $('[data-sgf-alt]', root);
-      if (res.alt) {
+      if (res.missed) {
         altEl.hidden = false;
-        altEl.textContent = res.dir > 0
-          ? `You are between two sizes. For a looser fit choose ${res.alt.label}.`
-          : `You are between two sizes. For a closer fit choose ${res.alt.label}.`;
+        altEl.textContent = `${res.missed.label} wäre ideal, ist aber gerade ausverkauft.`;
+      } else if (res.alt) {
+        altEl.hidden = false;
+        altEl.textContent = `Mehr Vorrat? ${res.alt.label} reicht dir ${duration(res.alt.months)}.`;
+      } else if (res.pick.months > TARGET) {
+        altEl.hidden = false;
+        altEl.textContent = 'Schon die kleinste Größe reicht dir lange – ideal, um den Duft kennenzulernen.';
       } else altEl.hidden = true;
-      $('[data-sgf-scale]', root).innerHTML = productSizes().map(s =>
-        `<span class="${s.label === res.pick.label ? 'on' : ''}${res.alt && s.label === res.alt.label ? ' alt' : ''}${s.sold ? ' sold' : ''}">${s.label}</span>`).join('');
+      $('[data-sgf-scale]', root).innerHTML = res.sizes.map(s =>
+        `<span class="${s === res.pick ? 'on' : ''}${s === res.alt ? ' alt' : ''}${s.sold ? ' sold' : ''}"><b>${s.label}</b><small>${short(s.months)}</small></span>`).join('');
       const apply = $('[data-sgf-apply]', root);
       const lab = $('[data-sgf-apply-label]', root);
       apply.hidden = !res.pick.btn;
       apply.disabled = !!res.pick.sold;
-      lab.textContent = res.pick.sold ? `Size ${res.pick.label} is sold out` : `Select size ${res.pick.label}`;
+      lab.textContent = res.pick.sold ? `${res.pick.label} ist ausverkauft` : `${res.pick.label} auswählen`;
       setLink(res);
     }
 
     /* Formular */
-    const hIn = $('[data-sgf-in="h"]', root), wIn = $('[data-sgf-in="w"]', root);
-    const hR = $('[data-sgf-range="h"]', root), wR = $('[data-sgf-range="w"]', root);
-    const setGender = g => {
-      st.g = g;
-      $$('[data-sgf-gender]', root).forEach(b => { const on = b.dataset.sgfGender === g; b.classList.toggle('on', on); b.setAttribute('aria-checked', on); });
+    const sIn = $('[data-sgf-in="s"]', root), sR = $('[data-sgf-range="s"]', root);
+    const setFreq = f => {
+      st.freq = f;
+      $$('[data-sgf-freq]', root).forEach(b => { const on = +b.dataset.sgfFreq === f; b.classList.toggle('on', on); b.setAttribute('aria-checked', on); });
     };
-    const setFit = f => {
-      st.fit = f;
-      $$('[data-sgf-fit]', root).forEach(b => { const on = +b.dataset.sgfFit === f; b.classList.toggle('on', on); b.setAttribute('aria-checked', on); });
+    const setRot = r => {
+      st.rot = r;
+      $$('[data-sgf-rot]', root).forEach(b => { const on = +b.dataset.sgfRot === r; b.classList.toggle('on', on); b.setAttribute('aria-checked', on); });
     };
-    [[hIn, hR], [wIn, wR]].forEach(([num, rng]) => {
-      rng.addEventListener('input', () => { num.value = rng.value; live(); });
-      num.addEventListener('input', () => { if (num.value) rng.value = num.value; live(); });
-    });
+    sR.addEventListener('input', () => { sIn.value = sR.value; live(); });
+    sIn.addEventListener('input', () => { if (sIn.value) sR.value = sIn.value; live(); });
     root.addEventListener('click', e => {
-      const g = e.target.closest('[data-sgf-gender]');
-      if (g) { setGender(g.dataset.sgfGender); err.textContent = ''; live(); return; }
-      const f = e.target.closest('[data-sgf-fit]');
-      if (f) { setFit(+f.dataset.sgfFit); live(); return; }
-      if (e.target.closest('[data-sgf-edit]')) { hIn.focus(); form.scrollIntoView?.({ block: 'start', behavior: calm() ? 'auto' : 'smooth' }); return; }
+      const f = e.target.closest('[data-sgf-freq]');
+      if (f) { setFreq(+f.dataset.sgfFreq); err.textContent = ''; live(); return; }
+      const r = e.target.closest('[data-sgf-rot]');
+      if (r) { setRot(+r.dataset.sgfRot); live(); return; }
+      if (e.target.closest('[data-sgf-edit]')) { sIn.focus(); form.scrollIntoView?.({ block: 'start', behavior: calm() ? 'auto' : 'smooth' }); return; }
       if (e.target.closest('[data-sgf-apply]') && st.result?.pick?.btn) {
         const btn = st.result.pick.btn;
         closeLayer('sizeguide');
@@ -1127,13 +1092,10 @@
     });
 
     function read(strict) {
-      const h = Math.round(+hIn.value), w = Math.round(+wIn.value);
-      if (!st.g) return strict ? 'Please choose men or women.' : null;
-      if (!h || h < 140 || h > 215) return strict ? 'Please enter your height between 140 and 215 cm.' : null;
-      if (!w || w < 35 || w > 180) return strict ? 'Please enter your weight between 35 and 180 kg.' : null;
-      const bmi = w / Math.pow(h / 100, 2);
-      if (bmi < 14 || bmi > 55) return strict ? 'Please check your height and weight.' : null;
-      return { g: st.g, h, w, fit: st.fit };
+      const s = Math.round(+sIn.value);
+      if (!st.freq) return strict ? 'Bitte wähle, wie oft du Parfum trägst.' : null;
+      if (!s || s < 1 || s > 12) return strict ? 'Bitte gib zwischen 1 und 12 Sprühstöße an.' : null;
+      return { freq: st.freq, s, rot: st.rot };
     }
     let shown = false;
     function run(strict, animate) {
@@ -1152,13 +1114,12 @@
       if (shown && matchMedia('(max-width: 820px)').matches) $('[data-sgf-result]', root).scrollIntoView({ behavior: calm() ? 'auto' : 'smooth', block: 'start' });
     });
 
-    /* Gespeicherte Angaben übernehmen -> Empfehlung direkt am Link zeigen (wie „Wir empfehlen Größe XS“) */
+    /* Gespeicherte Angaben übernehmen -> Empfehlung direkt am Link zeigen („Wir empfehlen 50 ml“) */
     const saved = load();
-    if (saved && BODY[saved.g]) {
-      setGender(saved.g);
-      setFit([-1, 0, 1].includes(saved.fit) ? saved.fit : 0);
-      hIn.value = hR.value = saved.h;
-      wIn.value = wR.value = saved.w;
+    if (saved && FREQ_LABEL[saved.freq]) {
+      setFreq(saved.freq);
+      setRot(ROT_LABEL[saved.rot] ? saved.rot : 1);
+      sIn.value = sR.value = saved.s;
       run(false, false);
     }
     /* Nach Variantenwechsel (z. B. Größe ausverkauft) Ergebnis aktualisieren */

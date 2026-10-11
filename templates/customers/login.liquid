@@ -1,28 +1,28 @@
 <div class="wrap form-page">
-  <h1 class="ctitle">Log in</h1>
+  <h1 class="ctitle">Anmelden</h1>
   {%- form 'customer_login', class: 'form-box' -%}
     {{ form.errors | default_errors }}
-    <label for="LoginEmail">Email</label>
+    <label for="LoginEmail">E-Mail</label>
     <input type="email" name="customer[email]" id="LoginEmail" autocomplete="email" required>
     {%- if form.password_needed -%}
-      <label for="LoginPassword">Password</label>
+      <label for="LoginPassword">Passwort</label>
       <input type="password" name="customer[password]" id="LoginPassword" autocomplete="current-password" required>
-      <a class="link-u" href="#recover" data-recover-toggle>Forgot your password?</a>
+      <a class="link-u" href="#recover" data-recover-toggle>Passwort vergessen?</a>
     {%- endif -%}
-    <button type="submit" class="atc">LOG IN</button>
-    <a class="link-u" href="{{ routes.account_register_url }}">Create account</a>
+    <button type="submit" class="atc">ANMELDEN</button>
+    <a class="link-u" href="{{ routes.account_register_url }}">Konto erstellen</a>
   {%- endform -%}
   <div id="recover" class="form-box recover">
-    <h2 class="sub-title">Reset your password</h2>
+    <h2 class="sub-title">Passwort zurücksetzen</h2>
     {%- form 'recover_customer_password' -%}
       {{ form.errors | default_errors }}
-      {%- if form.posted_successfully? -%}<p>We've sent you an email with a link to reset your password.</p>{%- endif -%}
-      <label for="RecoverEmail">Email</label>
+      {%- if form.posted_successfully? -%}<p>Wir haben dir eine E-Mail mit einem Link zum Zurücksetzen geschickt.</p>{%- endif -%}
+      <label for="RecoverEmail">E-Mail</label>
       <input type="email" name="email" id="RecoverEmail" autocomplete="email" required>
-      <button type="submit" class="btn-outline">SEND LINK</button>
+      <button type="submit" class="btn-outline">LINK SENDEN</button>
     {%- endform -%}
   </div>
   {%- if shop.checkout.guest_login -%}
-    {%- form 'guest_login' -%}<button type="submit" class="btn-outline">CONTINUE AS GUEST</button>{%- endform -%}
+    {%- form 'guest_login' -%}<button type="submit" class="btn-outline">ALS GAST FORTFAHREN</button>{%- endform -%}
   {%- endif -%}
 </div>

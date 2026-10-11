@@ -1,7 +1,7 @@
-<nav class="pagination" aria-label="Pagination">
-  {%- if paginate.previous -%}<a href="{{ paginate.previous.url }}">← Previous</a>{%- endif -%}
+<nav class="pagination" aria-label="Seiten">
+  {%- if paginate.previous -%}<a href="{{ paginate.previous.url }}">← Zurück</a>{%- endif -%}
   {%- for part in paginate.parts -%}
     {%- if part.is_link -%}<a href="{{ part.url }}">{{ part.title }}</a>{%- elsif part.title == paginate.current_page -%}<span class="current">{{ part.title }}</span>{%- else -%}<span>{{ part.title }}</span>{%- endif -%}
   {%- endfor -%}
-  {%- if paginate.next -%}<a href="{{ paginate.next.url }}">Next →</a>{%- endif -%}
+  {%- if paginate.next -%}<a href="{{ paginate.next.url }}">Weiter →</a>{%- endif -%}
 </nav>

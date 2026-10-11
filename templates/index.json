@@ -42,19 +42,19 @@
         "tile-1": {
           "type": "tile",
           "settings": {
-            "title": "Basics"
+            "title": "Damen"
           }
         },
         "tile-2": {
           "type": "tile",
           "settings": {
-            "title": "Women"
+            "title": "Herren"
           }
         },
         "tile-3": {
           "type": "tile",
           "settings": {
-            "title": "Sports"
+            "title": "Unisex"
           }
         }
       },
@@ -70,13 +70,13 @@
     "carousel": {
       "type": "product-carousel",
       "settings": {
-        "heading": "NEW: DROP 01",
-        "link_label": "View all",
+        "heading": "NEUE DÜFTE",
+        "link_label": "Alle ansehen",
         "limit": 10,
         "per_view": 5,
         "badge": "all",
-        "badge_label": "New",
-        "subtitle": "options",
+        "badge_label": "Neu",
+        "subtitle": "type",
         "padding_top": 64,
         "padding_bottom": 24
       }
@@ -88,64 +88,64 @@
           "type": "card",
           "settings": {
             "tab": "1",
-            "title": "New: Essentials",
-            "text": "Our everyday basics. Heavyweight fabric, clean cut."
+            "title": "Neu: Blumige Düfte",
+            "text": "Rose, Jasmin und Pfingstrose – frisch, weich und elegant."
           }
         },
         "card-2": {
           "type": "card",
           "settings": {
             "tab": "1",
-            "title": "Wide Leg Pants",
-            "text": "Relaxed fit that still holds its shape. From the gym straight to the city."
+            "title": "Eau de Parfum",
+            "text": "Intensiv und lang anhaltend – unsere Düfte für den ganzen Tag."
           }
         },
         "card-3": {
           "type": "card",
           "settings": {
             "tab": "1",
-            "title": "New: Heavy Cotton",
-            "text": "Thick cotton that still looks good after many washes."
+            "title": "Duft-Sets",
+            "text": "Mehrere Lieblingsdüfte in Reisegröße. Perfekt zum Entdecken und Verschenken."
           }
         },
         "card-4": {
           "type": "card",
           "settings": {
             "tab": "1",
-            "title": "Bestsellers",
-            "text": "The pieces that sell out fastest. Get them while they last."
+            "title": "Bestseller",
+            "text": "Die Düfte, die am schnellsten ausverkauft sind. Hol sie dir, solange sie da sind."
           }
         },
         "card-5": {
           "type": "card",
           "settings": {
             "tab": "2",
-            "title": "New: Essentials",
-            "text": "Hoodies and joggers in new colors. Oversized and heavyweight."
+            "title": "Neu: Holzige Düfte",
+            "text": "Zeder, Vetiver und Oud – warm, markant und unverwechselbar."
           }
         },
         "card-6": {
           "type": "card",
           "settings": {
             "tab": "2",
-            "title": "Track Pants",
-            "text": "Lightweight, durable and with an adjustable waistband for every day."
+            "title": "Frische Düfte",
+            "text": "Zitrus, Bergamotte und Meeresnoten für jeden Tag."
           }
         },
         "card-7": {
           "type": "card",
           "settings": {
             "tab": "2",
-            "title": "New: Heavy Cotton",
-            "text": "T-shirts with a sturdy collar and a boxy fit."
+            "title": "Extrait de Parfum",
+            "text": "Die höchste Konzentration für maximale Intensität und Haltbarkeit."
           }
         },
         "card-8": {
           "type": "card",
           "settings": {
             "tab": "2",
-            "title": "Bestsellers",
-            "text": "Our best-selling men's pieces at a glance."
+            "title": "Bestseller",
+            "text": "Unsere meistverkauften Herrendüfte auf einen Blick."
           }
         }
       },
@@ -160,9 +160,9 @@
         "card-8"
       ],
       "settings": {
-        "heading": "TRENDING NOW",
-        "tab_1": "Women",
-        "tab_2": "Men",
+        "heading": "GERADE BELIEBT",
+        "tab_1": "Damen",
+        "tab_2": "Herren",
         "columns": 4,
         "padding_top": 64,
         "padding_bottom": 80
@@ -174,19 +174,19 @@
         "t1": {
           "type": "text",
           "settings": {
-            "text": "<p>We are <strong>NoneofUs</strong> – a streetwear brand built on passion, persistence, and the desire to create something real.</p><p>We didn't come from fashion houses, but from garages, small warehouses, and nights full of ideas.</p><p>What began as a dream has grown into a movement.</p>"
+            "text": "<p>Wir sind <strong>NoneofUs</strong> – eine Parfummarke, entstanden aus Leidenschaft, Ausdauer und dem Wunsch, etwas Echtes zu schaffen.</p><p>Wir kommen nicht aus großen Parfumhäusern, sondern aus kleinen Laboren, langen Nächten und hunderten Testflakons.</p><p>Was als Traum begann, ist zu einer Bewegung geworden.</p>"
           }
         },
         "t2": {
           "type": "text",
           "settings": {
-            "text": "<p><strong>NoneofUs</strong> represents unity, authenticity, and quality.</p><p>We design clothing that not only looks good, but feels right – responsibly made, durable, and made to last.</p>"
+            "text": "<p><strong>NoneofUs</strong> steht für Zusammenhalt, Echtheit und Qualität.</p><p>Wir kreieren Düfte, die nicht nur gut riechen, sondern sich richtig anfühlen – hochwertig komponiert, lange haltbar und gemacht, um im Gedächtnis zu bleiben.</p>"
           }
         },
         "t3": {
           "type": "text",
           "settings": {
-            "text": "<p>We believe everyone has a story worth telling.</p><p>No matter where you come from, what you wear, or how you think – <strong>you belong.</strong></p>"
+            "text": "<p>Wir glauben, dass jeder Mensch eine Geschichte hat, die es wert ist, erzählt zu werden – und jeder Duft erzählt eine.</p><p>Egal, woher du kommst, was du trägst oder wie du denkst – <strong>du gehörst dazu.</strong></p>"
           }
         },
         "t4": {
@@ -203,7 +203,7 @@
         "t4"
       ],
       "settings": {
-        "heading": "NONEOFUS - STREETWEAR",
+        "heading": "NONEOFUS - PARFUM",
         "font": "michroma",
         "bg": "#eeece8",
         "ink": "#1a1a1a",

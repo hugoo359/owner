@@ -7,7 +7,7 @@
   assign size_idx = 0
   for option in product.options_with_values
     assign n = option.name | downcase
-    if n contains 'größe' or n contains 'grösse' or n contains 'groesse' or n contains 'size'
+    if n contains 'größe' or n contains 'grösse' or n contains 'groesse' or n contains 'size' or n contains 'inhalt' or n contains 'füllmenge' or n contains 'volum'
       assign size_option = option
       assign size_idx = forloop.index0
     endif
@@ -48,7 +48,19 @@
         endfor
       endunless
   endcase
+
+  # Grundpreis zur angezeigten (günstigsten) Variante
+  assign unit_variant = product.selected_or_first_available_variant
+  if product.price_varies
+    for v in product.variants
+      if v.price == product.price
+        assign unit_variant = v
+        break
+      endif
+    endfor
+  endif
 -%}
+{%- capture unit_out -%}{% render 'unit-price', variant: unit_variant %}{%- endcapture -%}
 <div class="card slide-card" data-reveal>
   <div class="card-media">
     <a href="{{ product.url }}" class="media{% if product.media.size > 1 %} has-hover{% endif %}" tabindex="-1" aria-hidden="true" draggable="false">
@@ -58,14 +70,14 @@
           {{ product.media[1] | image_url: width: 900 | image_tag: loading: 'lazy', sizes: '(min-width: 1100px) 20vw, (min-width: 700px) 33vw, 50vw', widths: '360, 540, 720, 900', class: 'hover-img', alt: '', draggable: 'false' }}
         {%- endif -%}
       {%- else -%}
-        {{ 'product-apparel-2' | placeholder_svg_tag: 'placeholder-svg' }}
+        {{ 'product-2' | placeholder_svg_tag: 'placeholder-svg' }}
       {%- endif -%}
     </a>
     {%- if badge_text != '' -%}<span class="badge{% if badge_text contains '%' %} badge--sale{% endif %}">{{ badge_text }}</span>{%- endif -%}
 
     {%- if settings.quick_add and product.available and size_option -%}
-      <div class="qa" aria-label="Quick add">
-        <span class="qa-label">Select size</span>
+      <div class="qa" aria-label="Schnell hinzufügen">
+        <span class="qa-label">Größe wählen</span>
         <div class="qa-sizes">
           {%- for value in size_option.values -%}
             {%- assign vname = value.name | default: value -%}
@@ -83,8 +95,10 @@
     <h3>{{ product.title }}</h3>
     {%- if sub != blank -%}<p class="card-sub">{{ sub }}</p>{%- endif -%}
     <div class="price">
+      {%- if product.price_varies -%}ab {% endif -%}
       {{ product.price | money }}
       {%- if product.compare_at_price > product.price %} <s>{{ product.compare_at_price | money }}</s>{% endif -%}
+      {%- if unit_out != blank -%}<span class="unit">{{ unit_out }}</span>{%- endif -%}
     </div>
   </a>
 </div>

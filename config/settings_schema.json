@@ -1,7 +1,7 @@
 [
   {
     "name": "theme_info",
-    "theme_name": "Streetwear",
+    "theme_name": "Parfum",
     "theme_version": "1.0.0",
     "theme_author": "Eigenes Theme",
     "theme_documentation_url": "https://help.shopify.com/manual/online-store/themes",
@@ -18,6 +18,7 @@
   {
     "name": "Farben",
     "settings": [
+      { "type": "paragraph", "content": "Voreingestellt sind die Farben von 6PM: weißer Hintergrund, fast schwarzer Text, Hellblau als Akzent und Grün für Verfügbarkeit." },
       { "type": "color", "id": "color_background", "label": "Hintergrund", "default": "#ffffff" },
       { "type": "color", "id": "color_text", "label": "Text", "default": "#111111" },
       { "type": "color", "id": "color_accent", "label": "Akzent (aktiver Filter, Zur-Kasse-Button)", "default": "#9dd5ea" },
@@ -25,17 +26,17 @@
     ]
   },
   {
-    "name": "Farb-Swatches",
+    "name": "Duftfamilien & Farbkreise",
     "settings": [
       {
         "type": "paragraph",
-        "content": "Ordnet Farbnamen aus deinen Varianten und Filtern einem Farbton zu. Eine Zeile pro Farbe im Format Name: #hex. Wenn du in Shopify schon Swatches hinterlegt hast, werden diese bevorzugt."
+        "content": "Ordnet Duftfamilien (Farbpunkt im Kollektionsfilter), Duftnamen (Farbkreis bei Düften einer Linie) und Farben einem Farbton zu. Eine Zeile pro Eintrag im Format Name: #hex. In Shopify hinterlegte Swatches und das Metafeld custom.color_swatch werden bevorzugt."
       },
       {
         "type": "textarea",
         "id": "color_map",
         "label": "Farbzuordnung",
-        "default": "Black: #141414\nSchwarz: #141414\nWhite: #f7f7f5\nWeiß: #f7f7f5\nGrey: #bdbdbd\nGrau: #bdbdbd\nGrey Melange: #cfcfcf\nLight Grey Melange: #dedede\nNavy: #22304d\nBlue: #3e6cb3\nBlau: #3e6cb3\nSky Blue: #93cbe8\nDenim: #5d80a6\nMint: #bfe5da\nGreen: #2f6b45\nGrün: #2f6b45\nEvergreen: #1f4d3a\nBrown: #6b4a33\nBraun: #6b4a33\nStone Brown: #7a5c45\nBeige: #e8dfcf\nCream: #efe8da\nPink: #f3a9c4\nRosa: #f3a9c4\nPurple: #8f6bbf\nLila: #8f6bbf\nRed: #c8102e\nRot: #c8102e\nWine Red: #6e1a28\nBordeaux: #6e1a28"
+        "default": "Blumig: #f3c6d3\nFloral: #f3c6d3\nPudrig: #ead7d1\nFruchtig: #e8798a\nGourmand: #c69c72\nSüß: #c69c72\nFrisch: #bfe5da\nZitrisch: #f4d35e\nAquatisch: #9dd5ea\nGrün: #7fae6e\nFougère: #6f8f72\nChypre: #6b7a3a\nHolzig: #8a6446\nWoody: #8a6446\nWürzig: #a3472a\nOrientalisch: #b0602c\nAmber: #c98a3a\nLedrig: #5a3a2a\nOud: #3b2a20\nMoschus: #e8dfcf\nSchwarz: #141414\nWeiß: #f7f7f5\nGold: #c9a227\nSilber: #c0c0c0\nRosa: #f3a9c4\nRot: #c8102e\nBlau: #3e6cb3"
       }
     ]
   },
@@ -43,19 +44,19 @@
     "name": "Warenkorb",
     "settings": [
       { "type": "number", "id": "free_shipping_threshold", "label": "Kostenloser Versand ab (Betrag)", "default": 125, "info": "0 blendet den Fortschrittsbalken aus. Die echten Versandkosten stellst du unter Einstellungen > Versand ein." },
-      { "type": "text", "id": "shipping_label", "label": "Angezeigte Versandkosten unter dem Mindestbetrag", "default": "€4.90" },
-      { "type": "text", "id": "cart_note_title", "label": "Hinweis-Titel", "default": "GREAT CHOICE!" },
-      { "type": "text", "id": "cart_note_text", "label": "Hinweis-Text", "default": "Here are your pieces:" },
+      { "type": "text", "id": "shipping_label", "label": "Angezeigte Versandkosten unter dem Mindestbetrag", "default": "4,90 €" },
+      { "type": "text", "id": "cart_note_title", "label": "Hinweis-Titel", "default": "GUTE WAHL!" },
+      { "type": "text", "id": "cart_note_text", "label": "Hinweis-Text", "default": "Hier sind deine Düfte:" },
       { "type": "collection", "id": "cart_upsell_collection", "label": "„Passt dazu“-Kollektion im Warenkorb" }
     ]
   },
   {
     "name": "Produktseite",
     "settings": [
-      { "type": "text", "id": "tax_text", "label": "Steuerhinweis", "default": "incl. VAT" },
-      { "type": "text", "id": "in_stock_text", "label": "Verfügbar-Text", "default": "In stock." },
-      { "type": "text", "id": "delivery_text", "label": "Lieferzeit-Text", "default": "Delivered in 2–4 days" },
-      { "type": "text", "id": "sold_out_text", "label": "Ausverkauft-Text", "default": "Sold out." }
+      { "type": "text", "id": "tax_text", "label": "Steuerhinweis", "default": "inkl. MwSt." },
+      { "type": "text", "id": "in_stock_text", "label": "Verfügbar-Text", "default": "Auf Lager." },
+      { "type": "text", "id": "delivery_text", "label": "Lieferzeit-Text", "default": "Lieferung in 2–4 Tagen" },
+      { "type": "text", "id": "sold_out_text", "label": "Ausverkauft-Text", "default": "Ausverkauft." }
     ]
   },
   {
@@ -64,7 +65,7 @@
       { "type": "checkbox", "id": "anim_reveal", "label": "Inhalte beim Scrollen einblenden", "default": true },
       { "type": "checkbox", "id": "anim_page_transitions", "label": "Weiche Seitenwechsel", "default": true },
       { "type": "checkbox", "id": "anim_fly_to_cart", "label": "Produktbild fliegt in den Warenkorb", "default": true },
-      { "type": "checkbox", "id": "quick_add", "label": "Schnell-Hinzufügen auf Produktkarten", "default": true, "info": "Größen erscheinen beim Hovern über dem Produktbild." },
+      { "type": "checkbox", "id": "quick_add", "label": "Schnell-Hinzufügen auf Produktkarten", "default": true, "info": "Größen (z. B. 50 ml) erscheinen beim Hovern über dem Produktbild." },
       { "type": "checkbox", "id": "respect_reduced_motion", "label": "Systemeinstellung „Bewegung reduzieren“ beachten", "default": false, "info": "Wenn aktiv, sehen Besucher mit dieser Systemeinstellung keine Animationen." }
     ]
   },

@@ -4,7 +4,7 @@
   assign f_colors = ''
   for option in product.options_with_values
     assign n = option.name | downcase
-    if n contains 'größe' or n contains 'grösse' or n contains 'groesse' or n contains 'size'
+    if n contains 'größe' or n contains 'grösse' or n contains 'groesse' or n contains 'size' or n contains 'inhalt' or n contains 'füllmenge' or n contains 'volum'
       assign size_option = option
       assign size_idx = forloop.index0
     elsif n contains 'farbe' or n contains 'color' or n contains 'colour'
@@ -28,9 +28,23 @@
       endif
     endfor
   endif
+
+  # Grundpreis zur angezeigten (günstigsten) Variante
+  assign unit_variant = product.selected_or_first_available_variant
+  if product.price_varies
+    for v in product.variants
+      if v.price == product.price
+        assign unit_variant = v
+        break
+      endif
+    endfor
+  endif
 -%}
+{%- capture unit_out -%}{% render 'unit-price', variant: unit_variant %}{%- endcapture -%}
+{%- capture f_families -%}{% render 'scent-families', product: product %}{%- endcapture -%}
 <div class="card" data-reveal
   data-f-type="{{ product.type | downcase | escape }}"
+  data-f-families="{{ f_families | strip | downcase | prepend: '|' | append: '|' | escape }}"
   data-f-colors="{{ f_colors | downcase | append: '|' | escape }}"
   data-f-sizes="{{ f_sizes | downcase | append: '|' | escape }}"
   data-f-avail="{{ product.available }}">
@@ -42,14 +56,14 @@
           {{ product.media[1] | image_url: width: 900 | image_tag: loading: 'lazy', sizes: '(min-width: 1100px) 25vw, 50vw', widths: '300, 450, 600, 900', class: 'hover-img', alt: '' }}
         {%- endif -%}
       {%- else -%}
-        {{ 'product-apparel-1' | placeholder_svg_tag: 'placeholder-svg' }}
+        {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
       {%- endif -%}
     </a>
 
     {%- if settings.quick_add and product.available -%}
-      <div class="qa" aria-label="Quick add">
+      <div class="qa" aria-label="Schnell hinzufügen">
         {%- if size_option -%}
-          <span class="qa-label">Select size</span>
+          <span class="qa-label">Größe wählen</span>
           <div class="qa-sizes">
             {%- for value in size_option.values -%}
               {%- assign vname = value.name | default: value -%}
@@ -65,7 +79,7 @@
             {%- endfor -%}
           </div>
         {%- elsif product.has_only_default_variant -%}
-          <button type="button" class="qa-single" data-qa-variant="{{ product.first_available_variant.id }}">+ Add to cart</button>
+          <button type="button" class="qa-single" data-qa-variant="{{ product.first_available_variant.id }}">+ In den Warenkorb</button>
         {%- endif -%}
       </div>
     {%- endif -%}
@@ -84,15 +98,16 @@
           {%- endfor -%}
         {%- endcapture -%}
         {% render 'icon', icon: 'cart-sm' %}
-        {%- if sizes_out != blank -%}{{ sizes_out }}{%- else -%}<span>{{ settings.sold_out_text | default: "Sold out" | upcase }}</span>{%- endif -%}
+        {%- if sizes_out != blank -%}{{ sizes_out }}{%- else -%}<span>{{ settings.sold_out_text | default: "Ausverkauft" | upcase }}</span>{%- endif -%}
       {%- elsif product.available == false -%}
-        <span>{{ settings.sold_out_text | default: "Sold out" | upcase }}</span>
+        <span>{{ settings.sold_out_text | default: "Ausverkauft" | upcase }}</span>
       {%- endif -%}
     </div>
     <div class="price">
-      {%- if product.price_varies -%}from {% endif -%}
+      {%- if product.price_varies -%}ab {% endif -%}
       {{ product.price | money_with_currency }}
       {%- if product.compare_at_price > product.price %} <s>{{ product.compare_at_price | money_with_currency }}</s>{% endif -%}
+      {%- if unit_out != blank -%}<span class="unit">{{ unit_out }}</span>{%- endif -%}
     </div>
   </a>
 </div>

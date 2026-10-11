@@ -1,6 +1,6 @@
 {%- paginate collection.products by section.settings.per_page -%}
 <div class="wrap collection-wrap">
-  <nav class="crumbs" aria-label="Breadcrumb">
+  <nav class="crumbs" aria-label="Navigationspfad">
     <a href="{{ routes.root_url }}">{{ section.settings.t_home }}</a><span>/</span>
     <a href="{{ routes.all_products_collection_url }}">{{ section.settings.t_shop }}</a><span>/</span>
     <span>{{ collection.title }}</span>
@@ -9,9 +9,10 @@
 
   {%- liquid
     # Schnellfilter-Fallback: Wenn in „Search & Discovery“ keine Filter für Kategorie,
-    # Farbe, Größe oder Verfügbarkeit eingerichtet sind, baut das Theme diese Zeilen selbst
-    # aus den Produkten der Kollektion und filtert direkt im Browser.
+    # Duftfamilie, Farbe, Größe oder Verfügbarkeit eingerichtet sind, baut das Theme diese
+    # Zeilen selbst aus den Produkten der Kollektion und filtert direkt im Browser.
     assign has_cat = false
+    assign has_family = false
     assign has_color = false
     assign has_size = false
     if section.settings.category_menu != blank
@@ -22,18 +23,28 @@
       if filter.param_name == 'filter.p.product_type'
         assign has_cat = true
       elsif filter.type == 'list'
-        if filter.presentation == 'swatch' or fl contains 'farbe' or fl contains 'color' or fl contains 'colour'
+        if fl contains 'duft' or fl contains 'scent' or fl contains 'fragrance'
+          assign has_family = true
+        elsif filter.presentation == 'swatch' or fl contains 'farbe' or fl contains 'color' or fl contains 'colour'
           assign has_color = true
-        elsif fl contains 'größe' or fl contains 'grösse' or fl contains 'groesse' or fl contains 'size'
+        elsif fl contains 'größe' or fl contains 'grösse' or fl contains 'groesse' or fl contains 'size' or fl contains 'inhalt' or fl contains 'füllmenge' or fl contains 'volum'
           assign has_size = true
         endif
       endif
     endfor
 
+    assign qf_families = ''
     assign qf_colors = ''
     assign qf_sizes = ''
     if section.settings.auto_filters
       for product in collection.products
+        capture fams
+          render 'scent-families', product: product
+        endcapture
+        assign fams = fams | strip
+        if fams != blank
+          assign qf_families = qf_families | append: '|' | append: fams
+        endif
         for option in product.options_with_values
           assign n = option.name | downcase
           if n contains 'farbe' or n contains 'color' or n contains 'colour'
@@ -41,7 +52,7 @@
               assign vname = value.name | default: value
               assign qf_colors = qf_colors | append: '|' | append: vname
             endfor
-          elsif n contains 'größe' or n contains 'grösse' or n contains 'groesse' or n contains 'size'
+          elsif n contains 'größe' or n contains 'grösse' or n contains 'groesse' or n contains 'size' or n contains 'inhalt' or n contains 'füllmenge' or n contains 'volum'
             for value in option.values
               assign vname = value.name | default: value
               assign qf_sizes = qf_sizes | append: '|' | append: vname
@@ -53,6 +64,7 @@
         endif
       endfor
     endif
+    assign qf_families = qf_families | remove_first: '|' | split: '|' | uniq | sort_natural
     assign qf_colors = qf_colors | remove_first: '|' | split: '|' | uniq
     assign qf_sizes = qf_sizes | remove_first: '|' | split: '|' | uniq
     assign qf_types = collection.all_types | sort_natural
@@ -104,7 +116,7 @@
             {%- endfor -%}
           </div>
         </div>
-      {%- elsif fl contains 'größe' or fl contains 'grösse' or fl contains 'groesse' or fl contains 'size' -%}
+      {%- elsif fl contains 'größe' or fl contains 'grösse' or fl contains 'groesse' or fl contains 'size' or fl contains 'inhalt' or fl contains 'füllmenge' or fl contains 'volum' -%}
         {%- capture size_row -%}
           <div class="frow">
             <span class="flabel">{{ filter.label }}</span>
@@ -130,6 +142,21 @@
       {%- endif -%}
     {%- endfor -%}
 
+    {%- if section.settings.auto_filters and has_family == false and qf_families.size > 1 -%}
+      <div class="frow">
+        <span class="flabel">{{ section.settings.t_family }}</span>
+        <div class="scroller" data-qf-row="families">
+          {%- for f in qf_families -%}
+            {%- capture dot -%}{% render 'color-value', name: f %}{%- endcapture -%}
+            {%- assign dot = dot | strip -%}
+            <button type="button" class="pill" data-qf-value="{{ f | downcase | escape }}">
+              {%- if dot contains '#' or dot contains 'rgb' -%}<span class="dot" style="background: {{ dot }}" aria-hidden="true"></span>{%- endif -%}
+              {{- f -}}
+            </button>
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
     {%- if section.settings.auto_filters and has_color == false and qf_colors.size > 1 -%}
       <div class="frow">
         <span class="flabel">{{ section.settings.t_color }}</span>
@@ -167,13 +194,13 @@
           <button type="button" class="toggle" data-qf-stock aria-pressed="false"><i></i>{{ section.settings.t_stock }}</button>
         {%- endif -%}
         <div class="dens" data-density data-default="{{ section.settings.cols_default }}">
-          <button type="button" data-cols="2" aria-label="2 columns">
+          <button type="button" data-cols="2" aria-label="2 Spalten">
             <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor" aria-hidden="true"><rect x="0" y="0" width="8" height="8"/><rect x="10" y="0" width="8" height="8"/><rect x="0" y="10" width="8" height="8"/><rect x="10" y="10" width="8" height="8"/></svg>
           </button>
-          <button type="button" data-cols="4" aria-label="4 columns">
+          <button type="button" data-cols="4" aria-label="4 Spalten">
             <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor" aria-hidden="true">{%- for r in (0..2) -%}{%- for c in (0..2) -%}<rect x="{{ c | times: 6.5 | plus: 0.5 }}" y="{{ r | times: 6.5 | plus: 0.5 }}" width="4" height="4"/>{%- endfor -%}{%- endfor -%}</svg>
           </button>
-          <button type="button" data-cols="6" aria-label="6 columns">
+          <button type="button" data-cols="6" aria-label="6 Spalten">
             <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor" aria-hidden="true">{%- for r in (0..3) -%}{%- for c in (0..3) -%}<rect x="{{ c | times: 5 }}" y="{{ r | times: 5 }}" width="3" height="3"/>{%- endfor -%}{%- endfor -%}</svg>
           </button>
         </div>
@@ -204,13 +231,14 @@
   "name": "Kollektion",
   "settings": [
     { "type": "range", "id": "per_page", "label": "Produkte pro Seite", "min": 8, "max": 48, "step": 4, "default": 24 },
-    { "type": "link_list", "id": "category_menu", "label": "Kategorie-Menü (Pillen oben)", "info": "Optional. Ansonsten erscheinen Filter aus der App Search & Discovery automatisch als Pillen, Farben als Kreise und Größen als Kästchen." },
+    { "type": "link_list", "id": "category_menu", "label": "Kategorie-Menü (Pillen oben)", "info": "Optional. Ansonsten erscheinen Filter aus der App Search & Discovery automatisch als Pillen, Farben als Kreise und Größen (ml) als Kästchen." },
     { "type": "select", "id": "cols_default", "label": "Spalten (Desktop, Standard)", "default": "4", "options": [ { "value": "2", "label": "2" }, { "value": "4", "label": "4" }, { "value": "6", "label": "6" } ] },
     { "type": "header", "content": "Texte" },
     { "type": "text", "id": "t_home", "label": "Startseite", "default": "Startseite" },
     { "type": "text", "id": "t_shop", "label": "Shop", "default": "Shop" },
     { "type": "text", "id": "t_category", "label": "Kategorie", "default": "Kategorie" },
     { "type": "text", "id": "t_all", "label": "Alle", "default": "Alle" },
+    { "type": "text", "id": "t_family", "label": "Duftfamilie", "default": "Duftfamilie" },
     { "type": "text", "id": "t_color", "label": "Farbe", "default": "Farbe" },
     { "type": "text", "id": "t_size", "label": "Größe", "default": "Größe" },
     { "type": "text", "id": "t_stock", "label": "Auf Lager", "default": "Auf Lager" },
@@ -219,7 +247,7 @@
     { "type": "text", "id": "t_more", "label": "Mehr laden", "default": "Mehr laden" },
     { "type": "text", "id": "t_products", "label": "Produkte", "default": "Produkte" },
     { "type": "header", "content": "Filter" },
-    { "type": "checkbox", "id": "auto_filters", "label": "Schnellfilter automatisch erzeugen", "default": true, "info": "Fehlen in Search & Discovery die Filter für Kategorie (Produkttyp), Farbe, Größe oder Verfügbarkeit, baut das Theme sie selbst aus deinen Produkten (Produkttyp, Varianten-Optionen „Farbe/Color“ und „Größe/Size“). Für sehr große Kollektionen sind die Filter aus Search & Discovery schneller." }
+    { "type": "checkbox", "id": "auto_filters", "label": "Schnellfilter automatisch erzeugen", "default": true, "info": "Fehlen in Search & Discovery die Filter für Kategorie (Produkttyp), Duftfamilie, Farbe, Größe oder Verfügbarkeit, baut das Theme sie selbst aus deinen Produkten (Produkttyp, Metafeld custom.scent_family bzw. Tags „Duftfamilie: …“, Varianten-Optionen „Farbe“ und „Größe/Inhalt“). Für sehr große Kollektionen sind die Filter aus Search & Discovery schneller." }
   ]
 }
 {% endschema %}

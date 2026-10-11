@@ -5,7 +5,7 @@
       {%- if block.settings.image != blank -%}
         {{ block.settings.image | image_url: width: 1400 | image_tag: class: 'tile-img', sizes: '(min-width: 700px) 33vw, 100vw', widths: '500, 800, 1100, 1400', loading: 'lazy', alt: block.settings.image.alt }}
       {%- else -%}
-        {{ 'collection-apparel-1' | placeholder_svg_tag: 'placeholder-svg tile-img' }}
+        {%- assign ph = 'collection-' | append: forloop.index -%}{{ ph | placeholder_svg_tag: 'placeholder-svg tile-img' }}
       {%- endif -%}
       {%- if block.settings.label_image != blank -%}
         {{ block.settings.label_image | image_url: width: 300 | image_tag: class: 'tile-label-img', alt: '' }}
@@ -32,16 +32,16 @@
         { "type": "url", "id": "link", "label": "Link" },
         { "type": "image_picker", "id": "label_image", "label": "Kleines Logo über dem Titel" },
         { "type": "text", "id": "label", "label": "Kleiner Schriftzug über dem Titel" },
-        { "type": "text", "id": "title", "label": "Titel", "default": "Basics" }
+        { "type": "text", "id": "title", "label": "Titel", "default": "Damen" }
       ]
     }
   ],
   "max_blocks": 4,
   "presets": [
     { "name": "Kategorie-Kacheln", "blocks": [
-      { "type": "tile", "settings": { "title": "Basics" } },
-      { "type": "tile", "settings": { "title": "Women" } },
-      { "type": "tile", "settings": { "title": "Sports" } }
+      { "type": "tile", "settings": { "title": "Damen" } },
+      { "type": "tile", "settings": { "title": "Herren" } },
+      { "type": "tile", "settings": { "title": "Unisex" } }
     ] }
   ]
 }

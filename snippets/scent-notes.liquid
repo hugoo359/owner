@@ -1,0 +1,89 @@
+{%- comment -%}
+  Duftnoten-Akkordeon: Duftpyramide (Kopf-, Herz-, Basisnote) und Duftprofil (1–5).
+  Metafelder: custom.top_notes, custom.heart_notes, custom.base_notes (Text oder Liste),
+  custom.intensity, custom.longevity, custom.sillage (Ganzzahl 1–5).
+  Parameter: product, block (Block „Duftnoten“ der Produktseite)
+{%- endcomment -%}
+{%- capture n_top -%}{% render 'mf-text', mf: product.metafields.custom.top_notes %}{%- endcapture -%}
+{%- capture n_heart -%}{% render 'mf-text', mf: product.metafields.custom.heart_notes %}{%- endcapture -%}
+{%- capture n_base -%}{% render 'mf-text', mf: product.metafields.custom.base_notes %}{%- endcapture -%}
+{%- liquid
+  assign p_int = product.metafields.custom.intensity.value | default: 0 | at_most: 5
+  assign p_lon = product.metafields.custom.longevity.value | default: 0 | at_most: 5
+  assign p_sil = product.metafields.custom.sillage.value | default: 0 | at_most: 5
+  assign has_notes = false
+  if n_top != blank or n_heart != blank or n_base != blank
+    assign has_notes = true
+  endif
+  assign has_profile = false
+  if p_int > 0 or p_lon > 0 or p_sil > 0
+    assign has_profile = true
+  endif
+-%}
+{%- if has_notes or has_profile or request.design_mode -%}
+  <details {{ block.shopify_attributes }}{% if block.settings.open %} open{% endif %}>
+    <summary>{% render 'icon', icon: 'notes' %}<span>{{ block.settings.title }}</span>{% render 'icon', icon: 'plus' %}</summary>
+    <div class="body">
+      {%- if has_notes -%}
+        <ul class="notes">
+          {%- for i in (1..3) -%}
+            {%- liquid
+              case i
+                when 1
+                  assign n_label = block.settings.t_top
+                  assign n_val = n_top
+                when 2
+                  assign n_label = block.settings.t_heart
+                  assign n_val = n_heart
+                when 3
+                  assign n_label = block.settings.t_base
+                  assign n_val = n_base
+              endcase
+            -%}
+            {%- if n_val != blank -%}
+              <li class="note">
+                <svg class="note-ico" width="26" height="23" viewBox="0 0 24 22" aria-hidden="true">
+                  <path class="{% if i == 1 %}on{% endif %}" d="M12 0l3.6 6.3H8.4z"/>
+                  <path class="{% if i == 2 %}on{% endif %}" d="M7.9 7.7h8.2l3.5 6.1H4.4z"/>
+                  <path class="{% if i == 3 %}on{% endif %}" d="M3.6 15.2h16.8L24 22H0z"/>
+                </svg>
+                <span class="note-tier">{{ n_label }}</span>
+                <span class="note-val">{{ n_val }}</span>
+              </li>
+            {%- endif -%}
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+      {%- if has_profile -%}
+        <dl class="profile">
+          {%- for i in (1..3) -%}
+            {%- liquid
+              case i
+                when 1
+                  assign p_label = block.settings.t_intensity
+                  assign p_val = p_int
+                when 2
+                  assign p_label = block.settings.t_longevity
+                  assign p_val = p_lon
+                when 3
+                  assign p_label = block.settings.t_sillage
+                  assign p_val = p_sil
+              endcase
+            -%}
+            {%- if p_val > 0 -%}
+              <div class="prof-row">
+                <dt>{{ p_label }}</dt>
+                <dd class="prof-bar" role="img" aria-label="{{ p_val }} von 5">
+                  {%- for k in (1..5) -%}<i class="{% if k <= p_val %}on{% endif %}" style="--k: {{ k }}"></i>{%- endfor -%}
+                </dd>
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        </dl>
+      {%- endif -%}
+      {%- if has_notes == false and has_profile == false -%}
+        <p class="notes-hint">Noch keine Duftnoten hinterlegt. Lege unter Einstellungen → Benutzerdefinierte Daten → Produkte die Metafelder custom.top_notes, custom.heart_notes und custom.base_notes an (optional custom.intensity, custom.longevity, custom.sillage als Ganzzahl 1–5). Dieser Hinweis ist nur im Theme-Editor sichtbar.</p>
+      {%- endif -%}
+    </div>
+  </details>
+{%- endif -%}
