@@ -1,0 +1,23 @@
+{%- comment -%}
+  Schnellfilter-Zeile mit Pillen (Fallback ohne Search & Discovery).
+  Parameter: label, key ('type' = Einzelauswahl mit „Alle“-Pille, sonst Mehrfachauswahl),
+  values (Liste), all_label, dots (true = Farbpunkt aus der Theme-Farbzuordnung)
+{%- endcomment -%}
+<div class="frow">
+  <span class="flabel">{{ label }}</span>
+  <div class="scroller" data-qf-row="{{ key }}"{% if key == 'type' %} data-qf-single{% endif %}>
+    {%- if key == 'type' -%}<button type="button" class="pill on" data-qf-all>{{ all_label }}</button>{%- endif -%}
+    {%- for v in values -%}
+      {%- if v != blank -%}
+        <button type="button" class="pill" data-qf-value="{{ v | downcase | escape }}">
+          {%- if dots -%}
+            {%- capture dot -%}{% render 'color-value', name: v %}{%- endcapture -%}
+            {%- assign dot = dot | strip -%}
+            {%- if dot contains '#' or dot contains 'rgb' -%}<span class="dot" style="background: {{ dot }}" aria-hidden="true"></span>{%- endif -%}
+          {%- endif -%}
+          {{- v -}}
+        </button>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+</div>

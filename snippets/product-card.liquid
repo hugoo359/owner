@@ -1,7 +1,7 @@
 {%- comment -%}
   Produktkarte für Kollektion, Suche und Empfehlungen.
-  Parameter: product, optional only_variant (nur diese Variante zeigen, z. B. 100 ml) und
-  only_label (angezeigte Größe, wenn das Produkt keine Größen-Option hat)
+  Parameter: product, optional only_id (ID der einzigen Variante, die gezeigt wird, z. B. 100 ml)
+  und only_label (angezeigte Größe, wenn das Produkt keine Größen-Option hat)
 {%- endcomment -%}
 {%- liquid
   assign size_option = nil
@@ -46,7 +46,16 @@
   endif
 
   # Was die Karte zeigt: ganzes Produkt oder nur eine Variante (z. B. nur 100 ml)
-  assign cv = only_variant
+  assign cv = nil
+  if only_id != blank
+    for v in product.variants
+      assign vid = v.id | append: ''
+      if vid == only_id
+        assign cv = v
+        break
+      endif
+    endfor
+  endif
   assign card_url = product.url
   assign card_media = product.featured_media
   assign card_price = product.price

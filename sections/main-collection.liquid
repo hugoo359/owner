@@ -50,12 +50,14 @@
             continue
           endif
         endif
-        capture fams
-          render 'scent-families', product: product
-        endcapture
-        assign fams = fams | strip
-        if fams != blank
-          assign qf_families = qf_families | append: '|' | append: fams
+        if section.settings.show_family
+          capture fams
+            render 'scent-families', product: product
+          endcapture
+          assign fams = fams | strip
+          if fams != blank
+            assign qf_families = qf_families | append: '|' | append: fams
+          endif
         endif
         for option in product.options_with_values
           assign n = option.name | downcase
@@ -83,18 +85,10 @@
   -%}
 
   <div class="filters" data-reveal{% if section.settings.auto_filters %} data-qf{% endif %}>
-    {%- if section.settings.auto_filters and has_cat == false and qf_types.size > 1 -%}
-      <div class="frow">
-        <span class="flabel">{{ section.settings.t_category }}</span>
-        <div class="scroller" data-qf-row="type" data-qf-single>
-          <button type="button" class="pill on" data-qf-all>{{ section.settings.t_all }}</button>
-          {%- for t in qf_types -%}
-            {%- if t != blank -%}<button type="button" class="pill" data-qf-value="{{ t | downcase | escape }}">{{ t }}</button>{%- endif -%}
-          {%- endfor -%}
-        </div>
-      </div>
+    {%- if section.settings.show_category and section.settings.auto_filters and has_cat == false and qf_types.size > 1 -%}
+      {% render 'qf-pill-row', label: section.settings.t_category, key: 'type', values: qf_types, all_label: section.settings.t_all %}
     {%- endif -%}
-    {%- if section.settings.category_menu != blank -%}
+    {%- if section.settings.show_category and section.settings.category_menu != blank -%}
       <div class="frow">
         <span class="flabel">{{ section.settings.t_category }}</span>
         <div class="scroller">
@@ -114,6 +108,10 @@
         {%- continue -%}
       {%- endif -%}
       {%- if filter.type != 'list' -%}{%- continue -%}{%- endif -%}
+      {%- if filter.param_name == 'filter.p.product_type' and section.settings.show_category == false -%}{%- continue -%}{%- endif -%}
+      {%- if section.settings.show_family == false -%}
+        {%- if fl contains 'duft' or fl contains 'scent' or fl contains 'fragrance' -%}{%- continue -%}{%- endif -%}
+      {%- endif -%}
 
       {%- if filter.presentation == 'swatch' or fl contains 'farbe' or fl contains 'color' or fl contains 'colour' -%}
         <div class="frow">
@@ -155,20 +153,8 @@
       {%- endif -%}
     {%- endfor -%}
 
-    {%- if section.settings.auto_filters and has_family == false and qf_families.size > 1 -%}
-      <div class="frow">
-        <span class="flabel">{{ section.settings.t_family }}</span>
-        <div class="scroller" data-qf-row="families">
-          {%- for f in qf_families -%}
-            {%- capture dot -%}{% render 'color-value', name: f %}{%- endcapture -%}
-            {%- assign dot = dot | strip -%}
-            <button type="button" class="pill" data-qf-value="{{ f | downcase | escape }}">
-              {%- if dot contains '#' or dot contains 'rgb' -%}<span class="dot" style="background: {{ dot }}" aria-hidden="true"></span>{%- endif -%}
-              {{- f -}}
-            </button>
-          {%- endfor -%}
-        </div>
-      </div>
+    {%- if section.settings.show_family and section.settings.auto_filters and has_family == false and qf_families.size > 1 -%}
+      {% render 'qf-pill-row', label: section.settings.t_family, key: 'families', values: qf_families, dots: true %}
     {%- endif -%}
     {%- if section.settings.auto_filters and has_color == false and qf_colors.size > 1 -%}
       <div class="frow">
@@ -224,19 +210,13 @@
   <div class="grid" id="ProductGrid" data-grid style="--cols: {{ section.settings.cols_default }}">
     {%- assign shown = 0 -%}
     {%- for product in collection.products -%}
+      {%- assign pick_id = '' -%}
       {%- if only_size != blank -%}
         {%- capture pick_id -%}{% render 'size-variant', product: product, size: only_size %}{%- endcapture -%}
         {%- if pick_id == blank -%}{%- continue -%}{%- endif -%}
-        {%- assign pick = nil -%}
-        {%- for v in product.variants -%}
-          {%- assign vid = v.id | append: '' -%}
-          {%- if vid == pick_id -%}{%- assign pick = v -%}{%- break -%}{%- endif -%}
-        {%- endfor -%}
         {%- assign shown = shown | plus: 1 -%}
-        {% render 'product-card', product: product, only_variant: pick, only_label: section.settings.only_size %}
-      {%- else -%}
-        {% render 'product-card', product: product %}
       {%- endif -%}
+      {% render 'product-card', product: product, only_id: pick_id, only_label: section.settings.only_size %}
     {%- else -%}
       <div class="empty">{{ section.settings.t_empty }} <a href="{{ collection.url }}">{{ section.settings.t_reset }}</a></div>
     {%- endfor -%}
@@ -262,7 +242,10 @@
   "name": "Kollektion",
   "settings": [
     { "type": "range", "id": "per_page", "label": "Produkte pro Seite", "min": 8, "max": 48, "step": 4, "default": 24 },
-    { "type": "link_list", "id": "category_menu", "label": "Kategorie-Menü (Pillen oben)", "info": "Optional. Ansonsten erscheinen Filter aus der App Search & Discovery automatisch als Pillen, Farben als Kreise und Größen (ml) als Kästchen." },
+    { "type": "header", "content": "Filterzeilen" },
+    { "type": "checkbox", "id": "show_category", "label": "„Kategorie“ anzeigen", "default": false, "info": "Produkttyp-Pillen, z. B. Eau de Parfum / Eau de Toilette." },
+    { "type": "checkbox", "id": "show_family", "label": "„Duftfamilie“ anzeigen", "default": false },
+    { "type": "link_list", "id": "category_menu", "label": "Kategorie-Menü (Pillen oben)", "info": "Optional, nur sichtbar mit „Kategorie“ anzeigen. Ansonsten erscheinen Filter aus der App Search & Discovery automatisch als Pillen, Farben als Kreise und Größen (ml) als Kästchen." },
     { "type": "text", "id": "only_size", "label": "Nur Düfte in dieser Größe zeigen", "default": "100 ml", "info": "Z. B. „100 ml“. Jede Karte zeigt dann nur diese Größe mit Preis und Grundpreis, Düfte ohne diese Größe werden ausgeblendet. Leer lassen = alle Größen." },
     { "type": "select", "id": "cols_default", "label": "Spalten (Desktop, Standard)", "default": "4", "options": [ { "value": "2", "label": "2" }, { "value": "4", "label": "4" }, { "value": "6", "label": "6" } ] },
     { "type": "header", "content": "Texte" },
