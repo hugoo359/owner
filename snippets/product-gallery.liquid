@@ -1,0 +1,78 @@
+{%- comment -%}
+  Bildergalerie der Produktseite: Wischen (Handy), Pfeile + Thumbnails (Desktop), Vollbild-Ansicht.
+  Bilder kommen aus den Produktmedien in Shopify. Ohne Medien erscheint die Ersatz-Illustration.
+  Parameter: product, featured (Medium der gewählten Variante), art, section_id
+{%- endcomment -%}
+{%- liquid
+  assign count = product.media.size
+  assign lightbox_id = 'Lightbox-' | append: section_id
+-%}
+<div class="pg{% if count < 2 %} pg--single{% endif %}" data-gallery data-lightbox="{{ lightbox_id }}" role="region" aria-roledescription="carousel" aria-label="{{ 'product.gallery' | t }}">
+  <div class="pg-viewport">
+    <ul class="pg-track" data-gallery-track role="list">
+      {%- if count > 0 -%}
+        {%- assign n = 0 -%}
+        {%- if featured -%}
+          {%- assign n = 1 -%}
+          {% render 'product-media-slide', media: featured, index: 1, count: count, eager: true %}
+        {%- endif -%}
+        {%- for media in product.media -%}
+          {%- if featured and media.id == featured.id -%}{%- continue -%}{%- endif -%}
+          {%- assign n = n | plus: 1 -%}
+          {%- if n == 1 -%}
+            {% render 'product-media-slide', media: media, index: n, count: count, eager: true %}
+          {%- else -%}
+            {% render 'product-media-slide', media: media, index: n, count: count, eager: false %}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- else -%}
+        <li class="pg-slide" data-index="0">
+          <div class="pg-media">{% render 'fallback-art', art: art, alt: product.title, eager: true %}</div>
+        </li>
+      {%- endif -%}
+    </ul>
+    {%- if count > 1 -%}
+      <button type="button" class="pg-arrow pg-arrow--prev" data-gallery-prev aria-label="{{ 'product.previous_image' | t }}">{% render 'icon', icon: 'arrow-left' %}</button>
+      <button type="button" class="pg-arrow pg-arrow--next" data-gallery-next aria-label="{{ 'product.next_image' | t }}">{% render 'icon', icon: 'arrow-right' %}</button>
+    {%- endif -%}
+  </div>
+
+  {%- if count > 1 -%}
+    <div class="pg-meta">
+      <span class="pg-count" aria-hidden="true"><b data-gallery-now>01</b> / {% if count < 10 %}0{% endif %}{{ count }}</span>
+      <span class="pg-progress" aria-hidden="true"><i data-gallery-bar style="--p: {{ 1 | times: 100.0 | divided_by: count }}%"></i></span>
+    </div>
+    <ul class="pg-thumbs" role="list">
+      {%- assign n = 0 -%}
+      {%- if featured -%}
+        {%- assign n = 1 -%}
+        <li><button type="button" class="pg-thumb is-on" data-thumb="{{ featured.id }}" aria-label="{{ 'product.media_label' | t: index: 1, count: count }}" aria-current="true">{{ featured.preview_image | image_url: width: 180 | image_tag: loading: 'lazy', alt: '', width: 90 }}</button></li>
+      {%- endif -%}
+      {%- for media in product.media -%}
+        {%- if featured and media.id == featured.id -%}{%- continue -%}{%- endif -%}
+        {%- assign n = n | plus: 1 -%}
+        <li><button type="button" class="pg-thumb{% if n == 1 %} is-on{% endif %}" data-thumb="{{ media.id }}" aria-label="{{ 'product.media_label' | t: index: n, count: count }}"{% if n == 1 %} aria-current="true"{% endif %}>{{ media.preview_image | image_url: width: 180 | image_tag: loading: 'lazy', alt: '', width: 90 }}</button></li>
+      {%- endfor -%}
+    </ul>
+  {%- endif -%}
+</div>
+
+{%- if count > 0 -%}
+  <div id="{{ lightbox_id }}" class="layer lightbox" hidden>
+    <div class="backdrop" data-close="{{ lightbox_id }}"></div>
+    <div class="lightbox-panel" role="dialog" aria-modal="true" aria-label="{{ 'product.gallery' | t }}">
+      <button type="button" class="lightbox-close" data-close="{{ lightbox_id }}" aria-label="{{ 'general.close' | t }}">{% render 'icon', icon: 'close' %}</button>
+      <ul class="lightbox-track" data-lightbox-track role="list">
+        {%- for media in product.media -%}
+          <li data-media-id="{{ media.id }}">
+            {{ media.preview_image | image_url: width: 2400 | image_tag: loading: 'lazy', sizes: '100vw', widths: '1200, 1800, 2400', alt: media.alt | default: product.title }}
+          </li>
+        {%- endfor -%}
+      </ul>
+      {%- if count > 1 -%}
+        <button type="button" class="pg-arrow pg-arrow--prev" data-lightbox-prev aria-label="{{ 'product.previous_image' | t }}">{% render 'icon', icon: 'arrow-left' %}</button>
+        <button type="button" class="pg-arrow pg-arrow--next" data-lightbox-next aria-label="{{ 'product.next_image' | t }}">{% render 'icon', icon: 'arrow-right' %}</button>
+      {%- endif -%}
+    </div>
+  </div>
+{%- endif -%}

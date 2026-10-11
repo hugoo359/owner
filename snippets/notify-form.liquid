@@ -1,0 +1,14 @@
+{%- comment -%}
+  „Benachrichtigen“-Formular für nicht verfügbare Produkte (natives Shopify-Kundenformular).
+  Die Anmeldung erscheint unter Kunden mit den Tags notify und notify-<handle>.
+  Parameter: product, status ('available' | 'soldout' | 'soon'), section_id
+{%- endcomment -%}
+{%- assign form_id = 'Notify-' | append: section_id -%}
+<div class="notify" data-notify{% if status == 'available' %} hidden{% endif %}>
+  <p class="notify-title">{{ 'product.notify_title' | t }}</p>
+  <p class="notify-text" data-notify-soldout{% if status == 'soon' %} hidden{% endif %}>{{ 'product.notify_text' | t: title: product.title }}</p>
+  <p class="notify-text" data-notify-soon{% unless status == 'soon' %} hidden{% endunless %}>{{ 'product.notify_text_soon' | t: title: product.title }}</p>
+  {%- capture tags -%}notify, notify-{{ product.handle }}{%- endcapture -%}
+  {%- capture notify_label -%}{{ 'product.notify_button' | t }}{%- endcapture -%}
+  {% render 'newsletter-form', form_id: form_id, tags: tags, button_label: notify_label %}
+</div>

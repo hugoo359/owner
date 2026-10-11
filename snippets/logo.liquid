@@ -1,7 +1,17 @@
-{%- comment -%} Gibt das Logo-Bild aus den Theme-Einstellungen aus, sonst den Shopnamen als Schriftzug. {%- endcomment -%}
+{%- comment -%}
+  Logo aus den Theme-Einstellungen, sonst Shopname als Schriftzug (optional mit Sanduhr-Zeichen).
+  Parameter: size ('sm' | 'lg'), eager (bool)
+{%- endcomment -%}
 {%- if settings.logo != blank -%}
   {%- assign w2 = settings.logo_width | times: 2 -%}
-  {{ settings.logo | image_url: width: w2 | image_tag: class: 'logo-img', alt: shop.name, loading: 'eager', width: settings.logo_width }}
+  {%- if eager -%}
+    {{ settings.logo | image_url: width: w2 | image_tag: class: 'logo-img', alt: shop.name, loading: 'eager', width: settings.logo_width }}
+  {%- else -%}
+    {{ settings.logo | image_url: width: w2 | image_tag: class: 'logo-img', alt: shop.name, loading: 'lazy', width: settings.logo_width }}
+  {%- endif -%}
 {%- else -%}
-  <span class="logo">{{ shop.name }}</span>
+  <span class="logo logo--{{ size | default: 'sm' }}">
+    {%- if settings.logo_emblem -%}{% render 'emblem', size: 14, class: 'logo-emblem' %}{%- endif -%}
+    <span class="logo-word">{{ shop.name }}</span>
+  </span>
 {%- endif -%}

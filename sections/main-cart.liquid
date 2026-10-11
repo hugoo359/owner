@@ -1,37 +1,66 @@
-<div class="wrap cart-page">
-  <h1 class="ctitle">Cart</h1>
-  {%- if cart.item_count == 0 -%}
-    <div class="cart-empty">Your cart is empty.<br><a href="{{ routes.all_products_collection_url }}">Shop now</a></div>
-  {%- else -%}
-    <form action="{{ routes.cart_url }}" method="post" class="cart-form">
-      {%- for item in cart.items -%}
-        <div class="line cart-line">
-          <a href="{{ item.url }}" class="media">{%- if item.image -%}{{ item.image | image_url: width: 300 | image_tag: alt: item.product.title, loading: 'lazy' }}{%- endif -%}</a>
-          <div>
-            <h3><a href="{{ item.url }}">{{ item.product.title }}</a></h3>
-            <div class="pr">{{ item.final_price | money_with_currency }}</div>
-            {%- unless item.product.has_only_default_variant -%}<div class="size">{{ item.variant.title }}</div>{%- endunless -%}
-            <div class="qty-row">
-              <label class="visually-hidden" for="Qty-{{ forloop.index }}">Quantity</label>
-              <input class="qty-input" type="number" min="0" name="updates[]" id="Qty-{{ forloop.index }}" value="{{ item.quantity }}">
-              <a class="link-u" href="{{ item.url_to_remove }}">Remove</a>
-            </div>
-          </div>
-          <div class="line-total">{{ item.final_line_price | money_with_currency }}</div>
-        </div>
-      {%- endfor -%}
-      <div class="cart-sum">
-        <div class="sumrow b"><span>Subtotal</span><span>{{ cart.total_price | money_with_currency }}</span></div>
-        <p class="vat">{{ settings.tax_text }} · Shipping calculated at checkout.</p>
-        <div class="cart-actions">
-          <button type="submit" name="update" class="btn-outline">Update</button>
-          <button type="submit" name="checkout" class="checkout">CHECKOUT</button>
-        </div>
+<section class="cart-page scheme-{{ section.settings.color_scheme }} section-pad">
+  <div class="wrap cart-page-inner">
+    <h1 class="h1" data-split>{{ 'cart.title' | t }}</h1>
+    {%- if cart.item_count == 0 -%}
+      <div class="cart-empty">
+        {% render 'emblem', size: 36, animate: true %}
+        <p class="cart-empty-title">{{ 'cart.empty' | t }}</p>
+        <a class="btn btn--line" href="{{ routes.all_products_collection_url }}">{{ 'cart.continue' | t }}</a>
       </div>
-    </form>
-  {%- endif -%}
-</div>
+    {%- else -%}
+      <form action="{{ routes.cart_url }}" method="post" class="cart-form" id="CartPageForm">
+        <ul class="lines" role="list">
+          {%- for item in cart.items -%}
+            <li class="line line--page">
+              <a href="{{ item.url }}" class="line-media" tabindex="-1" aria-hidden="true">
+                {%- if item.image -%}{{ item.image | image_url: width: 400 | image_tag: alt: '', loading: 'lazy', width: 200 }}{%- else -%}{% render 'fallback-art', art: 'relic', class: 'line-art' %}{%- endif -%}
+              </a>
+              <div class="line-info">
+                <div class="line-top">
+                  <h2 class="line-title"><a href="{{ item.url }}">{{ item.product.title }}</a></h2>
+                  <div class="line-price">
+                    {%- if item.original_line_price > item.final_line_price -%}<s>{% render 'money', amount: item.original_line_price %}</s>{%- endif -%}
+                    <span>{% render 'money', amount: item.final_line_price %}</span>
+                  </div>
+                </div>
+                {%- unless item.product.has_only_default_variant -%}<p class="line-variant">{{ item.variant.title }}</p>{%- endunless -%}
+                <div class="line-actions">
+                  <label class="visually-hidden" for="Qty-{{ forloop.index }}">{{ 'cart.quantity' | t }}</label>
+                  <input class="qty-input" type="number" min="0" name="updates[]" id="Qty-{{ forloop.index }}" value="{{ item.quantity }}">
+                  <a class="link-line" href="{{ item.url_to_remove }}">{{ 'cart.remove' | t }}</a>
+                </div>
+              </div>
+            </li>
+          {%- endfor -%}
+        </ul>
+        <div class="cart-sum">
+          {%- if settings.cart_note_enabled -%}
+            <label class="opt-legend" for="CartPageNote">{{ 'cart.note' | t }}</label>
+            <textarea name="note" id="CartPageNote" rows="3">{{ cart.note }}</textarea>
+          {%- endif -%}
+          {%- for discount in cart.cart_level_discount_applications -%}
+            <div class="sumrow"><span>{{ discount.title }}</span><span>-{% render 'money', amount: discount.total_allocated_amount %}</span></div>
+          {%- endfor -%}
+          <div class="sumrow sumrow--total"><span>{{ 'cart.subtotal' | t }}</span><span>{% render 'money', amount: cart.total_price %}</span></div>
+          <p class="d-note">{{ 'cart.taxes_shipping_at_checkout' | t }}</p>
+          <div class="btn-row">
+            <button type="submit" name="update" class="btn btn--line">{{ 'cart.update' | t }}</button>
+            <button type="submit" name="checkout" class="btn btn--solid">{{ 'cart.checkout' | t }}</button>
+          </div>
+        </div>
+      </form>
+    {%- endif -%}
+  </div>
+</section>
 
 {% schema %}
-{ "name": "Warenkorb-Seite" }
+{
+  "name": "Warenkorb-Seite",
+  "tag": "div",
+  "settings": [
+    { "type": "select", "id": "color_scheme", "label": "Farbschema", "default": "dark", "options": [
+      { "value": "dark", "label": "Nacht" }, { "value": "light", "label": "Pergament" }, { "value": "sand", "label": "Sand" }
+    ] }
+  ]
+}
 {% endschema %}

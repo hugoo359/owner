@@ -2,15 +2,20 @@
   {%- if predictive_search.performed -%}
     {%- assign products = predictive_search.resources.products -%}
     {%- if products.size > 0 -%}
-      <p>{{ products.size }} result{% if products.size > 1 %}s{% endif %}</p>
-      <div class="grid" style="--cols: 4; margin: 24px 0 0">
+      <ul class="ps-list" role="list">
         {%- for product in products limit: 4 -%}
-          {% render 'product-card', product: product %}
+          <li>
+            <a class="ps-item" href="{{ product.url }}">
+              <span class="ps-media">{%- if product.featured_media -%}{{ product.featured_media | image_url: width: 160 | image_tag: alt: '', loading: 'lazy', width: 80 }}{%- else -%}{% render 'fallback-art', art: 'relic' %}{%- endif -%}</span>
+              <span class="ps-title">{{ product.title }}</span>
+              {% render 'price', product: product %}
+            </a>
+          </li>
         {%- endfor -%}
-      </div>
-      <a class="search-all" href="{{ routes.search_url }}?q={{ predictive_search.terms | url_encode }}&options%5Bprefix%5D=last">View all results</a>
+      </ul>
+      <a class="link-arrow" href="{{ routes.search_url }}?q={{ predictive_search.terms | url_encode }}&options%5Bprefix%5D=last"><span>{{ 'search.view_all' | t }}</span>{% render 'icon', icon: 'arrow-right' %}</a>
     {%- else -%}
-      <p>No results for “{{ predictive_search.terms | escape }}”</p>
+      <p class="eyebrow">{{ 'search.no_results' | t }}</p>
     {%- endif -%}
   {%- endif -%}
 </div>

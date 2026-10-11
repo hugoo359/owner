@@ -1,0 +1,143 @@
+{%- liquid
+  assign s = section.settings
+  assign numerals = 'I,II,III,IV,V,VI,VII,VIII' | split: ','
+  assign shown = 0
+-%}
+<section class="fcol scheme-{{ s.color_scheme }} section-pad" style="--cols: {{ s.columns }}">
+  <div class="wrap">
+    {%- if s.eyebrow != blank or s.heading != blank or s.text != blank -%}
+      <header class="sec-head sec-head--{{ s.head_align }}">
+        {%- if s.eyebrow != blank -%}<p class="eyebrow" data-reveal>{{ s.eyebrow }}</p>{%- endif -%}
+        {%- if s.heading != blank -%}<h2 class="h1" data-split>{{ s.heading }}</h2>{%- endif -%}
+        {%- if s.text != blank -%}<div class="rte sec-text" data-reveal>{{ s.text }}</div>{%- endif -%}
+      </header>
+    {%- endif -%}
+
+    <div class="fcol-grid">
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'product' -%}
+            {%- liquid
+              assign p = block.settings.product
+              if p == blank and block.settings.handle != blank
+                assign p = all_products[block.settings.handle]
+                if p.id == blank
+                  assign p = nil
+                endif
+              endif
+              if s.exclude_current and product and p.id == product.id
+                continue
+              endif
+              assign shown = shown | plus: 1
+              assign era = block.settings.era
+              if era == blank and p
+                assign era = p.metafields.custom.era.value
+              endif
+              if s.show_numerals
+                assign num = numerals[forloop.index0]
+              else
+                assign num = ''
+              endif
+            -%}
+            {% render 'fragrance-card',
+              product: p,
+              era: era,
+              tagline: block.settings.tagline,
+              image: block.settings.image,
+              art: block.settings.fallback_art,
+              placeholder_title: block.settings.placeholder_title,
+              quick_add: s.quick_add,
+              numeral: num,
+              attrs: block.shopify_attributes
+            %}
+          {%- when 'coming_soon' -%}
+            {%- assign shown = shown | plus: 1 -%}
+            <article class="fcard fcard--soon fcard--veiled" data-reveal {{ block.shopify_attributes }}>
+              <a class="fcard-media" href="{{ block.settings.link | default: '#' }}" tabindex="-1" aria-hidden="true">
+                {%- if block.settings.image != blank -%}
+                  {{ block.settings.image | image_url: width: 1400 | image_tag: class: 'fcard-img', loading: 'lazy', sizes: '(min-width: 990px) 45vw, 92vw', widths: '500, 800, 1100, 1400', alt: '' }}
+                {%- else -%}
+                  {% render 'fallback-art', art: 'veil', class: 'fcard-img' %}
+                {%- endif -%}
+                {%- if s.show_numerals -%}<span class="fcard-numeral">{{ numerals[forloop.index0] }}</span>{%- endif -%}
+                <span class="badge badge--accent">{{ 'product.coming_soon' | t }}</span>
+              </a>
+              <div class="fcard-body">
+                {%- if block.settings.era != blank -%}<p class="eyebrow fcard-era">{{ block.settings.era }}</p>{%- endif -%}
+                <h3 class="fcard-title">{{ block.settings.title }}</h3>
+                {%- if block.settings.text != blank -%}<p class="fcard-sub">{{ block.settings.text }}</p>{%- endif -%}
+                {%- if block.settings.link_label != blank -%}
+                  <div class="fcard-foot">
+                    <a class="link-arrow" href="{{ block.settings.link | default: '#' }}"><span>{{ block.settings.link_label }}</span>{% render 'icon', icon: 'arrow-right' %}</a>
+                  </div>
+                {%- endif -%}
+              </div>
+            </article>
+        {%- endcase -%}
+      {%- endfor -%}
+    </div>
+
+    {%- if s.button_label != blank -%}
+      <div class="sec-foot" data-reveal>
+        <a class="btn btn--line" href="{{ s.button_link | default: routes.all_products_collection_url }}">{{ s.button_label }}</a>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Duft-Kollektion",
+  "tag": "div",
+  "settings": [
+    { "type": "select", "id": "color_scheme", "label": "Farbschema", "default": "dark", "options": [
+      { "value": "dark", "label": "Nacht" }, { "value": "light", "label": "Pergament" }, { "value": "sand", "label": "Sand" }
+    ] },
+    { "type": "text", "id": "eyebrow", "label": "Kleine Zeile", "default": "The Collection" },
+    { "type": "text", "id": "heading", "label": "Überschrift", "default": "Two figures. One hourglass." },
+    { "type": "richtext", "id": "text", "label": "Text" },
+    { "type": "select", "id": "head_align", "label": "Ausrichtung Überschrift", "default": "center", "options": [
+      { "value": "center", "label": "Mittig" }, { "value": "left", "label": "Links" }
+    ] },
+    { "type": "range", "id": "columns", "label": "Spalten (Desktop)", "min": 2, "max": 3, "step": 1, "default": 2 },
+    { "type": "checkbox", "id": "show_numerals", "label": "Römische Ziffern auf den Bildern", "default": true },
+    { "type": "checkbox", "id": "quick_add", "label": "„In den Warenkorb“ direkt auf der Karte", "default": true, "info": "Nur bei Produkten ohne Varianten-Auswahl." },
+    { "type": "checkbox", "id": "exclude_current", "label": "Auf Produktseiten das aktuelle Produkt ausblenden", "default": true },
+    { "type": "text", "id": "button_label", "label": "Button-Text" },
+    { "type": "url", "id": "button_link", "label": "Button-Link" }
+  ],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "Duft",
+      "settings": [
+        { "type": "product", "id": "product", "label": "Produkt" },
+        { "type": "text", "id": "handle", "label": "Ersatz: Produkt-Handle", "info": "Wird genutzt, solange oben kein Produkt gewählt ist (z. B. zeus)." },
+        { "type": "text", "id": "placeholder_title", "label": "Platzhalter-Name ohne Produkt", "default": "Fragrance" },
+        { "type": "text", "id": "era", "label": "Kleine Zeile über dem Namen", "info": "Leer = Metafeld custom.era des Produkts" },
+        { "type": "text", "id": "tagline", "label": "Unterzeile", "info": "Leer = Produkttyp aus Shopify" },
+        { "type": "image_picker", "id": "image", "label": "Eigenes Bild", "info": "Leer = Hauptbild des Produkts" },
+        { "type": "select", "id": "fallback_art", "label": "Ersatz-Illustration", "default": "relic", "options": [
+          { "value": "zeus", "label": "Flakon Gewitter" }, { "value": "pharaon", "label": "Flakon Wüste" }, { "value": "relic", "label": "Sanduhr" }, { "value": "veil", "label": "Verhüllt" }
+        ] }
+      ]
+    },
+    {
+      "type": "coming_soon",
+      "name": "Coming soon",
+      "limit": 2,
+      "settings": [
+        { "type": "text", "id": "era", "label": "Kleine Zeile", "default": "III" },
+        { "type": "text", "id": "title", "label": "Titel", "default": "Coming soon" },
+        { "type": "text", "id": "text", "label": "Text", "default": "The next name is still hidden in the sand." },
+        { "type": "image_picker", "id": "image", "label": "Bild" },
+        { "type": "text", "id": "link_label", "label": "Link-Text", "default": "Join the list" },
+        { "type": "url", "id": "link", "label": "Link" }
+      ]
+    }
+  ],
+  "presets": [
+    { "name": "Duft-Kollektion", "blocks": [ { "type": "product" }, { "type": "product" } ] }
+  ]
+}
+{% endschema %}

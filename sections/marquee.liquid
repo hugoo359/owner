@@ -1,0 +1,42 @@
+{%- liquid
+  assign items = section.blocks | where: 'type', 'item'
+-%}
+{%- if items.size > 0 -%}
+  <section class="marquee marquee--{{ section.settings.size }} scheme-{{ section.settings.color_scheme }}{% if section.settings.reverse %} marquee--reverse{% endif %}" style="--speed: {{ section.settings.speed }}s" aria-label="{{ items.first.settings.text | escape }}">
+    <div class="marquee-track" aria-hidden="true">
+      {%- for i in (1..2) -%}
+        <div class="marquee-group">
+          {%- for k in (1..3) -%}
+            {%- for block in items -%}
+              <span class="marquee-item"{% if i == 1 and k == 1 %} {{ block.shopify_attributes }}{% endif %}>{{ block.settings.text }}</span>
+              <span class="marquee-sep">{% render 'emblem', size: 12 %}</span>
+            {%- endfor -%}
+          {%- endfor -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  </section>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Laufband",
+  "tag": "div",
+  "settings": [
+    { "type": "select", "id": "color_scheme", "label": "Farbschema", "default": "dark", "options": [
+      { "value": "dark", "label": "Nacht" }, { "value": "light", "label": "Pergament" }, { "value": "sand", "label": "Sand" }
+    ] },
+    { "type": "select", "id": "size", "label": "Schriftgröße", "default": "lg", "options": [
+      { "value": "sm", "label": "Klein" }, { "value": "lg", "label": "Groß" }
+    ] },
+    { "type": "range", "id": "speed", "label": "Dauer eines Durchlaufs", "min": 10, "max": 90, "step": 5, "unit": "s", "default": 45 },
+    { "type": "checkbox", "id": "reverse", "label": "Andere Richtung", "default": false }
+  ],
+  "blocks": [
+    { "type": "item", "name": "Text", "settings": [ { "type": "text", "id": "text", "label": "Text", "default": "Extrait de Parfum" } ] }
+  ],
+  "presets": [
+    { "name": "Laufband", "blocks": [ { "type": "item", "settings": { "text": "Zeus" } }, { "type": "item", "settings": { "text": "Pharaon" } } ] }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1500" width="1200" height="1500">
+  <!-- Eigenständige Ersatz-Illustration (kein Original-Asset): verhüllter Flakon für kommende Düfte -->
+  <defs>
+    <radialGradient id="bg" cx=".5" cy=".55" r=".75">
+      <stop offset="0" stop-color="#1e1a16"/>
+      <stop offset="1" stop-color="#060505"/>
+    </radialGradient>
+    <linearGradient id="veil" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#1a1714"/>
+      <stop offset=".3" stop-color="#3d362e"/>
+      <stop offset=".55" stop-color="#25211c"/>
+      <stop offset=".8" stop-color="#3a332b"/>
+      <stop offset="1" stop-color="#141210"/>
+    </linearGradient>
+    <filter id="blur50"><feGaussianBlur stdDeviation="50"/></filter>
+    <filter id="blur5"><feGaussianBlur stdDeviation="5"/></filter>
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" stitchTiles="stitch"/>
+      <feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .06 0"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="1500" fill="url(#bg)"/>
+  <ellipse cx="600" cy="820" rx="360" ry="420" fill="#c6a46a" opacity=".08" filter="url(#blur50)"/>
+  <ellipse cx="600" cy="1214" rx="320" ry="24" fill="#000" opacity=".8" filter="url(#blur5)"/>
+  <path d="M600 420 C560 420 520 452 512 520 C500 610 470 640 440 700 C400 780 380 980 370 1210 L830 1210 C820 980 800 780 760 700 C730 640 700 610 688 520 C680 452 640 420 600 420 Z" fill="url(#veil)"/>
+  <path d="M520 560 C500 760 470 1000 450 1206 M600 430 C590 700 586 980 584 1208 M680 560 C700 760 728 1000 752 1206 M560 470 C530 640 520 900 516 1208 M642 470 C668 660 680 900 690 1208" fill="none" stroke="#5a5046" stroke-opacity=".45" stroke-width="2"/>
+  <path d="M370 1210 C460 1190 520 1220 600 1204 S760 1222 830 1210" fill="none" stroke="#c6a46a" stroke-opacity=".5" stroke-width="2"/>
+  <circle cx="600" cy="400" r="8" fill="#c6a46a" opacity=".7"/>
+  <path d="M600 260 V380" stroke="#c6a46a" stroke-opacity=".5" stroke-width="1.5" stroke-dasharray="2 8"/>
+  <rect width="1200" height="1500" filter="url(#grain)"/>
+</svg>

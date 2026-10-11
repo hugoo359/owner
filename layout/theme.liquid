@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="{{ request.locale.iso_code }}">
+<html lang="{{ request.locale.iso_code }}" class="no-js">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -12,35 +12,29 @@
   <title>
     {{ page_title }}
     {%- if current_tags %} – {{ current_tags | join: ', ' }}{% endif -%}
-    {%- if current_page != 1 %} – Page {{ current_page }}{% endif -%}
+    {%- if current_page != 1 %} – {{ 'general.page' | t: page: current_page }}{% endif -%}
     {%- unless page_title contains shop.name %} | {{ shop.name }}{% endunless -%}
   </title>
   {%- if page_description -%}
     <meta name="description" content="{{ page_description | escape }}">
   {%- endif -%}
+  {% render 'meta-tags' %}
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;1,900&display=swap">
+  {{ 'cormorant-garamond-latin-400-normal.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
+  {{ 'jost-latin-400-normal.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
+  {% render 'theme-styles' %}
+  {{ 'theme.css' | asset_url | stylesheet_tag }}
 
   <script>
-    document.documentElement.classList.add('js'{% if settings.anim_reveal %}, 'js-anim'{% endif %}{% if settings.respect_reduced_motion %}, 'rm-respect'{% endif %});
+    document.documentElement.classList.replace('no-js', 'js');
+    {%- if settings.anim_reveal %}document.documentElement.classList.add('js-anim');{% endif %}
+    {%- if settings.respect_reduced_motion %}document.documentElement.classList.add('rm-respect');{% endif %}
     setTimeout(function () { if (!window.__themeReady) document.documentElement.classList.remove('js-anim'); }, 3500);
   </script>
-  {{ 'theme.css' | asset_url | stylesheet_tag }}
-  <style>
-    :root{
-      --bg: {{ settings.color_background }};
-      --ink: {{ settings.color_text }};
-      --accent: {{ settings.color_accent }};
-      --ok: {{ settings.color_success }};
-      --logo-w: {{ settings.logo_width }}px;
-    }
-  </style>
 
   <script>
     window.theme = {
-      moneyFormat: {{ shop.money_with_currency_format | json }},
+      moneyFormat: {% if settings.currency_code_enabled %}{{ shop.money_with_currency_format | json }}{% else %}{{ shop.money_format | json }}{% endif %},
       routes: {
         root: {{ routes.root_url | json }},
         cart: {{ routes.cart_url | json }},
@@ -54,13 +48,16 @@
         respectReducedMotion: {{ settings.respect_reduced_motion | json }}
       },
       strings: {
-        added: "Added",
-        addToCart: "Add to cart",
-        soldOut: "Sold out",
-        unavailable: "Unavailable",
-        chooseSize: "Please select a size.",
-        inStock: {{ 'In stock.' | json }},
-        noResults: "No results"
+        addToCart: {{ 'product.add_to_cart' | t | json }},
+        soldOut: {{ 'product.sold_out' | t | json }},
+        comingSoon: {{ 'product.coming_soon' | t | json }},
+        unavailable: {{ 'product.unavailable' | t | json }},
+        inStock: {{ 'product.in_stock' | t | json }},
+        added: {{ 'product.added' | t | json }},
+        adding: {{ 'cart.adding' | t | json }},
+        cartError: {{ 'cart.error' | t | json }},
+        cookieUnavailable: {{ 'footer.cookie_unavailable' | t | json }},
+        loadError: {{ 'general.load_error' | t | json }}
       }
     };
   </script>
@@ -69,8 +66,8 @@
   {{ content_for_header }}
 </head>
 
-<body class="template-{{ template.name }}">
-  <a class="skip-link" href="#MainContent">Skip to content</a>
+<body class="template-{{ template.name }}{% if template.suffix %} template-{{ template.name }}--{{ template.suffix }}{% endif %}">
+  <a class="skip-link" href="#MainContent">{{ 'general.skip_to_content' | t }}</a>
 
   {% sections 'header-group' %}
 

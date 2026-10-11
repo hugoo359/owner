@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="1600" height="1000" preserveAspectRatio="xMidYMid slice">
+  <!-- Eigenständige Ersatz-Illustration (kein Original-Asset): Dünen bei Nacht -->
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#050404"/>
+      <stop offset=".55" stop-color="#1b140d"/>
+      <stop offset=".72" stop-color="#3a2817"/>
+      <stop offset="1" stop-color="#0b0806"/>
+    </linearGradient>
+    <radialGradient id="moon" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#f3e3bf"/>
+      <stop offset=".7" stop-color="#d7b77c"/>
+      <stop offset="1" stop-color="#a98048" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="d1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5a3c20"/><stop offset="1" stop-color="#150e08"/></linearGradient>
+    <linearGradient id="d2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a2614"/><stop offset="1" stop-color="#0c0805"/></linearGradient>
+    <linearGradient id="d3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22160c"/><stop offset="1" stop-color="#060403"/></linearGradient>
+    <filter id="blur60"><feGaussianBlur stdDeviation="60"/></filter>
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="2" stitchTiles="stitch"/>
+      <feColorMatrix values="0 0 0 0 1  0 0 0 0 .92  0 0 0 0 .8  0 0 0 .08 0"/>
+    </filter>
+  </defs>
+  <rect width="1600" height="1000" fill="url(#sky)"/>
+  <circle cx="800" cy="560" r="300" fill="#c6a46a" opacity=".22" filter="url(#blur60)"/>
+  <circle cx="800" cy="520" r="120" fill="url(#moon)" opacity=".85"/>
+  <g fill="#efe1c2" opacity=".5">
+    <circle cx="210" cy="140" r="1.4"/><circle cx="420" cy="90" r="1"/><circle cx="610" cy="200" r="1.2"/><circle cx="980" cy="120" r="1.5"/>
+    <circle cx="1180" cy="230" r="1"/><circle cx="1400" cy="110" r="1.3"/><circle cx="1500" cy="300" r="1"/><circle cx="90" cy="320" r="1.1"/>
+    <circle cx="1290" cy="380" r=".9"/><circle cx="330" cy="290" r=".9"/>
+  </g>
+  <path d="M0 640 C260 560 520 600 760 650 S1220 560 1600 620 L1600 1000 L0 1000 Z" fill="url(#d1)"/>
+  <path d="M0 640 C260 560 520 600 760 650" fill="none" stroke="#e6c690" stroke-opacity=".35" stroke-width="2"/>
+  <path d="M0 760 C300 690 640 800 940 740 S1400 700 1600 730 L1600 1000 L0 1000 Z" fill="url(#d2)"/>
+  <path d="M940 740 C1180 700 1400 700 1600 730" fill="none" stroke="#e6c690" stroke-opacity=".22" stroke-width="2"/>
+  <path d="M0 880 C340 820 700 920 1040 860 S1460 840 1600 860 L1600 1000 L0 1000 Z" fill="url(#d3)"/>
+  <rect width="1600" height="1000" filter="url(#grain)"/>
+</svg>

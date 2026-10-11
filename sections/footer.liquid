@@ -1,69 +1,60 @@
-{%- liquid
-  assign menu_count = 0
-  for block in section.blocks
-    if block.type == 'menu'
-      assign menu_count = menu_count | plus: 1
-    endif
-  endfor
--%}
-<footer class="site-footer">
-  <div class="f-grid" style="--menus: {{ menu_count | at_least: 1 }}">
-    <div class="f-brand" data-reveal>
-      <a href="{{ routes.root_url }}" class="logo-link" aria-label="{{ shop.name }}">{% render 'logo' %}</a>
+<footer class="ftr scheme-{{ section.settings.color_scheme }}">
+  <div class="ftr-top wrap">
+    <div class="ftr-brand" data-reveal>
+      <a href="{{ routes.root_url }}" class="logo-link" aria-label="{{ shop.name }}">{% render 'logo', size: 'lg' %}</a>
+      {%- if section.settings.tagline != blank -%}<div class="ftr-tagline rte">{{ section.settings.tagline }}</div>{%- endif -%}
+      {% render 'social-links' %}
+    </div>
+
+    <div class="ftr-cols">
       {%- for block in section.blocks -%}
-        {%- if block.type == 'info' -%}
-          <div class="f-info" {{ block.shopify_attributes }}>
-            {%- if block.settings.icon == 'chat' -%}{% render 'icon', icon: 'chat' %}{%- else -%}{% render 'icon', icon: 'info-sm' %}{%- endif -%}
-            <div>
-              <b>{{ block.settings.title }}</b>{{ block.settings.text }}
-              {%- if block.settings.link_label != blank -%}<br><a href="{{ block.settings.link | default: '#' }}">{{ block.settings.link_label }}</a>{%- endif -%}
+        {%- case block.type -%}
+          {%- when 'menu' -%}
+            <div class="ftr-col" data-reveal {{ block.shopify_attributes }}>
+              {%- if block.settings.heading != blank -%}<h2 class="eyebrow">{{ block.settings.heading }}</h2>{%- endif -%}
+              <ul class="ftr-list">
+                {%- for link in block.settings.menu.links -%}
+                  <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+                {%- endfor -%}
+                {%- if block.settings.show_policies -%}
+                  {%- for policy in shop.policies -%}
+                    <li><a href="{{ policy.url }}">{{ policy.title }}</a></li>
+                  {%- endfor -%}
+                {%- endif -%}
+              </ul>
             </div>
-          </div>
-        {%- endif -%}
+          {%- when 'text' -%}
+            <div class="ftr-col" data-reveal {{ block.shopify_attributes }}>
+              {%- if block.settings.heading != blank -%}<h2 class="eyebrow">{{ block.settings.heading }}</h2>{%- endif -%}
+              <div class="rte ftr-text">{{ block.settings.text }}</div>
+              {%- if block.settings.show_email and shop.email != blank -%}
+                <p class="ftr-text"><a class="link-line" href="mailto:{{ shop.email }}">{{ shop.email }}</a></p>
+              {%- endif -%}
+            </div>
+          {%- when 'newsletter' -%}
+            <div class="ftr-col ftr-col--wide" data-reveal {{ block.shopify_attributes }}>
+              {%- if block.settings.heading != blank -%}<h2 class="eyebrow">{{ block.settings.heading }}</h2>{%- endif -%}
+              {%- if block.settings.text != blank -%}<div class="rte ftr-text">{{ block.settings.text }}</div>{%- endif -%}
+              {% render 'newsletter-form', form_id: 'FooterNewsletter', tags: 'newsletter, footer' %}
+            </div>
+        {%- endcase -%}
       {%- endfor -%}
     </div>
-
-    {%- for block in section.blocks -%}
-      {%- if block.type == 'menu' -%}
-        <div data-reveal {{ block.shopify_attributes }}>
-          <h4>{{ block.settings.heading }}</h4>
-          <ul>
-            {%- for link in block.settings.menu.links -%}
-              <li><a href="{{ link.url }}">{{ link.title }}</a></li>
-            {%- endfor -%}
-            {%- if block.settings.show_policies -%}
-              {%- for policy in shop.policies -%}
-                <li><a href="{{ policy.url }}">{{ policy.title }}</a></li>
-              {%- endfor -%}
-            {%- endif -%}
-          </ul>
-        </div>
-      {%- endif -%}
-    {%- endfor -%}
-
-    <div class="f-more" data-reveal>
-      <h4>{{ section.settings.more_heading }}</h4>
-      {%- if settings.social_instagram != blank or settings.social_youtube != blank or settings.social_tiktok != blank or settings.social_whatsapp != blank -%}
-        <div class="f-small">Socials</div>
-        <div class="socials">
-          {%- if settings.social_instagram != blank -%}<a href="{{ settings.social_instagram }}" target="_blank" rel="noopener" aria-label="Instagram">{% render 'icon', icon: 'instagram' %}</a>{%- endif -%}
-          {%- if settings.social_youtube != blank -%}<a href="{{ settings.social_youtube }}" target="_blank" rel="noopener" aria-label="YouTube">{% render 'icon', icon: 'youtube' %}</a>{%- endif -%}
-          {%- if settings.social_tiktok != blank -%}<a href="{{ settings.social_tiktok }}" target="_blank" rel="noopener" aria-label="TikTok">{% render 'icon', icon: 'tiktok' %}</a>{%- endif -%}
-          {%- if settings.social_whatsapp != blank -%}<a href="{{ settings.social_whatsapp }}" target="_blank" rel="noopener" aria-label="WhatsApp">{% render 'icon', icon: 'chat' %}</a>{%- endif -%}
-        </div>
-      {%- endif -%}
-      {%- if section.settings.show_payments -%}
-        <div class="f-small">Secure Payments</div>
-        <div class="pays">{% render 'payment-icons' %}</div>
-      {%- endif -%}
-      {%- if section.settings.button_label != blank -%}
-        <a href="{{ section.settings.button_link | default: '#' }}" class="btn-grey">{{ section.settings.button_label }}</a>
-      {%- endif -%}
-    </div>
   </div>
-  <div class="copy">
-    © {{ 'now' | date: '%Y' }} - {{ shop.name }}. {{ section.settings.copyright }}
-    <button type="button" class="cookie-btn" data-cookie-settings>Cookie settings</button>
+
+  {%- if section.settings.big_wordmark -%}
+    <div class="ftr-mark" aria-hidden="true"><span>{{ shop.name }}</span></div>
+  {%- endif -%}
+
+  <div class="ftr-bottom wrap">
+    {%- assign year = 'now' | date: '%Y' -%}
+    <p>{{ 'footer.copyright' | t: year: year, shop: shop.name }}{% if section.settings.copyright != blank %} · {{ section.settings.copyright }}{% endif %}</p>
+    <div class="ftr-bottom-right">
+      {%- if section.settings.show_payments -%}
+        <div class="pays" aria-label="{{ 'footer.payment_methods' | t }}">{% render 'payment-icons' %}</div>
+      {%- endif -%}
+      <button type="button" class="link-line ftr-cookie" data-cookie-settings>{{ 'footer.cookie_settings' | t }}</button>
+    </div>
   </div>
 </footer>
 
@@ -72,33 +63,44 @@
   "name": "Footer",
   "class": "section-footer",
   "settings": [
-    { "type": "text", "id": "more_heading", "label": "Überschrift rechte Spalte", "default": "More" },
+    { "type": "select", "id": "color_scheme", "label": "Farbschema", "default": "dark", "options": [
+      { "value": "dark", "label": "Nacht" },
+      { "value": "light", "label": "Pergament" },
+      { "value": "sand", "label": "Sand" }
+    ] },
+    { "type": "richtext", "id": "tagline", "label": "Kurzer Markentext", "default": "<p>Extraits de parfum shaped by the figures who ruled their age.</p>" },
+    { "type": "checkbox", "id": "big_wordmark", "label": "Großer Schriftzug am Seitenende", "default": true },
     { "type": "checkbox", "id": "show_payments", "label": "Zahlungsarten anzeigen", "default": true },
-    { "type": "text", "id": "button_label", "label": "Button-Text", "info": "Leer lassen = kein Button" },
-    { "type": "url", "id": "button_link", "label": "Button-Link" },
-    { "type": "text", "id": "copyright", "label": "Copyright-Text", "default": "All rights reserved." }
+    { "type": "text", "id": "copyright", "label": "Zusatz neben dem Copyright", "default": "All rights reserved." }
   ],
   "blocks": [
-    {
-      "type": "info",
-      "name": "Info-Eintrag",
-      "limit": 3,
-      "settings": [
-        { "type": "select", "id": "icon", "label": "Icon", "default": "info", "options": [ { "value": "info", "label": "Info" }, { "value": "chat", "label": "Chat" } ] },
-        { "type": "text", "id": "title", "label": "Titel", "default": "SUPPORT" },
-        { "type": "text", "id": "text", "label": "Text", "default": "FOR QUESTIONS ABOUT YOUR ORDER, VISIT OUR" },
-        { "type": "text", "id": "link_label", "label": "Link-Text", "default": "SUPPORT CENTER" },
-        { "type": "url", "id": "link", "label": "Link" }
-      ]
-    },
     {
       "type": "menu",
       "name": "Menü-Spalte",
       "limit": 3,
       "settings": [
-        { "type": "text", "id": "heading", "label": "Überschrift", "default": "Service" },
+        { "type": "text", "id": "heading", "label": "Überschrift", "default": "Maison" },
         { "type": "link_list", "id": "menu", "label": "Menü" },
-        { "type": "checkbox", "id": "show_policies", "label": "Rechtliche Seiten automatisch anzeigen", "default": false }
+        { "type": "checkbox", "id": "show_policies", "label": "Rechtliche Seiten automatisch anzeigen", "default": false, "info": "Zeigt die unter Einstellungen > Richtlinien hinterlegten Seiten." }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "Text",
+      "limit": 2,
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Überschrift", "default": "Contact" },
+        { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Questions about an order, press or wholesale? Write to us.</p>" },
+        { "type": "checkbox", "id": "show_email", "label": "Shop-E-Mail anzeigen", "default": true, "info": "Nutzt die E-Mail unter Einstellungen > Allgemein." }
+      ]
+    },
+    {
+      "type": "newsletter",
+      "name": "Newsletter",
+      "limit": 1,
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Überschrift", "default": "Newsletter" },
+        { "type": "richtext", "id": "text", "label": "Text", "default": "<p>First access to new releases. No noise.</p>" }
       ]
     }
   ],

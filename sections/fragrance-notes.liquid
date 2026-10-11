@@ -1,0 +1,111 @@
+{%- liquid
+  assign s = section.settings
+  assign tiers = section.blocks | where: 'type', 'tier'
+  assign has_any = false
+  for block in tiers
+    assign key = block.settings.source
+    assign mf = ''
+    if key != 'none' and product
+      assign mf = product.metafields.custom[key].value | join: ' · '
+    endif
+    if mf != blank or block.settings.notes != blank
+      assign has_any = true
+    endif
+  endfor
+-%}
+{%- if has_any or request.design_mode -%}
+<section class="notes scheme-{{ s.color_scheme }} section-pad{% if s.image != blank or s.fallback_art != 'none' %} notes--media{% endif %}">
+  <div class="wrap notes-grid">
+    <div class="notes-copy">
+      <header class="sec-head sec-head--left">
+        {%- if s.eyebrow != blank -%}<p class="eyebrow" data-reveal>{{ s.eyebrow }}</p>{%- endif -%}
+        {%- if s.heading != blank -%}<h2 class="h1" data-split>{{ s.heading }}</h2>{%- endif -%}
+        {%- if s.text != blank -%}<div class="rte sec-text" data-reveal>{{ s.text }}</div>{%- endif -%}
+      </header>
+
+      {%- if has_any -%}
+        <ol class="notes-pyramid" role="list">
+          {%- for block in tiers -%}
+            {%- liquid
+              assign key = block.settings.source
+              assign list = ''
+              if key != 'none' and product
+                assign list = product.metafields.custom[key].value | join: ' · '
+              endif
+              if list == blank
+                assign list = block.settings.notes
+              endif
+              assign w = forloop.index | times: 100 | divided_by: forloop.length | at_least: 45
+            -%}
+            {%- if list != blank -%}
+              <li class="tier" style="--w: {{ w }}%; --i: {{ forloop.index0 }}" data-reveal {{ block.shopify_attributes }}>
+                <span class="tier-label eyebrow">{{ block.settings.label }}</span>
+                <p class="tier-notes">{{ list }}</p>
+                {%- if block.settings.description != blank -%}<p class="tier-desc">{{ block.settings.description }}</p>{%- endif -%}
+              </li>
+            {%- endif -%}
+          {%- endfor -%}
+        </ol>
+      {%- else -%}
+        <p class="editor-hint">{{ 'product.notes_empty' | t }}</p>
+      {%- endif -%}
+    </div>
+
+    {%- if s.image != blank or s.fallback_art != 'none' -%}
+      <div class="notes-media" data-reveal>
+        {%- if s.image != blank -%}
+          {{ s.image | image_url: width: 1400 | image_tag: loading: 'lazy', sizes: '(min-width: 990px) 40vw, 100vw', widths: '600, 900, 1200, 1400', alt: s.image.alt }}
+        {%- else -%}
+          {% render 'fallback-art', art: s.fallback_art %}
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Duftnoten",
+  "tag": "div",
+  "settings": [
+    { "type": "paragraph", "content": "Die Noten kommen aus den Produkt-Metafeldern (custom.top_notes, custom.heart_notes, custom.base_notes – Typ Liste oder Text). Ist ein Metafeld leer, gilt der Text im Block." },
+    { "type": "select", "id": "color_scheme", "label": "Farbschema", "default": "light", "options": [
+      { "value": "dark", "label": "Nacht" }, { "value": "light", "label": "Pergament" }, { "value": "sand", "label": "Sand" }
+    ] },
+    { "type": "text", "id": "eyebrow", "label": "Kleine Zeile", "default": "Composition" },
+    { "type": "inline_richtext", "id": "heading", "label": "Überschrift", "default": "The notes" },
+    { "type": "richtext", "id": "text", "label": "Text" },
+    { "type": "image_picker", "id": "image", "label": "Bild" },
+    { "type": "select", "id": "fallback_art", "label": "Ersatz-Illustration ohne Bild", "default": "none", "options": [
+      { "value": "none", "label": "Keine" }, { "value": "zeus", "label": "Flakon Gewitter" }, { "value": "pharaon", "label": "Flakon Wüste" }, { "value": "relic", "label": "Sanduhr" }
+    ] }
+  ],
+  "blocks": [
+    {
+      "type": "tier",
+      "name": "Notenstufe",
+      "limit": 4,
+      "settings": [
+        { "type": "text", "id": "label", "label": "Bezeichnung", "default": "Top" },
+        { "type": "select", "id": "source", "label": "Metafeld", "default": "top_notes", "options": [
+          { "value": "top_notes", "label": "custom.top_notes" },
+          { "value": "heart_notes", "label": "custom.heart_notes" },
+          { "value": "base_notes", "label": "custom.base_notes" },
+          { "value": "none", "label": "Keins – nur Text unten" }
+        ] },
+        { "type": "text", "id": "notes", "label": "Noten (Ersatz ohne Metafeld)", "info": "z. B. Note · Note · Note" },
+        { "type": "text", "id": "description", "label": "Kurzbeschreibung" }
+      ]
+    }
+  ],
+  "presets": [
+    { "name": "Duftnoten", "blocks": [
+      { "type": "tier", "settings": { "label": "Top", "source": "top_notes" } },
+      { "type": "tier", "settings": { "label": "Heart", "source": "heart_notes" } },
+      { "type": "tier", "settings": { "label": "Base", "source": "base_notes" } }
+    ] }
+  ],
+  "enabled_on": { "templates": ["product"] }
+}
+{% endschema %}

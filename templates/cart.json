@@ -1,4 +1,4 @@
 {
-  "sections": { "main": { "type": "main-cart", "settings": {} } },
+  "sections": { "main": { "type": "main-cart", "settings": { "color_scheme": "dark" } } },
   "order": ["main"]
 }

@@ -1,0 +1,87 @@
+{%- liquid
+  assign s = section.settings
+  assign form_id = 'ContactForm-' | append: section.id
+  assign subjects = s.subjects | split: ','
+  assign email = s.email | default: shop.email
+-%}
+<section class="contact scheme-{{ s.color_scheme }} section-pad" id="contact">
+  <div class="wrap contact-grid">
+    <div class="contact-copy">
+      {%- if s.eyebrow != blank -%}<p class="eyebrow" data-reveal>{{ s.eyebrow }}</p>{%- endif -%}
+      {%- if s.heading != blank -%}<h2 class="h1" data-split>{{ s.heading }}</h2>{%- endif -%}
+      {%- if s.text != blank -%}<div class="rte" data-reveal>{{ s.text }}</div>{%- endif -%}
+      {%- if s.show_email and email != blank -%}
+        <p class="contact-mail" data-reveal>{% render 'icon', icon: 'mail' %}<a class="link-line" href="mailto:{{ email }}">{{ email }}</a></p>
+      {%- endif -%}
+    </div>
+
+    <div class="contact-form" data-reveal>
+      {%- form 'contact', id: form_id, class: 'form-grid' -%}
+        {%- if form.posted_successfully? -%}
+          <p class="form-msg form-msg--ok" role="status" tabindex="-1">{% render 'icon', icon: 'check' %}{{ 'contact.success' | t }}</p>
+        {%- elsif form.errors -%}
+          <div class="form-msg form-msg--err" role="alert">
+            <p>{{ 'contact.error' | t }}</p>
+            {{ form.errors | default_errors }}
+          </div>
+        {%- endif -%}
+
+        <div class="field">
+          <label for="{{ form_id }}-name">{{ 'contact.name' | t }}</label>
+          <input type="text" id="{{ form_id }}-name" name="contact[name]" autocomplete="name" value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}">
+        </div>
+        <div class="field">
+          <label for="{{ form_id }}-email">{{ 'contact.email' | t }} <span aria-hidden="true">*</span></label>
+          <input type="email" id="{{ form_id }}-email" name="contact[email]" autocomplete="email" required value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"{% if form.errors contains 'email' %} aria-invalid="true"{% endif %}>
+        </div>
+        {%- if s.show_phone -%}
+          <div class="field">
+            <label for="{{ form_id }}-phone">{{ 'contact.phone' | t }}</label>
+            <input type="tel" id="{{ form_id }}-phone" name="contact[phone]" autocomplete="tel" value="{{ form.phone }}">
+          </div>
+        {%- endif -%}
+        {%- if subjects.size > 0 -%}
+          <div class="field">
+            <label for="{{ form_id }}-subject">{{ 'contact.subject' | t }}</label>
+            <div class="select">
+              <select id="{{ form_id }}-subject" name="contact[subject]">
+                {%- for sub in subjects -%}
+                  {%- assign sub = sub | strip -%}
+                  <option value="{{ sub | escape }}">{{ sub }}</option>
+                {%- endfor -%}
+              </select>
+              {% render 'icon', icon: 'chevron-down' %}
+            </div>
+          </div>
+        {%- endif -%}
+        <div class="field field--full">
+          <label for="{{ form_id }}-body">{{ 'contact.message' | t }} <span aria-hidden="true">*</span></label>
+          <textarea id="{{ form_id }}-body" name="contact[body]" rows="5" required>{{ form.body }}</textarea>
+        </div>
+        <div class="field field--full">
+          <button type="submit" class="btn btn--solid">{{ 'contact.send' | t }}</button>
+        </div>
+      {%- endform -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Kontaktformular",
+  "tag": "div",
+  "settings": [
+    { "type": "select", "id": "color_scheme", "label": "Farbschema", "default": "light", "options": [
+      { "value": "dark", "label": "Nacht" }, { "value": "light", "label": "Pergament" }, { "value": "sand", "label": "Sand" }
+    ] },
+    { "type": "text", "id": "eyebrow", "label": "Kleine Zeile", "default": "Contact" },
+    { "type": "inline_richtext", "id": "heading", "label": "Überschrift", "default": "Write to the house" },
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>For orders, press enquiries or wholesale, send us a message and we will get back to you.</p>" },
+    { "type": "checkbox", "id": "show_email", "label": "E-Mail-Adresse anzeigen", "default": true },
+    { "type": "text", "id": "email", "label": "E-Mail-Adresse", "info": "Leer = Shop-E-Mail aus Einstellungen > Allgemein. Nachrichten aus dem Formular gehen immer an die Shop-E-Mail." },
+    { "type": "text", "id": "subjects", "label": "Themen zur Auswahl", "default": "Order, Press, Wholesale, Other", "info": "Mit Komma trennen. Leer = kein Auswahlfeld." },
+    { "type": "checkbox", "id": "show_phone", "label": "Telefonfeld", "default": false }
+  ],
+  "presets": [ { "name": "Kontaktformular" } ]
+}
+{% endschema %}

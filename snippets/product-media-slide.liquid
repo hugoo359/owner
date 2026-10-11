@@ -1,0 +1,20 @@
+{%- comment -%} Ein Slide der Produktgalerie. Parameter: media, index, count, eager {%- endcomment -%}
+{%- capture zoom_label -%}{{ 'product.media_label' | t: index: index, count: count }}{%- endcapture -%}
+<li class="pg-slide" data-media-id="{{ media.id }}" data-index="{{ index | minus: 1 }}" aria-roledescription="slide" aria-label="{{ 'product.media_label' | t: index: index, count: count }}">
+  {%- case media.media_type -%}
+    {%- when 'video' -%}
+      <div class="pg-media pg-media--video">{{ media | video_tag: controls: true, muted: true, playsinline: true, image_size: '1400x' }}</div>
+    {%- when 'external_video' -%}
+      <div class="pg-media pg-media--video">{{ media | external_video_tag }}</div>
+    {%- when 'model' -%}
+      <div class="pg-media pg-media--model">{{ media | model_viewer_tag }}</div>
+    {%- else -%}
+      <button type="button" class="pg-media pg-zoom" data-lightbox-open="{{ media.id }}" aria-label="{{ media.alt | default: zoom_label | escape }}">
+        {%- if eager -%}
+          {{ media.preview_image | image_url: width: 1800 | image_tag: loading: 'eager', fetchpriority: 'high', sizes: '(min-width: 990px) 55vw, 100vw', widths: '600, 900, 1200, 1500, 1800', alt: media.alt }}
+        {%- else -%}
+          {{ media.preview_image | image_url: width: 1800 | image_tag: loading: 'lazy', sizes: '(min-width: 990px) 55vw, 100vw', widths: '600, 900, 1200, 1500, 1800', alt: media.alt }}
+        {%- endif -%}
+      </button>
+  {%- endcase -%}
+</li>

@@ -1,0 +1,63 @@
+{%- comment -%}
+  Duft-Karte. Preis, Bilder und Verfügbarkeit kommen aus dem Shopify-Produkt.
+  Parameter: product, era, tagline, image (Bild-Override), art (Ersatz-Illustration),
+             placeholder_title, quick_add (bool), numeral, attrs (block.shopify_attributes), sizes
+{%- endcomment -%}
+{%- liquid
+  assign sizes = sizes | default: '(min-width: 990px) 45vw, 92vw'
+  if product
+    capture status
+      render 'product-status', product: product
+    endcapture
+    assign status = status | strip
+    assign title = product.title
+    assign url = product.url
+    assign sub = tagline | default: product.type
+  else
+    assign status = 'placeholder'
+    assign title = placeholder_title
+    assign url = routes.all_products_collection_url
+    assign sub = tagline
+  endif
+-%}
+<article class="fcard fcard--{{ status }}" data-reveal {{ attrs }}>
+  <a class="fcard-media" href="{{ url }}" tabindex="-1" aria-hidden="true">
+    {%- if image != blank -%}
+      {{ image | image_url: width: 1400 | image_tag: class: 'fcard-img', loading: 'lazy', sizes: sizes, widths: '500, 800, 1100, 1400', alt: '' }}
+    {%- elsif product.featured_media -%}
+      {{ product.featured_media | image_url: width: 1400 | image_tag: class: 'fcard-img', loading: 'lazy', sizes: sizes, widths: '500, 800, 1100, 1400', alt: '' }}
+    {%- else -%}
+      {% render 'fallback-art', art: art, class: 'fcard-img' %}
+    {%- endif -%}
+    {%- if product.media.size > 1 and image == blank -%}
+      {{ product.media[1] | image_url: width: 1400 | image_tag: class: 'fcard-img fcard-img--hover', loading: 'lazy', sizes: sizes, widths: '500, 800, 1100, 1400', alt: '' }}
+    {%- endif -%}
+    {%- if numeral != blank -%}<span class="fcard-numeral">{{ numeral }}</span>{%- endif -%}
+    {%- case status -%}
+      {%- when 'soldout' -%}<span class="badge">{{ 'product.sold_out' | t }}</span>
+      {%- when 'soon' -%}<span class="badge badge--accent">{{ 'product.coming_soon' | t }}</span>
+    {%- endcase -%}
+  </a>
+  <div class="fcard-body">
+    {%- if era != blank -%}<p class="eyebrow fcard-era">{{ era }}</p>{%- endif -%}
+    <h3 class="fcard-title"><a href="{{ url }}">{{ title }}</a></h3>
+    {%- if sub != blank -%}<p class="fcard-sub">{{ sub }}</p>{%- endif -%}
+    <div class="fcard-foot">
+      {%- if product -%}
+        {% render 'price', product: product, class: 'fcard-price' %}
+      {%- elsif request.design_mode -%}
+        <span class="editor-hint">{{ 'general.editor_hint' | t: text: 'Produkt im Block auswählen' }}</span>
+      {%- endif -%}
+      <a class="link-arrow" href="{{ url }}" aria-label="{{ 'product.view' | t: title: title | escape }}">
+        <span>{%- if status == 'available' -%}{{ 'product.shop_now' | t }}{%- else -%}{{ 'product.discover' | t }}{%- endif -%}</span>{% render 'icon', icon: 'arrow-right' %}
+      </a>
+    </div>
+    {%- if quick_add and status == 'available' and product.has_only_default_variant -%}
+      {%- form 'product', product, class: 'fcard-form', data-quick-add: '' -%}
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+        <input type="hidden" name="quantity" value="1">
+        <button type="submit" class="btn btn--line btn--block fcard-add"><span>{{ 'product.add_to_cart' | t }}</span></button>
+      {%- endform -%}
+    {%- endif -%}
+  </div>
+</article>

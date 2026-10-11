@@ -1,30 +1,33 @@
 {%- paginate search.results by 24 -%}
-<div class="wrap search-page">
-  <h1 class="ctitle">Search</h1>
-  <form action="{{ routes.search_url }}" method="get" role="search" class="search-form">
-    {% render 'icon', icon: 'search-sm' %}
-    <input type="search" name="q" value="{{ search.terms | escape }}" placeholder="Search..." aria-label="Search">
-    <input type="hidden" name="options[prefix]" value="last">
-    <button type="submit">SEARCH</button>
-  </form>
-  {%- if search.performed -%}
-    <p class="result-count">{{ search.results_count }} result{% if search.results_count != 1 %}s{% endif %} for “{{ search.terms | escape }}”</p>
-    <div class="grid" style="--cols: 4">
-      {%- for item in search.results -%}
-        {%- if item.object_type == 'product' -%}
-          {% render 'product-card', product: item %}
+<section class="search-page scheme-dark section-pad">
+  <div class="wrap">
+    <h1 class="h1" data-split>{{ 'search.title' | t }}</h1>
+    <form action="{{ routes.search_url }}" method="get" role="search" class="search-form">
+      {% render 'icon', icon: 'search' %}
+      <label class="visually-hidden" for="SearchPageInput">{{ 'search.title' | t }}</label>
+      <input type="search" id="SearchPageInput" name="q" value="{{ search.terms | escape }}" placeholder="{{ 'general.search_placeholder' | t }}">
+      <input type="hidden" name="options[prefix]" value="last">
+      <button type="submit" class="link-line">{{ 'search.submit' | t }}</button>
+    </form>
+    {%- if search.performed -%}
+      <p class="eyebrow result-count">{{ 'search.results' | t: count: search.results_count, terms: search.terms }}</p>
+      <div class="fcol-grid" style="--cols: 3">
+        {%- for item in search.results -%}
+          {%- if item.object_type == 'product' -%}
+            {% render 'fragrance-card', product: item, art: 'relic' %}
+          {%- else -%}
+            <a class="text-card" href="{{ item.url }}"><h2 class="h3">{{ item.title }}</h2><p>{{ item.content | strip_html | truncatewords: 24 }}</p></a>
+          {%- endif -%}
         {%- else -%}
-          <a class="card text-card" href="{{ item.url }}"><h3>{{ item.title }}</h3><p>{{ item.content | strip_html | truncatewords: 20 }}</p></a>
-        {%- endif -%}
-      {%- else -%}
-        <div class="empty">No results found.</div>
-      {%- endfor -%}
-    </div>
-    {%- if paginate.pages > 1 -%}{% render 'pagination', paginate: paginate %}{%- endif -%}
-  {%- endif -%}
-</div>
+          <p class="empty">{{ 'search.no_results' | t }}</p>
+        {%- endfor -%}
+      </div>
+      {%- if paginate.pages > 1 -%}{% render 'pagination', paginate: paginate %}{%- endif -%}
+    {%- endif -%}
+  </div>
+</section>
 {%- endpaginate -%}
 
 {% schema %}
-{ "name": "Suchergebnisse" }
+{ "name": "Suchergebnisse", "tag": "div" }
 {% endschema %}

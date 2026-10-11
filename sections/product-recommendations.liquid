@@ -1,20 +1,30 @@
-<section class="related" data-recs data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit={{ section.settings.limit }}&intent=related">
+<section class="fcol scheme-{{ section.settings.color_scheme }} section-pad" data-recs data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit={{ section.settings.limit }}&intent=related">
   {%- if recommendations.performed and recommendations.products_count > 0 -%}
-    <h2 class="split-title" data-split data-reveal>{{ section.settings.heading }}</h2>
-    <div class="grid" style="--cols: 4">
-      {%- for product in recommendations.products -%}
-        {% render 'product-card', product: product %}
-      {%- endfor -%}
+    <div class="wrap">
+      <header class="sec-head sec-head--center">
+        <h2 class="h1" data-split>{{ section.settings.heading }}</h2>
+      </header>
+      <div class="fcol-grid" style="--cols: {{ section.settings.limit | at_most: 3 }}">
+        {%- for p in recommendations.products -%}
+          {% render 'fragrance-card', product: p, art: 'relic', quick_add: true %}
+        {%- endfor -%}
+      </div>
     </div>
   {%- endif -%}
 </section>
 
 {% schema %}
 {
-  "name": "Passt dazu",
+  "name": "Produktempfehlungen",
+  "tag": "div",
   "settings": [
-    { "type": "text", "id": "heading", "label": "Überschrift", "default": "YOU MAY ALSO LIKE" },
-    { "type": "range", "id": "limit", "label": "Anzahl Produkte", "min": 2, "max": 8, "step": 1, "default": 4 }
-  ]
+    { "type": "select", "id": "color_scheme", "label": "Farbschema", "default": "dark", "options": [
+      { "value": "dark", "label": "Nacht" }, { "value": "light", "label": "Pergament" }, { "value": "sand", "label": "Sand" }
+    ] },
+    { "type": "text", "id": "heading", "label": "Überschrift", "default": "You may also like" },
+    { "type": "range", "id": "limit", "label": "Anzahl Produkte", "min": 2, "max": 6, "step": 1, "default": 3 }
+  ],
+  "presets": [ { "name": "Produktempfehlungen" } ],
+  "enabled_on": { "templates": ["product"] }
 }
 {% endschema %}

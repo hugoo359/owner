@@ -1,0 +1,94 @@
+{%- liquid
+  assign s = section.settings
+  assign overlay = s.overlay | divided_by: 100.0
+-%}
+<section class="hero hero--{{ s.height }} hero--{{ s.align }} scheme-{{ s.color_scheme }}" data-hero>
+  <div class="hero-media" data-parallax>
+    {%- if s.video != blank -%}
+      {{ s.video | video_tag: autoplay: true, loop: true, muted: true, playsinline: true, controls: false, class: 'hero-img', image_size: '1600x' }}
+    {%- elsif s.image != blank -%}
+      {%- if s.image_mobile != blank -%}
+        <picture>
+          <source media="(max-width: 749px)" srcset="{{ s.image_mobile | image_url: width: 750 }} 750w, {{ s.image_mobile | image_url: width: 1100 }} 1100w" sizes="100vw">
+          {{ s.image | image_url: width: 2400 | image_tag: class: 'hero-img', loading: 'eager', fetchpriority: 'high', sizes: '100vw', widths: '750, 1100, 1500, 1920, 2400', alt: s.image.alt }}
+        </picture>
+      {%- else -%}
+        {{ s.image | image_url: width: 2400 | image_tag: class: 'hero-img', loading: 'eager', fetchpriority: 'high', sizes: '100vw', widths: '750, 1100, 1500, 1920, 2400', alt: s.image.alt }}
+      {%- endif -%}
+    {%- elsif s.fallback_art != 'none' -%}
+      {% render 'fallback-art', art: s.fallback_art, class: 'hero-img', eager: true %}
+    {%- endif -%}
+    <div class="hero-shade" style="--shade: {{ overlay }}"></div>
+  </div>
+
+  <div class="hero-inner wrap">
+    {%- if s.show_emblem -%}
+      <div class="hero-emblem" data-reveal>{% render 'emblem', size: 30, animate: true %}</div>
+    {%- endif -%}
+    {%- if s.eyebrow != blank -%}<p class="eyebrow hero-eyebrow" data-reveal>{{ s.eyebrow }}</p>{%- endif -%}
+    {%- if s.heading != blank -%}<h1 class="display hero-title" data-split>{{ s.heading }}</h1>{%- endif -%}
+    {%- if s.text != blank -%}<div class="hero-text rte" data-reveal>{{ s.text }}</div>{%- endif -%}
+    {%- if section.blocks.size > 0 -%}
+      <div class="btn-row hero-ctas" data-reveal>
+        {%- for block in section.blocks -%}
+          <a class="btn btn--{{ block.settings.style }}" href="{{ block.settings.link | default: routes.all_products_collection_url }}" {{ block.shopify_attributes }}>{{ block.settings.label }}</a>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+
+  {%- if s.show_scroll -%}
+    <a class="hero-scroll" href="#shopify-section-{{ section.id }}-end" aria-label="{{ 'general.scroll_down' | t }}"><span></span></a>
+  {%- endif -%}
+</section>
+<span id="shopify-section-{{ section.id }}-end"></span>
+
+{% schema %}
+{
+  "name": "Hero",
+  "tag": "div",
+  "class": "section-hero",
+  "settings": [
+    { "type": "select", "id": "color_scheme", "label": "Farbschema", "default": "dark", "options": [
+      { "value": "dark", "label": "Nacht" }, { "value": "light", "label": "Pergament" }, { "value": "sand", "label": "Sand" }
+    ] },
+    { "type": "select", "id": "height", "label": "Höhe", "default": "full", "options": [
+      { "value": "full", "label": "Bildschirmhoch" }, { "value": "large", "label": "Groß" }, { "value": "medium", "label": "Mittel" }
+    ] },
+    { "type": "select", "id": "align", "label": "Ausrichtung", "default": "center", "options": [
+      { "value": "center", "label": "Mittig" }, { "value": "left", "label": "Links unten" }
+    ] },
+    { "type": "header", "content": "Bild / Video" },
+    { "type": "image_picker", "id": "image", "label": "Bild", "info": "Empfohlen: 2400 × 1500 px" },
+    { "type": "image_picker", "id": "image_mobile", "label": "Bild für Handys", "info": "Optional, Hochformat 1100 × 1600 px" },
+    { "type": "video", "id": "video", "label": "Video (ersetzt das Bild)" },
+    { "type": "select", "id": "fallback_art", "label": "Ersatz-Illustration ohne Bild", "default": "dunes", "options": [
+      { "value": "dunes", "label": "Dünen" }, { "value": "relic", "label": "Sanduhr" }, { "value": "zeus", "label": "Flakon Gewitter" }, { "value": "pharaon", "label": "Flakon Wüste" }, { "value": "none", "label": "Keine" }
+    ] },
+    { "type": "range", "id": "overlay", "label": "Abdunkelung", "min": 0, "max": 90, "step": 5, "unit": "%", "default": 35 },
+    { "type": "header", "content": "Text" },
+    { "type": "checkbox", "id": "show_emblem", "label": "Animierte Sanduhr anzeigen", "default": true },
+    { "type": "text", "id": "eyebrow", "label": "Kleine Zeile", "default": "Extraits de Parfum" },
+    { "type": "inline_richtext", "id": "heading", "label": "Überschrift", "default": "History, <em>distilled</em>" },
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Each fragrance begins with a figure who bent history to their will.</p>" },
+    { "type": "checkbox", "id": "show_scroll", "label": "Scroll-Hinweis anzeigen", "default": true }
+  ],
+  "blocks": [
+    {
+      "type": "button",
+      "name": "Button",
+      "limit": 2,
+      "settings": [
+        { "type": "text", "id": "label", "label": "Text", "default": "Discover" },
+        { "type": "url", "id": "link", "label": "Link" },
+        { "type": "select", "id": "style", "label": "Stil", "default": "solid", "options": [
+          { "value": "solid", "label": "Gefüllt" }, { "value": "line", "label": "Kontur" }
+        ] }
+      ]
+    }
+  ],
+  "presets": [
+    { "name": "Hero", "blocks": [ { "type": "button", "settings": { "label": "Discover the collection" } } ] }
+  ]
+}
+{% endschema %}

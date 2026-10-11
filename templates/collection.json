@@ -1,4 +1,4 @@
 {
-  "sections": { "main": { "type": "main-collection", "settings": { "per_page": 24 } } },
+  "sections": { "main": { "type": "main-collection", "settings": { "color_scheme": "dark", "columns": 2, "per_page": 24, "quick_add": true } } },
   "order": ["main"]
 }

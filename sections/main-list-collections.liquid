@@ -1,22 +1,26 @@
-<div class="wrap page-wrap">
-  <h1 class="ctitle">Collections</h1>
-  <div class="grid" style="--cols: 3">
-    {%- for collection in collections -%}
-      {%- if collection.handle == 'frontpage' -%}{%- continue -%}{%- endif -%}
-      <a class="card" href="{{ collection.url }}">
-        <div class="media">
-          {%- if collection.featured_image -%}
-            {{ collection.featured_image | image_url: width: 900 | image_tag: loading: 'lazy', alt: collection.title }}
-          {%- else -%}
-            {{ 'collection-apparel-2' | placeholder_svg_tag: 'placeholder-svg' }}
-          {%- endif -%}
-        </div>
-        <h3>{{ collection.title }}</h3>
-        <div class="price">{{ collection.products_count }} products</div>
-      </a>
-    {%- endfor -%}
+<section class="collection scheme-dark section-pad">
+  <div class="wrap">
+    <header class="sec-head sec-head--center"><h1 class="h1" data-split>{{ page_title }}</h1></header>
+    <div class="fcol-grid" style="--cols: 3">
+      {%- for collection in collections -%}
+        {%- if collection.handle == 'frontpage' -%}{%- continue -%}{%- endif -%}
+        <article class="fcard" data-reveal>
+          <a class="fcard-media" href="{{ collection.url }}" tabindex="-1" aria-hidden="true">
+            {%- if collection.featured_image -%}
+              {{ collection.featured_image | image_url: width: 1100 | image_tag: class: 'fcard-img', loading: 'lazy', alt: '' }}
+            {%- else -%}
+              {% render 'fallback-art', art: 'relic', class: 'fcard-img' %}
+            {%- endif -%}
+          </a>
+          <div class="fcard-body">
+            <p class="eyebrow">{{ 'collection.products' | t: count: collection.products_count }}</p>
+            <h2 class="fcard-title"><a href="{{ collection.url }}">{{ collection.title }}</a></h2>
+          </div>
+        </article>
+      {%- endfor -%}
+    </div>
   </div>
-</div>
+</section>
 {% schema %}
-{ "name": "Alle Kollektionen" }
+{ "name": "Alle Kollektionen", "tag": "div" }
 {% endschema %}

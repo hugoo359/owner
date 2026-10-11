@@ -1,0 +1,198 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "eyebrow": {
+          "type": "eyebrow",
+          "settings": {
+            "text": ""
+          }
+        },
+        "title": {
+          "type": "title",
+          "settings": {}
+        },
+        "subtitle": {
+          "type": "subtitle",
+          "settings": {
+            "text": ""
+          }
+        },
+        "price": {
+          "type": "price",
+          "settings": {}
+        },
+        "variant_picker": {
+          "type": "variant_picker",
+          "settings": {
+            "hide_single": false
+          }
+        },
+        "quantity": {
+          "type": "quantity",
+          "settings": {}
+        },
+        "buy_buttons": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_dynamic_checkout": false
+          }
+        },
+        "description": {
+          "type": "description",
+          "settings": {}
+        },
+        "notes": {
+          "type": "notes",
+          "settings": {
+            "heading": "Notes",
+            "top": "",
+            "heart": "",
+            "base": ""
+          }
+        },
+        "acc-wear": {
+          "type": "accordion",
+          "settings": {
+            "title": "How to wear",
+            "content": "<p>Extrait de parfum is concentrated. One or two sprays on the pulse points are enough.</p>",
+            "open": false
+          }
+        },
+        "acc-shipping": {
+          "type": "accordion",
+          "settings": {
+            "title": "Shipping & returns",
+            "content": "<p>Shipping costs and delivery times are shown at checkout. Details are in our shipping and refund policies.</p>",
+            "open": false
+          }
+        }
+      },
+      "block_order": [
+        "eyebrow",
+        "title",
+        "subtitle",
+        "price",
+        "variant_picker",
+        "quantity",
+        "buy_buttons",
+        "description",
+        "notes",
+        "acc-wear",
+        "acc-shipping"
+      ],
+      "settings": {
+        "color_scheme": "dark",
+        "fallback_art": "pharaon",
+        "sticky_bar": true
+      }
+    },
+    "notes": {
+      "type": "fragrance-notes",
+      "blocks": {
+        "top": {
+          "type": "tier",
+          "settings": {
+            "label": "Top",
+            "source": "top_notes",
+            "notes": "",
+            "description": ""
+          }
+        },
+        "heart": {
+          "type": "tier",
+          "settings": {
+            "label": "Heart",
+            "source": "heart_notes",
+            "notes": "",
+            "description": ""
+          }
+        },
+        "base": {
+          "type": "tier",
+          "settings": {
+            "label": "Base",
+            "source": "base_notes",
+            "notes": "",
+            "description": ""
+          }
+        }
+      },
+      "block_order": [
+        "top",
+        "heart",
+        "base"
+      ],
+      "settings": {
+        "color_scheme": "light",
+        "eyebrow": "Composition",
+        "heading": "The notes",
+        "text": "",
+        "fallback_art": "none"
+      }
+    },
+    "figure": {
+      "type": "image-with-text",
+      "settings": {
+        "color_scheme": "dark",
+        "layout": "right",
+        "ratio": "portrait",
+        "fallback_art": "pharaon",
+        "numeral": "",
+        "eyebrow": "The figure",
+        "heading": "The patience of <em>stone and sun</em>",
+        "text": "<p>Use this space for the figure behind the fragrance: the era, the legend and the mood the scent should carry.</p>",
+        "button_label": "Read the story",
+        "button_link": "/pages/the-story",
+        "button_style": "line"
+      }
+    },
+    "more": {
+      "type": "fragrance-collection",
+      "blocks": {
+        "zeus": {
+          "type": "product",
+          "settings": {
+            "handle": "zeus",
+            "placeholder_title": "Zeus",
+            "era": "",
+            "tagline": "",
+            "fallback_art": "zeus"
+          }
+        },
+        "pharaon": {
+          "type": "product",
+          "settings": {
+            "handle": "pharaon",
+            "placeholder_title": "Pharaon",
+            "era": "",
+            "tagline": "",
+            "fallback_art": "pharaon"
+          }
+        }
+      },
+      "block_order": [
+        "zeus",
+        "pharaon"
+      ],
+      "settings": {
+        "color_scheme": "dark",
+        "eyebrow": "Continue the story",
+        "heading": "The other figure",
+        "head_align": "center",
+        "columns": 2,
+        "show_numerals": false,
+        "quick_add": true,
+        "exclude_current": true,
+        "button_label": ""
+      }
+    }
+  },
+  "order": [
+    "main",
+    "notes",
+    "figure",
+    "more"
+  ]
+}

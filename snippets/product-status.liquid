@@ -1,0 +1,25 @@
+{%- comment -%}
+  Gibt den Status eines Produkts als Wort aus: available | soldout | soon
+  „soon“ = nicht verfügbar und mit dem Tag aus Theme-Einstellungen > Produktstatus markiert.
+  Parameter: product, variant (optional, für die gewählte Variante)
+{%- endcomment -%}
+{%- liquid
+  assign target = variant | default: product
+  assign soon_tag = settings.coming_soon_tag | strip | downcase
+  assign is_soon = false
+  if soon_tag != blank
+    for tag in product.tags
+      assign t = tag | downcase
+      if t == soon_tag
+        assign is_soon = true
+      endif
+    endfor
+  endif
+  if target.available
+    echo 'available'
+  elsif is_soon
+    echo 'soon'
+  else
+    echo 'soldout'
+  endif
+-%}

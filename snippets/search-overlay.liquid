@@ -1,11 +1,13 @@
 <div id="search" class="layer" hidden>
   <div class="backdrop" data-close="search"></div>
-  <div class="search-panel">
-    <form action="{{ routes.search_url }}" method="get" role="search" class="search-row">
-      {% render 'icon', icon: 'search-sm' %}
-      <input type="search" name="q" id="SearchInput" placeholder="Search..." aria-label="Search" autocomplete="off">
-      <button type="button" data-close="search" aria-label="Close search">{% render 'icon', icon: 'close' %}</button>
+  <div class="search-panel scheme-dark" role="dialog" aria-modal="true" aria-label="{{ 'general.search' | t }}">
+    <form action="{{ routes.search_url }}" method="get" role="search" class="search-row wrap">
+      {% render 'icon', icon: 'search' %}
+      <label class="visually-hidden" for="SearchInput">{{ 'general.search' | t }}</label>
+      <input type="search" name="q" id="SearchInput" placeholder="{{ 'general.search_placeholder' | t }}" autocomplete="off">
+      <input type="hidden" name="options[prefix]" value="last">
+      <button type="button" data-close="search" aria-label="{{ 'general.close' | t }}">{% render 'icon', icon: 'close' %}</button>
     </form>
-    <div class="search-results" id="SearchResults" hidden></div>
+    <div class="search-results wrap" id="SearchResults" hidden></div>
   </div>
 </div>

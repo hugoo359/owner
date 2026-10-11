@@ -1,0 +1,35 @@
+{%- comment -%}
+  Preis aus Shopify-Daten. Parameter: product, variant (optional), class
+{%- endcomment -%}
+{%- liquid
+  if variant
+    assign p = variant.price
+    assign cmp = variant.compare_at_price
+    assign varies = false
+  else
+    assign p = product.price
+    assign cmp = product.compare_at_price
+    assign varies = product.price_varies
+  endif
+  assign on_sale = false
+  if cmp > p
+    assign on_sale = true
+  endif
+-%}
+<span class="price{% if on_sale %} price--sale{% endif %} {{ class }}" data-price-wrap>
+  {%- if on_sale -%}
+    <span class="visually-hidden">{{ 'product.regular_price' | t }}</span>
+    <s class="price-compare" data-compare>{% render 'money', amount: cmp %}</s>
+    <span class="visually-hidden">{{ 'product.sale_price' | t }}</span>
+  {%- else -%}
+    <s class="price-compare" data-compare hidden></s>
+  {%- endif -%}
+  <span class="price-now" data-price>
+    {%- if varies -%}
+      {%- capture amount -%}{% render 'money', amount: p %}{%- endcapture -%}
+      {{ 'product.from_price' | t: price: amount }}
+    {%- else -%}
+      {% render 'money', amount: p %}
+    {%- endif -%}
+  </span>
+</span>

@@ -1,7 +1,161 @@
 {
   "general": {
     "skip_to_content": "Skip to content",
+    "page": "Page {{ page }}",
+    "home": "Home",
+    "menu": "Menu",
+    "open_menu": "Open menu",
+    "close_menu": "Close menu",
+    "close": "Close",
+    "search": "Search",
+    "search_placeholder": "Search…",
+    "account": "Account",
+    "log_in": "Log in",
+    "my_account": "My account",
+    "load_error": "Content could not be loaded. Please try again.",
+    "previous": "Previous",
+    "next": "Next",
+    "scroll_down": "Scroll down",
+    "read_more": "Read more",
+    "pagination_label": "Pagination",
+    "breadcrumb": "Breadcrumb",
+    "continue_shopping": "Continue shopping",
+    "not_found_title": "Page not found",
+    "not_found_text": "This page does not exist or has been moved.",
+    "editor_hint": "Theme editor note: {{ text }}"
+  },
+  "header": {
     "cart": "Cart",
-    "search": "Search"
+    "cart_count": "Cart ({{ count }})",
+    "open_cart": "Open cart",
+    "open_search": "Open search",
+    "main_menu": "Main menu"
+  },
+  "product": {
+    "add_to_cart": "Add to cart",
+    "sold_out": "Sold out",
+    "coming_soon": "Coming soon",
+    "unavailable": "Unavailable",
+    "in_stock": "Available",
+    "added": "Added",
+    "quantity": "Quantity",
+    "decrease": "Decrease quantity",
+    "increase": "Increase quantity",
+    "tax_included": "Taxes included.",
+    "shipping_at_checkout": "Shipping calculated at checkout.",
+    "regular_price": "Regular price",
+    "sale_price": "Sale price",
+    "from_price": "From {{ price }}",
+    "discover": "Discover",
+    "shop_now": "Shop now",
+    "view": "View {{ title }}",
+    "media_label": "Image {{ index }} of {{ count }}",
+    "previous_image": "Previous image",
+    "next_image": "Next image",
+    "gallery": "Product gallery",
+    "notify_title": "Be the first to know",
+    "notify_text": "Leave your email and we will write to you as soon as {{ title }} is available again.",
+    "notify_text_soon": "Leave your email and we will write to you as soon as {{ title }} is released.",
+    "notify_button": "Notify me",
+    "notify_success": "Thank you. We will let you know.",
+    "notes_top": "Top",
+    "notes_heart": "Heart",
+    "notes_base": "Base",
+    "notes_empty": "Add notes via the block settings or the product metafields custom.top_notes, custom.heart_notes and custom.base_notes.",
+    "description_empty": "The product description from Shopify appears here."
+  },
+  "cart": {
+    "title": "Cart",
+    "empty": "Your cart is empty.",
+    "continue": "Continue shopping",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "shipping_free": "Free",
+    "taxes_shipping_at_checkout": "Taxes and shipping calculated at checkout.",
+    "checkout": "Checkout",
+    "remove": "Remove",
+    "remove_item": "Remove {{ title }}",
+    "quantity": "Quantity",
+    "update": "Update",
+    "free_shipping_remaining": "You are {{ amount }} away from free shipping.",
+    "free_shipping_unlocked": "Your order ships free.",
+    "upsell_title": "Complete the collection",
+    "add": "Add",
+    "adding": "Adding…",
+    "error": "Something went wrong. Please reload the page.",
+    "note": "Order note",
+    "discounts": "Discounts"
+  },
+  "newsletter": {
+    "email": "Email address",
+    "placeholder": "Your email address",
+    "subscribe": "Subscribe",
+    "success": "Thank you. You are on the list.",
+    "error": "Please enter a valid email address."
+  },
+  "contact": {
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "subject": "Subject",
+    "message": "Message",
+    "send": "Send message",
+    "success": "Thank you. Your message has been sent.",
+    "error": "Please check the highlighted fields.",
+    "required": "Required"
+  },
+  "footer": {
+    "copyright": "© {{ year }} {{ shop }}",
+    "cookie_settings": "Cookie settings",
+    "cookie_unavailable": "Cookie settings are currently unavailable.",
+    "payment_methods": "Payment methods",
+    "social": "Follow us"
+  },
+  "countdown": {
+    "days": "Days",
+    "hours": "Hours",
+    "minutes": "Minutes",
+    "seconds": "Seconds"
+  },
+  "customer": {
+    "log_in": "Log in",
+    "email": "Email",
+    "password": "Password",
+    "forgot": "Forgot your password?",
+    "create_account": "Create account",
+    "reset_title": "Reset your password",
+    "reset_sent": "We have sent you an email with a link to reset your password.",
+    "send_link": "Send link",
+    "guest": "Continue as guest"
+  },
+  "search": {
+    "title": "Search",
+    "submit": "Search",
+    "results": {
+      "one": "{{ count }} result for “{{ terms }}”",
+      "other": "{{ count }} results for “{{ terms }}”"
+    },
+    "no_results": "No results found.",
+    "view_all": "View all results"
+  },
+  "collection": {
+    "empty": "This collection is empty.",
+    "products": {
+      "one": "{{ count }} fragrance",
+      "other": "{{ count }} fragrances"
+    }
+  },
+  "password": {
+    "enter": "Enter using password",
+    "enter_button": "Enter",
+    "notify_success": "Thank you. We will let you know as soon as we open.",
+    "notify_button": "Notify me"
+  },
+  "gift_card": {
+    "title": "Your gift card",
+    "invalid": "This gift card is no longer valid.",
+    "remaining": "Remaining balance: {{ balance }}",
+    "valid_until": "Valid until {{ date }}",
+    "redeem": "Redeem now"
   }
 }

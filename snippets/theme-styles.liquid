@@ -1,0 +1,25 @@
+{%- comment -%}
+  Schriften (Cormorant Garamond, Jost – beide SIL Open Font License 1.1) liegen im Theme,
+  damit keine externen Font-Anfragen nötig sind. Farben kommen aus den Theme-Einstellungen.
+{%- endcomment -%}
+<style>
+  @font-face{font-family:"Cormorant Garamond";font-style:normal;font-weight:400;font-display:swap;src:url({{ 'cormorant-garamond-latin-400-normal.woff2' | asset_url }}) format("woff2")}
+  @font-face{font-family:"Cormorant Garamond";font-style:italic;font-weight:400;font-display:swap;src:url({{ 'cormorant-garamond-latin-400-italic.woff2' | asset_url }}) format("woff2")}
+  @font-face{font-family:"Cormorant Garamond";font-style:normal;font-weight:500;font-display:swap;src:url({{ 'cormorant-garamond-latin-500-normal.woff2' | asset_url }}) format("woff2")}
+  @font-face{font-family:"Cormorant Garamond";font-style:normal;font-weight:600;font-display:swap;src:url({{ 'cormorant-garamond-latin-600-normal.woff2' | asset_url }}) format("woff2")}
+  @font-face{font-family:"Jost";font-style:normal;font-weight:300;font-display:swap;src:url({{ 'jost-latin-300-normal.woff2' | asset_url }}) format("woff2")}
+  @font-face{font-family:"Jost";font-style:normal;font-weight:400;font-display:swap;src:url({{ 'jost-latin-400-normal.woff2' | asset_url }}) format("woff2")}
+  @font-face{font-family:"Jost";font-style:normal;font-weight:500;font-display:swap;src:url({{ 'jost-latin-500-normal.woff2' | asset_url }}) format("woff2")}
+  :root{
+    --c-dark-bg: {{ settings.color_background }};
+    --c-dark-ink: {{ settings.color_text }};
+    --c-light-bg: {{ settings.color_background_alt }};
+    --c-light-ink: {{ settings.color_text_alt }};
+    --c-sand-bg: {{ settings.color_sand }};
+    --accent: {{ settings.color_accent }};
+    --logo-w: {{ settings.logo_width }}px;
+    --head-scale: {{ settings.heading_scale | divided_by: 100.0 }};
+    --head-case: {% if settings.heading_uppercase %}uppercase{% else %}none{% endif %};
+    --radius: {{ settings.button_radius }}px;
+  }
+</style>

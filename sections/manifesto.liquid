@@ -1,0 +1,39 @@
+{%- liquid
+  assign s = section.settings
+-%}
+<section class="manifesto scheme-{{ s.color_scheme }} section-pad section-pad--lg manifesto--{{ s.align }}">
+  <div class="wrap manifesto-inner">
+    {%- if s.show_emblem -%}<div class="manifesto-emblem" data-reveal>{% render 'emblem', size: 22 %}</div>{%- endif -%}
+    {%- if s.eyebrow != blank -%}<p class="eyebrow" data-reveal>{{ s.eyebrow }}</p>{%- endif -%}
+    {%- if s.text != blank -%}
+      <div class="manifesto-text"{% if s.scroll_highlight %} data-scroll-words{% else %} data-reveal{% endif %}>{{ s.text }}</div>
+    {%- endif -%}
+    {%- if s.attribution != blank -%}<p class="manifesto-by" data-reveal>{{ s.attribution }}</p>{%- endif -%}
+    {%- if s.button_label != blank -%}
+      <div class="btn-row" data-reveal><a class="btn btn--line" href="{{ s.button_link | default: routes.root_url }}">{{ s.button_label }}</a></div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Manifest",
+  "tag": "div",
+  "settings": [
+    { "type": "select", "id": "color_scheme", "label": "Farbschema", "default": "dark", "options": [
+      { "value": "dark", "label": "Nacht" }, { "value": "light", "label": "Pergament" }, { "value": "sand", "label": "Sand" }
+    ] },
+    { "type": "select", "id": "align", "label": "Ausrichtung", "default": "center", "options": [
+      { "value": "center", "label": "Mittig" }, { "value": "left", "label": "Links" }
+    ] },
+    { "type": "checkbox", "id": "show_emblem", "label": "Sanduhr-Zeichen", "default": true },
+    { "type": "text", "id": "eyebrow", "label": "Kleine Zeile" },
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>A fragrance should outlast the hour it was worn in. We compose for memory, never for the season.</p>" },
+    { "type": "checkbox", "id": "scroll_highlight", "label": "Wörter beim Scrollen aufleuchten lassen", "default": true },
+    { "type": "text", "id": "attribution", "label": "Zeile darunter" },
+    { "type": "text", "id": "button_label", "label": "Button-Text" },
+    { "type": "url", "id": "button_link", "label": "Button-Link" }
+  ],
+  "presets": [ { "name": "Manifest" } ]
+}
+{% endschema %}

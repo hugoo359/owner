@@ -1,0 +1,112 @@
+{%- liquid
+  assign s = section.settings
+-%}
+<section class="timeline scheme-{{ s.color_scheme }} section-pad" data-timeline>
+  <div class="wrap">
+    {%- if s.eyebrow != blank or s.heading != blank or s.text != blank -%}
+      <header class="sec-head sec-head--center">
+        {%- if s.eyebrow != blank -%}<p class="eyebrow" data-reveal>{{ s.eyebrow }}</p>{%- endif -%}
+        {%- if s.heading != blank -%}<h2 class="h1" data-split>{{ s.heading }}</h2>{%- endif -%}
+        {%- if s.text != blank -%}<div class="rte sec-text" data-reveal>{{ s.text }}</div>{%- endif -%}
+      </header>
+    {%- endif -%}
+
+    <div class="tl-wrap">
+    <span class="tl-line" aria-hidden="true"><i data-timeline-bar></i></span>
+    <ol class="tl" role="list">
+      {%- for block in section.blocks -%}
+        {%- assign b = block.settings -%}
+        <li class="tl-item tl-item--{{ block.type }}{% cycle ' tl-item--a', ' tl-item--b' %}" {{ block.shopify_attributes }}>
+          <span class="tl-dot" aria-hidden="true"></span>
+          <div class="tl-media" data-reveal>
+            {%- if b.image != blank -%}
+              {{ b.image | image_url: width: 1400 | image_tag: loading: 'lazy', sizes: '(min-width: 990px) 38vw, 90vw', widths: '500, 800, 1100, 1400', alt: b.image.alt }}
+            {%- elsif block.type == 'coming_soon' -%}
+              {% render 'fallback-art', art: 'veil' %}
+            {%- else -%}
+              {% render 'fallback-art', art: b.fallback_art %}
+            {%- endif -%}
+          </div>
+          <div class="tl-copy">
+            {%- if b.era != blank -%}<p class="tl-era" data-reveal>{{ b.era }}</p>{%- endif -%}
+            {%- if b.title != blank -%}<h3 class="h2 tl-title" data-split>{{ b.title }}</h3>{%- endif -%}
+            {%- if b.text != blank -%}<div class="rte" data-reveal>{{ b.text }}</div>{%- endif -%}
+            {%- if block.type == 'chapter' -%}
+              {%- liquid
+                assign p = b.product
+                if p == blank and b.handle != blank
+                  assign p = all_products[b.handle]
+                  if p.id == blank
+                    assign p = nil
+                  endif
+                endif
+              -%}
+              {%- if p -%}
+                {%- capture st -%}{% render 'product-status', product: p %}{%- endcapture -%}
+                {%- assign st = st | strip -%}
+                <div class="tl-product" data-reveal>
+                  {% render 'price', product: p %}
+                  {%- if st == 'soldout' -%}<span class="badge">{{ 'product.sold_out' | t }}</span>{%- elsif st == 'soon' -%}<span class="badge badge--accent">{{ 'product.coming_soon' | t }}</span>{%- endif -%}
+                  <a class="link-arrow" href="{{ p.url }}"><span>{{ b.button_label | default: p.title }}</span>{% render 'icon', icon: 'arrow-right' %}</a>
+                </div>
+              {%- endif -%}
+            {%- elsif b.link_label != blank -%}
+              <div class="tl-product" data-reveal>
+                <a class="link-arrow" href="{{ b.link | default: '#' }}"><span>{{ b.link_label }}</span>{% render 'icon', icon: 'arrow-right' %}</a>
+              </div>
+            {%- endif -%}
+          </div>
+        </li>
+      {%- endfor -%}
+    </ol>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Zeitleiste",
+  "tag": "div",
+  "settings": [
+    { "type": "select", "id": "color_scheme", "label": "Farbschema", "default": "dark", "options": [
+      { "value": "dark", "label": "Nacht" }, { "value": "light", "label": "Pergament" }, { "value": "sand", "label": "Sand" }
+    ] },
+    { "type": "text", "id": "eyebrow", "label": "Kleine Zeile", "default": "The figures" },
+    { "type": "inline_richtext", "id": "heading", "label": "Überschrift", "default": "Who has touched the glass" },
+    { "type": "richtext", "id": "text", "label": "Text" }
+  ],
+  "blocks": [
+    {
+      "type": "chapter",
+      "name": "Kapitel",
+      "settings": [
+        { "type": "text", "id": "era", "label": "Epoche / Jahr", "default": "Era" },
+        { "type": "text", "id": "title", "label": "Titel", "default": "Figure" },
+        { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Describe the figure, the age and the mood this fragrance carries.</p>" },
+        { "type": "image_picker", "id": "image", "label": "Bild" },
+        { "type": "select", "id": "fallback_art", "label": "Ersatz-Illustration", "default": "relic", "options": [
+          { "value": "zeus", "label": "Flakon Gewitter" }, { "value": "pharaon", "label": "Flakon Wüste" }, { "value": "relic", "label": "Sanduhr" }, { "value": "dunes", "label": "Dünen" }
+        ] },
+        { "type": "product", "id": "product", "label": "Verknüpftes Produkt", "info": "Zeigt Preis und Status aus Shopify" },
+        { "type": "text", "id": "handle", "label": "Ersatz: Produkt-Handle", "info": "Wird genutzt, solange oben kein Produkt gewählt ist." },
+        { "type": "text", "id": "button_label", "label": "Link-Text", "info": "Leer = Produktname" }
+      ]
+    },
+    {
+      "type": "coming_soon",
+      "name": "Coming soon",
+      "settings": [
+        { "type": "text", "id": "era", "label": "Epoche / Jahr", "default": "—" },
+        { "type": "text", "id": "title", "label": "Titel", "default": "Coming soon" },
+        { "type": "richtext", "id": "text", "label": "Text", "default": "<p>The next name is still hidden in the sand.</p>" },
+        { "type": "image_picker", "id": "image", "label": "Bild" },
+        { "type": "text", "id": "link_label", "label": "Link-Text", "default": "Join the list" },
+        { "type": "url", "id": "link", "label": "Link" }
+      ]
+    }
+  ],
+  "presets": [
+    { "name": "Zeitleiste", "blocks": [ { "type": "chapter" }, { "type": "chapter" }, { "type": "coming_soon" } ] }
+  ]
+}
+{% endschema %}

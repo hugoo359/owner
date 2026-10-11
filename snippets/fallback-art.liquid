@@ -1,0 +1,19 @@
+{%- comment -%}
+  Eigenständige Ersatz-Illustration (SVG aus /assets), solange kein eigenes Bild gesetzt ist.
+  Parameter: art ('zeus' | 'pharaon' | 'relic' | 'veil' | 'dunes'), class, alt, eager
+{%- endcomment -%}
+{%- liquid
+  assign w = 1200
+  assign h = 1500
+  case art
+    when 'zeus', 'pharaon', 'relic', 'veil'
+      assign file = 'art-' | append: art | append: '.svg'
+    when 'dunes'
+      assign file = 'art-dunes.svg'
+      assign w = 1600
+      assign h = 1000
+    else
+      assign file = 'art-relic.svg'
+  endcase
+-%}
+<img src="{{ file | asset_url }}" class="fallback-art {{ class }}" alt="{{ alt | escape }}" width="{{ w }}" height="{{ h }}" {% if eager %}fetchpriority="high"{% else %}loading="lazy"{% endif %}>

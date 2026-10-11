@@ -1,0 +1,52 @@
+{%- liquid
+  assign s = section.settings
+  assign title = s.heading
+  if title == blank
+    assign title = page.title
+  endif
+  assign overlay = s.overlay | divided_by: 100.0
+-%}
+<section class="phero phero--{{ s.height }} scheme-{{ s.color_scheme }}">
+  {%- if s.image != blank or s.fallback_art != 'none' -%}
+    <div class="phero-media" data-parallax>
+      {%- if s.image != blank -%}
+        {{ s.image | image_url: width: 2400 | image_tag: class: 'hero-img', loading: 'eager', fetchpriority: 'high', sizes: '100vw', widths: '750, 1100, 1500, 1920, 2400', alt: s.image.alt }}
+      {%- else -%}
+        {% render 'fallback-art', art: s.fallback_art, class: 'hero-img', eager: true %}
+      {%- endif -%}
+      <div class="hero-shade" style="--shade: {{ overlay }}"></div>
+    </div>
+  {%- endif -%}
+  <div class="phero-inner wrap">
+    {%- if s.show_emblem -%}<div class="hero-emblem" data-reveal>{% render 'emblem', size: 26, animate: true %}</div>{%- endif -%}
+    {%- if s.eyebrow != blank -%}<p class="eyebrow" data-reveal>{{ s.eyebrow }}</p>{%- endif -%}
+    <h1 class="display phero-title" data-split>{{ title }}</h1>
+    {%- if s.text != blank -%}<div class="rte phero-text" data-reveal>{{ s.text }}</div>{%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Seiten-Titel",
+  "tag": "div",
+  "class": "section-hero",
+  "settings": [
+    { "type": "select", "id": "color_scheme", "label": "Farbschema", "default": "dark", "options": [
+      { "value": "dark", "label": "Nacht" }, { "value": "light", "label": "Pergament" }, { "value": "sand", "label": "Sand" }
+    ] },
+    { "type": "select", "id": "height", "label": "Höhe", "default": "large", "options": [
+      { "value": "full", "label": "Bildschirmhoch" }, { "value": "large", "label": "Groß" }, { "value": "small", "label": "Klein" }
+    ] },
+    { "type": "image_picker", "id": "image", "label": "Bild" },
+    { "type": "select", "id": "fallback_art", "label": "Ersatz-Illustration ohne Bild", "default": "dunes", "options": [
+      { "value": "dunes", "label": "Dünen" }, { "value": "relic", "label": "Sanduhr" }, { "value": "none", "label": "Keine" }
+    ] },
+    { "type": "range", "id": "overlay", "label": "Abdunkelung", "min": 0, "max": 90, "step": 5, "unit": "%", "default": 40 },
+    { "type": "checkbox", "id": "show_emblem", "label": "Animierte Sanduhr", "default": true },
+    { "type": "text", "id": "eyebrow", "label": "Kleine Zeile" },
+    { "type": "inline_richtext", "id": "heading", "label": "Überschrift", "info": "Leer = Seitentitel" },
+    { "type": "richtext", "id": "text", "label": "Text" }
+  ],
+  "presets": [ { "name": "Seiten-Titel" } ]
+}
+{% endschema %}

@@ -1,0 +1,71 @@
+{%- liquid
+  assign s = section.settings
+  assign form_id = 'DropSignup-' | append: section.id
+  assign date = s.countdown_date | strip
+-%}
+<section class="drop scheme-{{ s.color_scheme }} section-pad" id="drop">
+  <div class="wrap drop-grid drop-grid--{{ s.layout }}">
+    <div class="drop-media" data-reveal>
+      {%- if s.image != blank -%}
+        {{ s.image | image_url: width: 1400 | image_tag: loading: 'lazy', sizes: '(min-width: 990px) 40vw, 100vw', widths: '600, 900, 1200, 1400', alt: s.image.alt }}
+      {%- else -%}
+        {% render 'fallback-art', art: s.fallback_art %}
+      {%- endif -%}
+    </div>
+    <div class="drop-copy">
+      {%- if s.eyebrow != blank -%}<p class="eyebrow" data-reveal>{{ s.eyebrow }}</p>{%- endif -%}
+      {%- if s.heading != blank -%}<h2 class="h1" data-split>{{ s.heading }}</h2>{%- endif -%}
+      {%- if s.text != blank -%}<div class="rte" data-reveal>{{ s.text }}</div>{%- endif -%}
+
+      {%- if date != blank -%}
+        <div class="countdown" data-countdown="{{ date | escape }}" data-reveal hidden>
+          {%- if s.countdown_label != blank -%}<p class="countdown-label eyebrow">{{ s.countdown_label }}</p>{%- endif -%}
+          <div class="countdown-row" role="timer" aria-live="off">
+            <span><b data-cd="d">00</b><small>{{ 'countdown.days' | t }}</small></span>
+            <span><b data-cd="h">00</b><small>{{ 'countdown.hours' | t }}</small></span>
+            <span><b data-cd="m">00</b><small>{{ 'countdown.minutes' | t }}</small></span>
+            <span><b data-cd="s">00</b><small>{{ 'countdown.seconds' | t }}</small></span>
+          </div>
+        </div>
+      {%- elsif request.design_mode -%}
+        <p class="editor-hint">{{ 'general.editor_hint' | t: text: 'Ohne Datum wird kein Countdown angezeigt.' }}</p>
+      {%- endif -%}
+
+      <div class="drop-form" data-reveal>
+        {% render 'newsletter-form', form_id: form_id, tags: s.tags, button_label: s.button_label %}
+      </div>
+      {%- if s.note != blank -%}<p class="drop-note" data-reveal>{{ s.note }}</p>{%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Nächster Drop",
+  "tag": "div",
+  "settings": [
+    { "type": "select", "id": "color_scheme", "label": "Farbschema", "default": "sand", "options": [
+      { "value": "dark", "label": "Nacht" }, { "value": "light", "label": "Pergament" }, { "value": "sand", "label": "Sand" }
+    ] },
+    { "type": "select", "id": "layout", "label": "Bildposition", "default": "right", "options": [
+      { "value": "left", "label": "Bild links" }, { "value": "right", "label": "Bild rechts" }
+    ] },
+    { "type": "image_picker", "id": "image", "label": "Bild" },
+    { "type": "select", "id": "fallback_art", "label": "Ersatz-Illustration ohne Bild", "default": "veil", "options": [
+      { "value": "veil", "label": "Verhüllt" }, { "value": "relic", "label": "Sanduhr" }, { "value": "dunes", "label": "Dünen" }
+    ] },
+    { "type": "text", "id": "eyebrow", "label": "Kleine Zeile", "default": "The next figure" },
+    { "type": "inline_richtext", "id": "heading", "label": "Überschrift", "default": "The hourglass <em>is turning</em>" },
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Releases are made in small batches. Join the list to hear about the next one before anyone else.</p>" },
+    { "type": "header", "content": "Countdown (optional)" },
+    { "type": "paragraph", "content": "Nur ausfüllen, wenn der Termin feststeht. Format: 2026-12-01T20:00:00-05:00 (Datum, Uhrzeit, Zeitzone). Ist das Datum vorbei, verschwindet der Countdown automatisch." },
+    { "type": "text", "id": "countdown_date", "label": "Datum und Uhrzeit" },
+    { "type": "text", "id": "countdown_label", "label": "Text über dem Countdown", "default": "Release in" },
+    { "type": "header", "content": "Formular" },
+    { "type": "text", "id": "tags", "label": "Kunden-Tags", "default": "newsletter, next-drop", "info": "So findest du die Anmeldungen unter Kunden wieder." },
+    { "type": "text", "id": "button_label", "label": "Button-Text", "default": "Notify me" },
+    { "type": "text", "id": "note", "label": "Kleiner Hinweis unter dem Formular", "default": "We only write when there is something to tell." }
+  ],
+  "presets": [ { "name": "Nächster Drop" } ]
+}
+{% endschema %}

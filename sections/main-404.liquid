@@ -1,8 +1,11 @@
-<div class="wrap page-wrap center">
-  <h1 class="ctitle">Page not found</h1>
-  <p>This page doesn't exist or has been moved.</p>
-  <a class="atc inline" href="{{ routes.all_products_collection_url }}">Continue shopping</a>
-</div>
+<section class="page scheme-dark section-pad section-pad--lg">
+  <div class="wrap page-inner page-inner--narrow center">
+    {% render 'emblem', size: 36, animate: true %}
+    <h1 class="h1 page-title" data-split>{{ 'general.not_found_title' | t }}</h1>
+    <p>{{ 'general.not_found_text' | t }}</p>
+    <div class="btn-row btn-row--center"><a class="btn btn--line" href="{{ routes.root_url }}">{{ 'general.continue_shopping' | t }}</a></div>
+  </div>
+</section>
 {% schema %}
-{ "name": "404" }
+{ "name": "404", "tag": "div" }
 {% endschema %}

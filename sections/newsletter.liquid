@@ -1,33 +1,29 @@
-<section class="newsletter">
-  {%- form 'customer', id: 'NewsletterForm', class: 'nl-form' -%}
-    <input type="hidden" name="contact[tags]" value="newsletter">
-    <button type="button" class="nl-toggle" data-nl-toggle aria-expanded="{% if form.posted_successfully? or form.errors %}true{% else %}false{% endif %}" aria-controls="NewsletterFields">
-      <span>{{ section.settings.heading }}</span>
-      <svg class="nl-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 5l4 4 4-4"/></svg>
-    </button>
-    <div class="nl-fields{% if form.posted_successfully? or form.errors %} open{% endif %}" id="NewsletterFields">
-      <div class="nl-inner">
-        {%- if form.posted_successfully? -%}
-          <p class="nl-msg">{{ section.settings.success_text }}</p>
-        {%- else -%}
-          <input type="email" name="contact[email]" id="NewsletterEmail" required placeholder="YOUR EMAIL ADDRESS" aria-label="Email address" autocomplete="email">
-          <button type="submit">SUBSCRIBE</button>
-          {%- if form.errors -%}
-            <p class="nl-msg">Please enter a valid email address.</p>
-          {%- endif -%}
-        {%- endif -%}
-      </div>
-    </div>
-  {%- endform -%}
+{%- liquid
+  assign s = section.settings
+  assign form_id = 'Newsletter-' | append: section.id
+-%}
+<section class="nl scheme-{{ s.color_scheme }} section-pad">
+  <div class="wrap nl-inner">
+    {%- if s.eyebrow != blank -%}<p class="eyebrow" data-reveal>{{ s.eyebrow }}</p>{%- endif -%}
+    {%- if s.heading != blank -%}<h2 class="h2" data-split>{{ s.heading }}</h2>{%- endif -%}
+    {%- if s.text != blank -%}<div class="rte" data-reveal>{{ s.text }}</div>{%- endif -%}
+    <div data-reveal>{% render 'newsletter-form', form_id: form_id, tags: s.tags %}</div>
+  </div>
 </section>
 
 {% schema %}
 {
-  "name": "Newsletter-Leiste",
+  "name": "Newsletter",
+  "tag": "div",
   "settings": [
-    { "type": "text", "id": "heading", "label": "Text", "default": "SIGN UP FOR OUR NEWSLETTER" },
-    { "type": "text", "id": "success_text", "label": "Text nach Anmeldung", "default": "Thanks! You're now subscribed." }
+    { "type": "select", "id": "color_scheme", "label": "Farbschema", "default": "sand", "options": [
+      { "value": "dark", "label": "Nacht" }, { "value": "light", "label": "Pergament" }, { "value": "sand", "label": "Sand" }
+    ] },
+    { "type": "text", "id": "eyebrow", "label": "Kleine Zeile", "default": "Newsletter" },
+    { "type": "inline_richtext", "id": "heading", "label": "Überschrift", "default": "Letters from the house" },
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>New releases, early access and the stories behind each figure.</p>" },
+    { "type": "text", "id": "tags", "label": "Kunden-Tags", "default": "newsletter" }
   ],
-  "presets": [ { "name": "Newsletter-Leiste" } ]
+  "presets": [ { "name": "Newsletter" } ]
 }
 {% endschema %}

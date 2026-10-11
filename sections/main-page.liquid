@@ -1,7 +1,22 @@
-<div class="wrap page-wrap">
-  <h1 class="ctitle">{{ page.title }}</h1>
-  <div class="rte">{{ page.content }}</div>
-</div>
+{%- if section.settings.show_title or page.content != blank -%}
+<section class="page scheme-{{ section.settings.color_scheme }} section-pad">
+  <div class="wrap page-inner{% if section.settings.narrow %} page-inner--narrow{% endif %}">
+    {%- if section.settings.show_title -%}<h1 class="h1 page-title" data-split>{{ page.title }}</h1>{%- endif -%}
+    {%- if page.content != blank -%}<div class="rte page-content" data-reveal>{{ page.content }}</div>{%- endif -%}
+  </div>
+</section>
+{%- endif -%}
+
 {% schema %}
-{ "name": "Seite" }
+{
+  "name": "Seiteninhalt",
+  "tag": "div",
+  "settings": [
+    { "type": "select", "id": "color_scheme", "label": "Farbschema", "default": "dark", "options": [
+      { "value": "dark", "label": "Nacht" }, { "value": "light", "label": "Pergament" }, { "value": "sand", "label": "Sand" }
+    ] },
+    { "type": "checkbox", "id": "show_title", "label": "Seitentitel anzeigen", "default": true },
+    { "type": "checkbox", "id": "narrow", "label": "Schmale Textspalte", "default": true }
+  ]
+}
 {% endschema %}

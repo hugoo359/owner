@@ -1,0 +1,43 @@
+{
+  "sections": {
+    "hero": {
+      "type": "page-hero",
+      "settings": {
+        "color_scheme": "dark",
+        "height": "small",
+        "fallback_art": "none",
+        "overlay": 0,
+        "show_emblem": true,
+        "eyebrow": "",
+        "heading": "",
+        "text": ""
+      }
+    },
+    "main": {
+      "type": "main-page",
+      "settings": {
+        "show_title": false,
+        "color_scheme": "dark",
+        "narrow": true
+      }
+    },
+    "form": {
+      "type": "contact-form",
+      "settings": {
+        "color_scheme": "light",
+        "eyebrow": "Contact",
+        "heading": "Write to the house",
+        "text": "<p>For orders, press enquiries or wholesale, send us a message and we will get back to you.</p>",
+        "show_email": true,
+        "email": "",
+        "subjects": "Order, Press, Wholesale, Other",
+        "show_phone": false
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "main",
+    "form"
+  ]
+}

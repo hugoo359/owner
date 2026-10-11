@@ -8,106 +8,129 @@
 -%}
 <div id="cart" class="layer" hidden>
   <div class="backdrop" data-close="cart"></div>
-  <aside class="drawer" aria-label="Cart" role="dialog">
-    <div class="d-head">
-      <h2>CART</h2>
-      <button type="button" data-close="cart" aria-label="Close cart">{% render 'icon', icon: 'close-thin' %}</button>
-    </div>
+  <aside class="drawer scheme-{{ section.settings.color_scheme }}" role="dialog" aria-modal="true" aria-labelledby="CartDrawerTitle">
     <div id="CartDrawerInner" class="drawer-inner" data-count="{{ cart.item_count }}">
+      <div class="d-head">
+        <h2 id="CartDrawerTitle" class="d-title">{{ 'cart.title' | t }} <span class="d-count">({{ cart.item_count }})</span></h2>
+        <button type="button" class="d-close" data-close="cart" aria-label="{{ 'general.close' | t }}">{% render 'icon', icon: 'close' %}</button>
+      </div>
+
       {%- if cart.item_count == 0 -%}
         <div class="d-scroll">
           <div class="cart-empty">
-            Your cart is empty.<br>
-            <a href="{{ routes.all_products_collection_url }}">Shop now</a>
+            {% render 'emblem', size: 36, animate: true %}
+            <p class="cart-empty-title">{{ 'cart.empty' | t }}</p>
+            {%- if section.settings.empty_link != blank -%}
+              <a class="btn btn--line" href="{{ section.settings.empty_link }}" data-close-cart-link>{{ 'cart.continue' | t }}</a>
+            {%- else -%}
+              <a class="btn btn--line" href="{{ routes.all_products_collection_url }}">{{ 'cart.continue' | t }}</a>
+            {%- endif -%}
           </div>
         </div>
       {%- else -%}
         <div class="d-scroll">
           {%- if threshold > 0 -%}
             <div class="ship">
-              {%- if remaining > 0 -%}
-                You're <b>{{ remaining | money_with_currency }}</b> away from free shipping
-              {%- else -%}
-                <b>You've unlocked free shipping!</b>
-              {%- endif -%}
-              <div class="bar"><i data-bar style="width: {{ progress }}%"></i></div>
+              <p>
+                {%- if remaining > 0 -%}
+                  {%- capture amount -%}{% render 'money', amount: remaining %}{%- endcapture -%}
+                  {{ 'cart.free_shipping_remaining' | t: amount: amount }}
+                {%- else -%}
+                  {{ 'cart.free_shipping_unlocked' | t }}
+                {%- endif -%}
+              </p>
+              <div class="bar" role="presentation"><i data-bar style="width: {{ progress }}%"></i></div>
             </div>
-          {%- endif -%}
-          {%- if settings.cart_note_title != blank or settings.cart_note_text != blank -%}
-            <div class="good">{% render 'icon', icon: 'check' %}<b>{{ settings.cart_note_title }}</b> {{ settings.cart_note_text }}</div>
           {%- endif -%}
 
-          {%- for item in cart.items -%}
-            <div class="line" data-key="{{ item.key }}">
-              <a href="{{ item.url }}" class="media">
-                {%- if item.image -%}{{ item.image | image_url: width: 240 | image_tag: alt: item.product.title, loading: 'lazy' }}{%- endif -%}
-              </a>
-              <div>
-                <h3><a href="{{ item.url }}">{{ item.product.title }}</a></h3>
-                <div class="pr">{{ item.final_price | money_with_currency }}</div>
-                {%- unless item.product.has_only_default_variant -%}
-                  <div class="size">{{ item.variant.title | downcase }}</div>
-                {%- endunless -%}
-                <div class="qty-row">
-                  <div class="qty">
-                    <button type="button" data-line="{{ forloop.index }}" data-qty="{{ item.quantity | minus: 1 }}" aria-label="Decrease quantity">{% render 'icon', icon: 'qty-minus' %}</button>
-                    <span data-qty-num>{{ item.quantity }}</span>
-                    <button type="button" data-line="{{ forloop.index }}" data-qty="{{ item.quantity | plus: 1 }}" aria-label="Increase quantity">{% render 'icon', icon: 'qty-plus' %}</button>
+          <ul class="lines" role="list">
+            {%- for item in cart.items -%}
+              <li class="line" data-key="{{ item.key }}">
+                <a href="{{ item.url }}" class="line-media" tabindex="-1" aria-hidden="true">
+                  {%- if item.image -%}
+                    {{ item.image | image_url: width: 300 | image_tag: alt: '', loading: 'lazy', width: 150 }}
+                  {%- else -%}
+                    {% render 'fallback-art', art: 'relic', class: 'line-art' %}
+                  {%- endif -%}
+                </a>
+                <div class="line-info">
+                  <div class="line-top">
+                    <h3 class="line-title"><a href="{{ item.url }}">{{ item.product.title }}</a></h3>
+                    <div class="line-price">
+                      {%- if item.original_line_price > item.final_line_price -%}
+                        <s>{% render 'money', amount: item.original_line_price %}</s>
+                      {%- endif -%}
+                      <span>{% render 'money', amount: item.final_line_price %}</span>
+                    </div>
                   </div>
-                  <button type="button" class="link-u" data-line="{{ forloop.index }}" data-qty="0">Remove</button>
+                  {%- unless item.product.has_only_default_variant -%}
+                    <p class="line-variant">{{ item.variant.title }}</p>
+                  {%- endunless -%}
+                  {%- for p in item.properties -%}
+                    {%- assign first_char = p.first | slice: 0 -%}
+                    {%- if p.last != blank and first_char != '_' -%}<p class="line-variant">{{ p.first }}: {{ p.last }}</p>{%- endif -%}
+                  {%- endfor -%}
+                  {%- for discount in item.line_level_discount_allocations -%}
+                    <p class="line-variant line-discount">{{ discount.discount_application.title }}</p>
+                  {%- endfor -%}
+                  <div class="line-actions">
+                    <div class="qty" role="group" aria-label="{{ 'cart.quantity' | t }}">
+                      <button type="button" data-line="{{ forloop.index }}" data-qty="{{ item.quantity | minus: 1 }}" aria-label="{{ 'product.decrease' | t }}">{% render 'icon', icon: 'minus' %}</button>
+                      <span data-qty-num aria-live="polite">{{ item.quantity }}</span>
+                      <button type="button" data-line="{{ forloop.index }}" data-qty="{{ item.quantity | plus: 1 }}" aria-label="{{ 'product.increase' | t }}">{% render 'icon', icon: 'plus' %}</button>
+                    </div>
+                    <button type="button" class="link-line line-remove" data-line="{{ forloop.index }}" data-qty="0" aria-label="{{ 'cart.remove_item' | t: title: item.product.title | escape }}">{{ 'cart.remove' | t }}</button>
+                  </div>
                 </div>
-              </div>
-            </div>
-          {%- endfor -%}
+              </li>
+            {%- endfor -%}
+          </ul>
 
           {%- if settings.cart_upsell_collection != blank -%}
             {%- assign in_cart = cart.items | map: 'product_id' | join: ',' | prepend: ',' | append: ',' -%}
             {%- assign n = 0 -%}
             {%- capture ups -%}
-              {%- for p in settings.cart_upsell_collection.products limit: 16 -%}
+              {%- for p in settings.cart_upsell_collection.products limit: 12 -%}
                 {%- assign key = p.id | prepend: ',' | append: ',' -%}
                 {%- if in_cart contains key or p.available == false -%}{%- continue -%}{%- endif -%}
                 {%- if n >= 2 -%}{%- break -%}{%- endif -%}
                 {%- assign n = n | plus: 1 -%}
-                <div class="line{% if n > 1 %} is-hidden{% endif %}" data-ups="{{ n }}">
-                  <a href="{{ p.url }}" class="media">
-                    {%- if p.featured_media -%}{{ p.featured_media | image_url: width: 240 | image_tag: alt: p.title, loading: 'lazy' }}{%- endif -%}
+                <li class="ups">
+                  <a href="{{ p.url }}" class="line-media" tabindex="-1" aria-hidden="true">
+                    {%- if p.featured_media -%}{{ p.featured_media | image_url: width: 200 | image_tag: alt: '', loading: 'lazy', width: 100 }}{%- else -%}{% render 'fallback-art', art: 'relic', class: 'line-art' %}{%- endif -%}
                   </a>
                   <div>
-                    <h3><a href="{{ p.url }}">{{ p.title }}</a></h3>
-                    <div class="pr">{{ p.price | money_with_currency }}</div>
-                    <button type="button" class="link-u ups-add" data-add-variant="{{ p.first_available_variant.id }}">Add to cart</button>
+                    <p class="line-title"><a href="{{ p.url }}">{{ p.title }}</a></p>
+                    <p class="line-variant">{% render 'money', amount: p.price %}</p>
                   </div>
-                </div>
+                  <button type="button" class="btn btn--line btn--sm" data-add-variant="{{ p.first_available_variant.id }}">{{ 'cart.add' | t }}</button>
+                </li>
               {%- endfor -%}
             {%- endcapture -%}
             {%- if n > 0 -%}
               <div class="upsell">
-                <div class="upsell-head">PAIRS WELL WITH
-                  {%- if n > 1 -%}
-                    <div class="udots"><button type="button" class="on" data-ups-dot="1" aria-label="Suggestion 1"></button><button type="button" data-ups-dot="2" aria-label="Suggestion 2"></button></div>
-                  {%- endif -%}
-                </div>
-                {{ ups }}
+                <h3 class="eyebrow">{{ 'cart.upsell_title' | t }}</h3>
+                <ul role="list">{{ ups }}</ul>
               </div>
             {%- endif -%}
           {%- endif -%}
         </div>
 
-        <div class="d-foot">
-          <div class="sumrow b"><span>Subtotal</span><span>{{ cart.total_price | money_with_currency }}</span></div>
-          <div class="sumrow">
-            <span>Shipping</span>
-            <span>
-              {%- if threshold > 0 and remaining <= 0 -%}Free
-              {%- elsif settings.shipping_label != blank -%}{{ settings.shipping_label }}
-              {%- else -%}Calculated at checkout{%- endif -%}
-            </span>
-          </div>
-          <form action="{{ routes.cart_url }}" method="post">
-            <button type="submit" name="checkout" class="checkout">CHECKOUT</button>
-          </form>
-        </div>
+        <form action="{{ routes.cart_url }}" method="post" class="d-foot" id="CartDrawerForm">
+          {%- if settings.cart_note_enabled -%}
+            <details class="cart-note">
+              <summary>{{ 'cart.note' | t }}{% render 'icon', icon: 'plus' %}</summary>
+              <label class="visually-hidden" for="CartDrawerNote">{{ 'cart.note' | t }}</label>
+              <textarea name="note" id="CartDrawerNote" rows="3">{{ cart.note }}</textarea>
+            </details>
+          {%- endif -%}
+          {%- for discount in cart.cart_level_discount_applications -%}
+            <div class="sumrow"><span>{{ discount.title }}</span><span>-{% render 'money', amount: discount.total_allocated_amount %}</span></div>
+          {%- endfor -%}
+          <div class="sumrow sumrow--total"><span>{{ 'cart.subtotal' | t }}</span><span>{% render 'money', amount: cart.total_price %}</span></div>
+          <p class="d-note">{{ 'cart.taxes_shipping_at_checkout' | t }}</p>
+          <button type="submit" name="checkout" class="btn btn--solid btn--block">{{ 'cart.checkout' | t }}</button>
+        </form>
       {%- endif -%}
     </div>
   </aside>
@@ -117,7 +140,13 @@
 {
   "name": "Warenkorb-Seitenleiste",
   "settings": [
-    { "type": "paragraph", "content": "Einstellungen findest du unter Theme-Einstellungen > Warenkorb." }
+    { "type": "select", "id": "color_scheme", "label": "Farbschema", "default": "dark", "options": [
+      { "value": "dark", "label": "Nacht" },
+      { "value": "light", "label": "Pergament" },
+      { "value": "sand", "label": "Sand" }
+    ] },
+    { "type": "url", "id": "empty_link", "label": "Link bei leerem Warenkorb", "info": "Leer = alle Produkte" },
+    { "type": "paragraph", "content": "Weitere Einstellungen findest du unter Theme-Einstellungen > Warenkorb." }
   ]
 }
 {% endschema %}

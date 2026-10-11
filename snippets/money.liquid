@@ -1,0 +1,2 @@
+{%- comment -%} Gibt einen Betrag (in Cent) im Shop-Format aus, mit Währungscode je nach Theme-Einstellung. Parameter: amount {%- endcomment -%}
+{%- if settings.currency_code_enabled -%}{{ amount | money_with_currency }}{%- else -%}{{ amount | money }}{%- endif -%}

@@ -1,8 +1,8 @@
 [
   {
     "name": "theme_info",
-    "theme_name": "Streetwear",
-    "theme_version": "1.0.0",
+    "theme_name": "Sablier",
+    "theme_version": "2.0.0",
     "theme_author": "Eigenes Theme",
     "theme_documentation_url": "https://help.shopify.com/manual/online-store/themes",
     "theme_support_url": "https://help.shopify.com/"
@@ -10,52 +10,56 @@
   {
     "name": "Logo",
     "settings": [
-      { "type": "image_picker", "id": "logo", "label": "Logo" },
-      { "type": "range", "id": "logo_width", "label": "Logo-Breite", "min": 40, "max": 220, "step": 2, "unit": "px", "default": 64 },
+      { "type": "image_picker", "id": "logo", "label": "Logo", "info": "Ohne Logo-Bild zeigt das Theme den Shopnamen als Schriftzug mit Sanduhr-Zeichen." },
+      { "type": "range", "id": "logo_width", "label": "Logo-Breite", "min": 60, "max": 260, "step": 2, "unit": "px", "default": 132 },
+      { "type": "checkbox", "id": "logo_emblem", "label": "Sanduhr-Zeichen neben dem Schriftzug", "default": true },
       { "type": "image_picker", "id": "favicon", "label": "Favicon", "info": "Quadratisch, mindestens 32 × 32 px" }
     ]
   },
   {
     "name": "Farben",
     "settings": [
-      { "type": "color", "id": "color_background", "label": "Hintergrund", "default": "#ffffff" },
-      { "type": "color", "id": "color_text", "label": "Text", "default": "#111111" },
-      { "type": "color", "id": "color_accent", "label": "Akzent (aktiver Filter, Zur-Kasse-Button)", "default": "#9dd5ea" },
-      { "type": "color", "id": "color_success", "label": "Erfolg (Verfügbarkeit, Versandbalken)", "default": "#2f7d14" }
+      { "type": "header", "content": "Farbschema „Nacht“ (Standard)" },
+      { "type": "color", "id": "color_background", "label": "Hintergrund", "default": "#0d0c0a" },
+      { "type": "color", "id": "color_text", "label": "Text", "default": "#ece4d6" },
+      { "type": "header", "content": "Farbschema „Pergament“" },
+      { "type": "color", "id": "color_background_alt", "label": "Hintergrund", "default": "#efe8dc" },
+      { "type": "color", "id": "color_text_alt", "label": "Text", "default": "#191612" },
+      { "type": "header", "content": "Farbschema „Sand“" },
+      { "type": "color", "id": "color_sand", "label": "Hintergrund", "default": "#2a2219" },
+      { "type": "header", "content": "Akzent" },
+      { "type": "color", "id": "color_accent", "label": "Akzent (Gold, Linien, Hervorhebungen)", "default": "#c6a46a" }
     ]
   },
   {
-    "name": "Farb-Swatches",
+    "name": "Typografie",
     "settings": [
-      {
-        "type": "paragraph",
-        "content": "Ordnet Farbnamen aus deinen Varianten und Filtern einem Farbton zu. Eine Zeile pro Farbe im Format Name: #hex. Wenn du in Shopify schon Swatches hinterlegt hast, werden diese bevorzugt."
-      },
-      {
-        "type": "textarea",
-        "id": "color_map",
-        "label": "Farbzuordnung",
-        "default": "Black: #141414\nSchwarz: #141414\nWhite: #f7f7f5\nWeiß: #f7f7f5\nGrey: #bdbdbd\nGrau: #bdbdbd\nGrey Melange: #cfcfcf\nLight Grey Melange: #dedede\nNavy: #22304d\nBlue: #3e6cb3\nBlau: #3e6cb3\nSky Blue: #93cbe8\nDenim: #5d80a6\nMint: #bfe5da\nGreen: #2f6b45\nGrün: #2f6b45\nEvergreen: #1f4d3a\nBrown: #6b4a33\nBraun: #6b4a33\nStone Brown: #7a5c45\nBeige: #e8dfcf\nCream: #efe8da\nPink: #f3a9c4\nRosa: #f3a9c4\nPurple: #8f6bbf\nLila: #8f6bbf\nRed: #c8102e\nRot: #c8102e\nWine Red: #6e1a28\nBordeaux: #6e1a28"
-      }
+      { "type": "paragraph", "content": "Überschriften: Cormorant Garamond, Fließtext: Jost. Beide Schriften liegen im Theme (Open Font License)." },
+      { "type": "range", "id": "heading_scale", "label": "Größe der Überschriften", "min": 80, "max": 130, "step": 5, "unit": "%", "default": 100 },
+      { "type": "checkbox", "id": "heading_uppercase", "label": "Überschriften in Großbuchstaben", "default": true },
+      { "type": "range", "id": "button_radius", "label": "Ecken der Buttons", "min": 0, "max": 30, "step": 2, "unit": "px", "default": 0 }
+    ]
+  },
+  {
+    "name": "Preise",
+    "settings": [
+      { "type": "checkbox", "id": "currency_code_enabled", "label": "Währungscode anzeigen (z. B. „$155.00 USD“)", "default": false }
+    ]
+  },
+  {
+    "name": "Produktstatus",
+    "settings": [
+      { "type": "paragraph", "content": "Ausverkauft wird automatisch aus dem Lagerbestand in Shopify erkannt. Für noch nicht erschienene Düfte vergibst du im Produkt das Tag unten – dann steht dort „Coming soon“ statt „Sold out“. Ein Datum zeigt das Theme nur, wenn du es selbst einträgst." },
+      { "type": "text", "id": "coming_soon_tag", "label": "Produkt-Tag für „Coming soon“", "default": "coming-soon" },
+      { "type": "checkbox", "id": "notify_enabled", "label": "„Benachrichtigen“-Formular bei nicht verfügbaren Produkten", "default": true, "info": "Nutzt Shopifys Kundenformular. Einträge erscheinen unter Kunden mit dem Tag notify-<produkt-handle>." }
     ]
   },
   {
     "name": "Warenkorb",
     "settings": [
-      { "type": "number", "id": "free_shipping_threshold", "label": "Kostenloser Versand ab (Betrag)", "default": 125, "info": "0 blendet den Fortschrittsbalken aus. Die echten Versandkosten stellst du unter Einstellungen > Versand ein." },
-      { "type": "text", "id": "shipping_label", "label": "Angezeigte Versandkosten unter dem Mindestbetrag", "default": "€4.90" },
-      { "type": "text", "id": "cart_note_title", "label": "Hinweis-Titel", "default": "GREAT CHOICE!" },
-      { "type": "text", "id": "cart_note_text", "label": "Hinweis-Text", "default": "Here are your pieces:" },
-      { "type": "collection", "id": "cart_upsell_collection", "label": "„Passt dazu“-Kollektion im Warenkorb" }
-    ]
-  },
-  {
-    "name": "Produktseite",
-    "settings": [
-      { "type": "text", "id": "tax_text", "label": "Steuerhinweis", "default": "incl. VAT" },
-      { "type": "text", "id": "in_stock_text", "label": "Verfügbar-Text", "default": "In stock." },
-      { "type": "text", "id": "delivery_text", "label": "Lieferzeit-Text", "default": "Delivered in 2–4 days" },
-      { "type": "text", "id": "sold_out_text", "label": "Ausverkauft-Text", "default": "Sold out." }
+      { "type": "number", "id": "free_shipping_threshold", "label": "Kostenloser Versand ab (Betrag in Shop-Währung)", "default": 0, "info": "0 blendet den Fortschrittsbalken aus. Die echten Versandkosten stellst du unter Einstellungen > Versand ein." },
+      { "type": "checkbox", "id": "cart_note_enabled", "label": "Bestellnotiz im Warenkorb erlauben", "default": false },
+      { "type": "collection", "id": "cart_upsell_collection", "label": "Empfehlungen im Warenkorb aus Kollektion", "info": "Leer = keine Empfehlungen" }
     ]
   },
   {
@@ -64,17 +68,17 @@
       { "type": "checkbox", "id": "anim_reveal", "label": "Inhalte beim Scrollen einblenden", "default": true },
       { "type": "checkbox", "id": "anim_page_transitions", "label": "Weiche Seitenwechsel", "default": true },
       { "type": "checkbox", "id": "anim_fly_to_cart", "label": "Produktbild fliegt in den Warenkorb", "default": true },
-      { "type": "checkbox", "id": "quick_add", "label": "Schnell-Hinzufügen auf Produktkarten", "default": true, "info": "Größen erscheinen beim Hovern über dem Produktbild." },
-      { "type": "checkbox", "id": "respect_reduced_motion", "label": "Systemeinstellung „Bewegung reduzieren“ beachten", "default": false, "info": "Wenn aktiv, sehen Besucher mit dieser Systemeinstellung keine Animationen." }
+      { "type": "checkbox", "id": "respect_reduced_motion", "label": "Systemeinstellung „Bewegung reduzieren“ beachten", "default": true }
     ]
   },
   {
     "name": "Social Media",
     "settings": [
       { "type": "text", "id": "social_instagram", "label": "Instagram-Link" },
-      { "type": "text", "id": "social_youtube", "label": "YouTube-Link" },
       { "type": "text", "id": "social_tiktok", "label": "TikTok-Link" },
-      { "type": "text", "id": "social_whatsapp", "label": "WhatsApp-Link" }
+      { "type": "text", "id": "social_facebook", "label": "Facebook-Link" },
+      { "type": "text", "id": "social_youtube", "label": "YouTube-Link" },
+      { "type": "text", "id": "social_x", "label": "X-Link" }
     ]
   }
 ]

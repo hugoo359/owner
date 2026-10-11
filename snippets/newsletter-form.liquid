@@ -1,0 +1,21 @@
+{%- comment -%}
+  Natives Shopify-Kundenformular für den Newsletter.
+  Parameter: form_id (eindeutig pro Seite), tags (Kunden-Tags), button_label (optional)
+{%- endcomment -%}
+{%- form 'customer', id: form_id, class: 'nl-form' -%}
+  <input type="hidden" name="contact[tags]" value="{{ tags | default: 'newsletter' }}">
+  {%- if form.posted_successfully? -%}
+    <p class="form-msg form-msg--ok" role="status" tabindex="-1">{% render 'icon', icon: 'check' %}{{ 'newsletter.success' | t }}</p>
+  {%- else -%}
+    <div class="nl-field">
+      <label class="visually-hidden" for="{{ form_id }}-email">{{ 'newsletter.email' | t }}</label>
+      <input type="email" name="contact[email]" id="{{ form_id }}-email" required autocomplete="email" placeholder="{{ 'newsletter.placeholder' | t }}"{% if form.errors %} aria-invalid="true" aria-describedby="{{ form_id }}-error"{% endif %}>
+      <button type="submit" class="nl-submit">
+        <span>{%- if button_label != blank -%}{{ button_label }}{%- else -%}{{ 'newsletter.subscribe' | t }}{%- endif -%}</span>{% render 'icon', icon: 'arrow-right' %}
+      </button>
+    </div>
+    {%- if form.errors -%}
+      <p class="form-msg form-msg--err" id="{{ form_id }}-error" role="alert">{{ 'newsletter.error' | t }}</p>
+    {%- endif -%}
+  {%- endif -%}
+{%- endform -%}

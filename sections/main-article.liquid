@@ -1,12 +1,13 @@
-<article class="wrap page-wrap">
-  <nav class="crumbs"><a href="{{ blog.url }}">{{ blog.title }}</a></nav>
-  <h1 class="ctitle">{{ article.title }}</h1>
-  <p class="vat">{{ article.published_at | date: '%b %d, %Y' }}</p>
-  {%- if article.image -%}
-    <div class="article-img">{{ article.image | image_url: width: 1800 | image_tag: sizes: '100vw', widths: '800, 1200, 1800', alt: article.title }}</div>
-  {%- endif -%}
-  <div class="rte">{{ article.content }}</div>
+<article class="page scheme-dark section-pad">
+  <div class="wrap page-inner page-inner--narrow">
+    <nav class="eyebrow" aria-label="{{ 'general.breadcrumb' | t }}"><a class="link-line" href="{{ blog.url }}">{{ blog.title }}</a> · {{ article.published_at | date: '%b %d, %Y' }}</nav>
+    <h1 class="h1 page-title" data-split>{{ article.title }}</h1>
+    {%- if article.image -%}
+      <div class="page-img" data-reveal>{{ article.image | image_url: width: 1800 | image_tag: sizes: '(min-width: 990px) 760px, 100vw', widths: '800, 1200, 1800', alt: article.title }}</div>
+    {%- endif -%}
+    <div class="rte page-content" data-reveal>{{ article.content }}</div>
+  </div>
 </article>
 {% schema %}
-{ "name": "Blogbeitrag" }
+{ "name": "Blogbeitrag", "tag": "div" }
 {% endschema %}

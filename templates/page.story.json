@@ -1,0 +1,158 @@
+{
+  "sections": {
+    "hero": {
+      "type": "page-hero",
+      "settings": {
+        "color_scheme": "dark",
+        "height": "full",
+        "fallback_art": "dunes",
+        "overlay": 35,
+        "show_emblem": true,
+        "eyebrow": "The Story",
+        "heading": "",
+        "text": "<p>Sand falls at the same pace for rulers and for everyone else. We bottle the moments when someone tried to stop it.</p>"
+      }
+    },
+    "intro": {
+      "type": "manifesto",
+      "settings": {
+        "color_scheme": "light",
+        "align": "center",
+        "show_emblem": true,
+        "eyebrow": "The house",
+        "text": "<p>Every bottle starts with a name from history or myth, and with a question: what would power smell like if it could be held in one hand?</p>",
+        "scroll_highlight": true,
+        "attribution": "",
+        "button_label": ""
+      }
+    },
+    "hourglass": {
+      "type": "image-with-text",
+      "settings": {
+        "color_scheme": "dark",
+        "layout": "left",
+        "ratio": "portrait",
+        "fallback_art": "relic",
+        "numeral": "",
+        "eyebrow": "The Hourglass",
+        "heading": "Glass, sand and <em>a single question</em>",
+        "text": "<p>Use this space for the origin of the house: the object that inspired it, the people behind it and what each release is meant to hold.</p>",
+        "button_label": "",
+        "button_link": "",
+        "button_style": "line"
+      }
+    },
+    "timeline": {
+      "type": "story-timeline",
+      "blocks": {
+        "pharaon": {
+          "type": "chapter",
+          "settings": {
+            "era": "Egypt · New Kingdom",
+            "title": "Pharaon",
+            "text": "<p>Sun on limestone and the slow rhythm of the river. A ruler who measured time in floods and harvests, and expected it to obey.</p>",
+            "fallback_art": "pharaon",
+            "handle": "pharaon",
+            "button_label": "Discover Pharaon"
+          }
+        },
+        "zeus": {
+          "type": "chapter",
+          "settings": {
+            "era": "Greece · Age of Myth",
+            "title": "Zeus",
+            "text": "<p>Storm air over the mountain, the moment before the strike. A ruler who won his throne in a war of giants and kept it with thunder.</p>",
+            "fallback_art": "zeus",
+            "handle": "zeus",
+            "button_label": "Discover Zeus"
+          }
+        },
+        "next": {
+          "type": "coming_soon",
+          "settings": {
+            "era": "—",
+            "title": "Coming soon",
+            "text": "<p>The next name is still hidden in the sand.</p>",
+            "link_label": "Join the list",
+            "link": "#drop"
+          }
+        }
+      },
+      "block_order": [
+        "pharaon",
+        "zeus",
+        "next"
+      ],
+      "settings": {
+        "color_scheme": "dark",
+        "eyebrow": "The figures",
+        "heading": "Who has touched the glass",
+        "text": ""
+      }
+    },
+    "collection": {
+      "type": "fragrance-collection",
+      "blocks": {
+        "zeus": {
+          "type": "product",
+          "settings": {
+            "handle": "zeus",
+            "placeholder_title": "Zeus",
+            "era": "",
+            "tagline": "",
+            "fallback_art": "zeus"
+          }
+        },
+        "pharaon": {
+          "type": "product",
+          "settings": {
+            "handle": "pharaon",
+            "placeholder_title": "Pharaon",
+            "era": "",
+            "tagline": "",
+            "fallback_art": "pharaon"
+          }
+        }
+      },
+      "block_order": [
+        "zeus",
+        "pharaon"
+      ],
+      "settings": {
+        "color_scheme": "sand",
+        "eyebrow": "The Collection",
+        "heading": "Wear the story",
+        "head_align": "center",
+        "columns": 2,
+        "show_numerals": true,
+        "quick_add": true,
+        "exclude_current": true,
+        "button_label": ""
+      }
+    },
+    "drop": {
+      "type": "drop-signup",
+      "settings": {
+        "color_scheme": "dark",
+        "layout": "left",
+        "fallback_art": "veil",
+        "eyebrow": "The next figure",
+        "heading": "The hourglass <em>is turning</em>",
+        "text": "<p>Releases are made in small batches. Join the list to hear about the next one before anyone else.</p>",
+        "countdown_date": "",
+        "countdown_label": "Release in",
+        "tags": "newsletter, next-drop",
+        "button_label": "Notify me",
+        "note": "We only write when there is something to tell."
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "intro",
+    "hourglass",
+    "timeline",
+    "collection",
+    "drop"
+  ]
+}

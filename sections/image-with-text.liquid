@@ -1,0 +1,59 @@
+{%- liquid
+  assign s = section.settings
+-%}
+<section class="iwt iwt--{{ s.layout }} iwt--{{ s.ratio }} scheme-{{ s.color_scheme }} section-pad">
+  <div class="wrap iwt-grid">
+    <div class="iwt-media" data-reveal>
+      <div class="iwt-frame" data-parallax-img>
+        {%- if s.image != blank -%}
+          {{ s.image | image_url: width: 1800 | image_tag: loading: 'lazy', sizes: '(min-width: 990px) 50vw, 100vw', widths: '600, 900, 1200, 1500, 1800', alt: s.image.alt }}
+        {%- else -%}
+          {% render 'fallback-art', art: s.fallback_art %}
+        {%- endif -%}
+      </div>
+      {%- if s.numeral != blank -%}<span class="iwt-numeral" aria-hidden="true">{{ s.numeral }}</span>{%- endif -%}
+    </div>
+    <div class="iwt-copy">
+      {%- if s.eyebrow != blank -%}<p class="eyebrow" data-reveal>{{ s.eyebrow }}</p>{%- endif -%}
+      {%- if s.heading != blank -%}<h2 class="h1" data-split>{{ s.heading }}</h2>{%- endif -%}
+      {%- if s.text != blank -%}<div class="rte iwt-text" data-reveal>{{ s.text }}</div>{%- endif -%}
+      {%- if s.button_label != blank -%}
+        <div class="btn-row" data-reveal>
+          <a class="btn btn--{{ s.button_style }}" href="{{ s.button_link | default: routes.root_url }}">{{ s.button_label }}</a>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Bild mit Text",
+  "tag": "div",
+  "settings": [
+    { "type": "select", "id": "color_scheme", "label": "Farbschema", "default": "dark", "options": [
+      { "value": "dark", "label": "Nacht" }, { "value": "light", "label": "Pergament" }, { "value": "sand", "label": "Sand" }
+    ] },
+    { "type": "select", "id": "layout", "label": "Bildposition", "default": "left", "options": [
+      { "value": "left", "label": "Bild links" }, { "value": "right", "label": "Bild rechts" }
+    ] },
+    { "type": "select", "id": "ratio", "label": "Bildformat", "default": "portrait", "options": [
+      { "value": "portrait", "label": "Hochformat" }, { "value": "square", "label": "Quadrat" }, { "value": "landscape", "label": "Querformat" }
+    ] },
+    { "type": "image_picker", "id": "image", "label": "Bild" },
+    { "type": "select", "id": "fallback_art", "label": "Ersatz-Illustration ohne Bild", "default": "relic", "options": [
+      { "value": "relic", "label": "Sanduhr" }, { "value": "zeus", "label": "Flakon Gewitter" }, { "value": "pharaon", "label": "Flakon Wüste" }, { "value": "veil", "label": "Verhüllt" }, { "value": "dunes", "label": "Dünen" }
+    ] },
+    { "type": "text", "id": "numeral", "label": "Große Ziffer neben dem Bild", "info": "z. B. I, II, III – leer = keine" },
+    { "type": "text", "id": "eyebrow", "label": "Kleine Zeile", "default": "The Hourglass" },
+    { "type": "inline_richtext", "id": "heading", "label": "Überschrift", "default": "An hourglass that <em>keeps more than time</em>" },
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Tell the story of your house here: where the idea began, what the glass holds and why each fragrance carries a name from history.</p>" },
+    { "type": "text", "id": "button_label", "label": "Button-Text", "default": "Read the story" },
+    { "type": "url", "id": "button_link", "label": "Button-Link" },
+    { "type": "select", "id": "button_style", "label": "Button-Stil", "default": "line", "options": [
+      { "value": "solid", "label": "Gefüllt" }, { "value": "line", "label": "Kontur" }
+    ] }
+  ],
+  "presets": [ { "name": "Bild mit Text" } ]
+}
+{% endschema %}

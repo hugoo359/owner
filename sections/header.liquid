@@ -4,180 +4,116 @@
   if section.settings.transparent_home and template.name == 'index'
     assign transparent = true
   endif
+  if section.settings.transparent_story and template.suffix == 'story'
+    assign transparent = true
+  endif
+  assign numerals = 'I,II,III,IV,V,VI,VII,VIII,IX,X,XI,XII' | split: ','
+  assign link_count = menu.links.size
+  assign half = link_count | plus: 1 | divided_by: 2
 -%}
 {%- if transparent -%}
   <script>document.body.classList.add('transparent-header');</script>
 {%- endif -%}
 
-<header class="nav{% if transparent %} over{% endif %}" id="SiteNav">
-  <div class="nav-left">
-    <button class="burger" type="button" data-open="mnav" aria-label="Open menu">{% render 'icon', icon: 'burger' %}</button>
-    <ul class="nav-links">
-      {%- for link in menu.links -%}
-        {%- if link.links.size > 0 -%}
-          {%- liquid
-            assign has_cols = false
-            for child in link.links
-              if child.links.size > 0
-                assign has_cols = true
-              endif
-            endfor
-          -%}
-          <li class="has-mega">
-            <a href="{{ link.url }}" aria-haspopup="true">{{ link.title }}</a>
-            <div class="mega">
-              {%- if has_cols -%}
-                {%- for child in link.links -%}
-                  <div>
-                    <h4><a href="{{ child.url }}">{{ child.title }}</a></h4>
-                    {%- if child.links.size > 0 -%}
-                      <ul>
-                        {%- for grandchild in child.links -%}
-                          <li><a href="{{ grandchild.url }}">{{ grandchild.title }}</a></li>
-                        {%- endfor -%}
-                      </ul>
-                    {%- endif -%}
-                  </div>
-                {%- endfor -%}
-              {%- else -%}
-                <div>
-                  <h4><a href="{{ link.url }}">{{ link.title }}</a></h4>
-                  <ul>
-                    {%- for child in link.links -%}
-                      <li><a href="{{ child.url }}">{{ child.title }}</a></li>
-                    {%- endfor -%}
-                  </ul>
-                </div>
-              {%- endif -%}
-            </div>
-          </li>
-        {%- else -%}
-          <li><a href="{{ link.url }}">{{ link.title }}</a></li>
-        {%- endif -%}
-      {%- endfor -%}
-    </ul>
+<header class="hdr hdr--{{ section.settings.layout }}{% if transparent %} over{% endif %}" id="SiteNav">
+  <div class="hdr-left">
+    <button class="hdr-burger" type="button" data-open="mnav" aria-controls="mnav" aria-expanded="false" aria-label="{{ 'general.open_menu' | t }}">
+      {% render 'icon', icon: 'burger' %}
+    </button>
+    <nav class="hdr-nav" aria-label="{{ 'header.main_menu' | t }}">
+      <ul class="hdr-links">
+        {%- for link in menu.links -%}
+          {%- if section.settings.layout == 'split' and forloop.index > half -%}{%- break -%}{%- endif -%}
+          {% render 'header-link', link: link %}
+        {%- endfor -%}
+      </ul>
+    </nav>
   </div>
 
-  <a href="{{ routes.root_url }}" class="logo-link" aria-label="{{ shop.name }}">{% render 'logo' %}</a>
+  <a href="{{ routes.root_url }}" class="hdr-logo logo-link" aria-label="{{ shop.name }}">
+    {% render 'logo', eager: true, size: 'sm' %}
+  </a>
 
-  <div class="nav-right">
-    {%- if shop.customer_accounts_enabled -%}
-      <a href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}" data-open="account" class="account-icon{% if customer %} is-in{% endif %}" aria-label="{% if customer %}My account{% else %}Log in{% endif %}" rel="nofollow">
-        {% render 'icon', icon: 'account' %}
-      </a>
+  <div class="hdr-right">
+    {%- if section.settings.layout == 'split' -%}
+      <ul class="hdr-links hdr-links--right">
+        {%- for link in menu.links offset: half -%}
+          {% render 'header-link', link: link %}
+        {%- endfor -%}
+      </ul>
     {%- endif -%}
-    <button type="button" data-open="search" aria-label="Open search">{% render 'icon', icon: 'search' %}</button>
-    <a href="{{ routes.cart_url }}" data-open="cart" class="cart-icon" id="CartIcon" aria-label="Open cart">
-      {% render 'icon', icon: 'cart' %}
-      <span class="cart-count" id="CartCount"{% if cart.item_count == 0 %} hidden{% endif %}>{{ cart.item_count }}</span>
+    {%- if section.settings.show_search -%}
+      <button type="button" class="hdr-icon" data-open="search" aria-label="{{ 'header.open_search' | t }}">{% render 'icon', icon: 'search' %}</button>
+    {%- endif -%}
+    {%- if section.settings.show_account and shop.customer_accounts_enabled -%}
+      <a class="hdr-icon" href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}" rel="nofollow" aria-label="{% if customer %}{{ 'general.my_account' | t }}{% else %}{{ 'general.log_in' | t }}{% endif %}">{% render 'icon', icon: 'account' %}</a>
+    {%- endif -%}
+    <a href="{{ routes.cart_url }}" data-open="cart" class="hdr-cart cart-icon" id="CartIcon" aria-label="{{ 'header.open_cart' | t }}">
+      <span class="hdr-cart-icon">{% render 'icon', icon: 'bag' %}</span>
+      <span class="hdr-cart-label">{{ 'header.cart' | t }}</span>
+      <span class="cart-count" id="CartCount" data-count="{{ cart.item_count }}">{{ cart.item_count }}</span>
     </a>
   </div>
 </header>
 
-<div id="mnav" class="layer" hidden>
-  <div class="backdrop" data-close="mnav"></div>
-  <nav class="panel" aria-label="Menu">
-    <button type="button" class="mnav-close" data-close="mnav" aria-label="Close menu">{% render 'icon', icon: 'close' %}</button>
-    {%- for link in menu.links -%}
-      {%- if link.links.size > 0 -%}
-        <h4>{{ link.title }}</h4>
-        {%- for child in link.links -%}
-          <a href="{{ child.url }}">{{ child.title }}</a>
-          {%- for grandchild in child.links -%}
-            <a href="{{ grandchild.url }}" class="sub">{{ grandchild.title }}</a>
-          {%- endfor -%}
+<div id="mnav" class="layer mnav" hidden>
+  <div class="mnav-panel scheme-dark" role="dialog" aria-modal="true" aria-label="{{ 'general.menu' | t }}">
+    <div class="mnav-top">
+      <button type="button" class="mnav-close" data-close="mnav" aria-label="{{ 'general.close_menu' | t }}">{% render 'icon', icon: 'close' %}</button>
+      <a href="{{ routes.root_url }}" class="logo-link">{% render 'logo' %}</a>
+      <a href="{{ routes.cart_url }}" data-open="cart" class="mnav-cart" aria-label="{{ 'header.open_cart' | t }}">{% render 'icon', icon: 'bag' %}</a>
+    </div>
+    <nav class="mnav-links" aria-label="{{ 'header.main_menu' | t }}">
+      <ul>
+        {%- for link in menu.links -%}
+          <li style="--i: {{ forloop.index0 }}">
+            {%- if link.links.size > 0 -%}
+              <details class="mnav-sub">
+                <summary>
+                  {%- if section.settings.menu_numerals -%}<span class="mnav-num">{{ numerals[forloop.index0] }}</span>{%- endif -%}
+                  <span class="mnav-title">{{ link.title }}</span>{% render 'icon', icon: 'plus' %}
+                </summary>
+                <ul>
+                  {%- for child in link.links -%}
+                    <li><a href="{{ child.url }}"{% if child.current %} aria-current="page"{% endif %}>{{ child.title }}</a></li>
+                  {%- endfor -%}
+                </ul>
+              </details>
+            {%- else -%}
+              <a href="{{ link.url }}"{% if link.current %} aria-current="page"{% endif %}>
+                {%- if section.settings.menu_numerals -%}<span class="mnav-num">{{ numerals[forloop.index0] }}</span>{%- endif -%}
+                <span class="mnav-title">{{ link.title }}</span>
+              </a>
+            {%- endif -%}
+          </li>
         {%- endfor -%}
-      {%- else -%}
-        <a href="{{ link.url }}">{{ link.title }}</a>
-      {%- endif -%}
-    {%- endfor -%}
-    {%- if shop.customer_accounts_enabled -%}
-      <h4>Account</h4>
-      <a href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}" data-open="account" data-no-transition>{% if customer %}My account{% else %}Log in{% endif %}</a>
-    {%- endif -%}
-  </nav>
-</div>
-
-{%- if shop.customer_accounts_enabled -%}
-  {%- liquid
-    if section.settings.login_return == 'storefront'
-      assign login_url = routes.storefront_login_url
-    else
-      assign login_url = routes.account_login_url
-    endif
-    assign url_parts = routes.account_url | split: '?'
-    assign base_url = url_parts | first
-    assign query = ''
-    if url_parts.size > 1
-      assign query = '?' | append: url_parts.last
-    endif
-  -%}
-  <div id="account" class="layer" hidden>
-    <div class="backdrop" data-close="account"></div>
-    <aside class="drawer account-drawer" aria-label="Account" role="dialog">
-      <div class="d-head">
-        <h2>{% if customer %}MY ACCOUNT{% else %}LOG IN{% endif %}</h2>
-        <button type="button" data-close="account" aria-label="Close">{% render 'icon', icon: 'close-thin' %}</button>
-      </div>
-      <div class="d-scroll account-body">
-        {%- if customer -%}
-          <div class="acc-hello">
-            <span class="acc-avatar" aria-hidden="true">{{ customer.first_name | default: customer.email | slice: 0 | upcase }}</span>
-            <div>
-              <p class="acc-name">Hi {{ customer.first_name | default: 'there' }}!</p>
-              <p class="acc-mail">{{ customer.email }}</p>
-            </div>
-          </div>
-          {%- assign last_order = customer.orders.first -%}
-          {%- if last_order -%}
-            <a class="acc-order" href="{{ last_order.customer_url | default: routes.account_url }}" data-no-transition>
-              <span class="acc-label">Latest order</span>
-              <span class="acc-order-row"><b>{{ last_order.name }}</b><span>{{ last_order.created_at | date: '%b %d, %Y' }}</span></span>
-              <span class="acc-order-row"><span>{{ last_order.fulfillment_status_label }}</span><span>{{ last_order.total_price | money_with_currency }}</span></span>
-            </a>
-          {%- endif -%}
-          <nav class="acc-links">
-            <a href="{{ routes.account_url }}" data-no-transition>Orders <span aria-hidden="true">→</span></a>
-            <a href="{{ base_url }}/profile{{ query }}" data-no-transition>Profile &amp; addresses <span aria-hidden="true">→</span></a>
-          </nav>
-          <a class="btn-outline acc-logout" href="{{ routes.account_logout_url }}" data-no-transition>Log out</a>
-        {%- else -%}
-          <p class="acc-intro">{{ section.settings.login_text }}</p>
-          {%- capture shop_btn -%}{{ shop | login_button }}{%- endcapture -%}
-          {%- if shop_btn != blank -%}
-            <div class="shop-login">{{ shop_btn }}</div>
-            <div class="acc-or"><span>or</span></div>
-          {%- endif -%}
-          <a class="atc acc-email" href="{{ login_url }}" rel="nofollow" data-no-transition>
-            <span class="atc-label">Log in with email</span>
-          </a>
-          {%- if routes.account_register_url != blank -%}
-            <a class="acc-register link-u" href="{{ routes.account_register_url }}" data-no-transition>No account yet? Create one</a>
-          {%- endif -%}
-          <ul class="acc-perks">
-            <li>{% render 'icon', icon: 'check' %}Track your orders anytime</li>
-            <li>{% render 'icon', icon: 'check' %}Check out faster with saved details</li>
-            <li>{% render 'icon', icon: 'check' %}Early access to new drops</li>
-          </ul>
-        {%- endif -%}
-      </div>
-    </aside>
+      </ul>
+    </nav>
+    <div class="mnav-foot">
+      {%- if section.settings.mobile_note != blank -%}<p class="eyebrow">{{ section.settings.mobile_note }}</p>{%- endif -%}
+      {% render 'social-links' %}
+    </div>
   </div>
-{%- endif -%}
+</div>
 
 {% schema %}
 {
   "name": "Header",
   "class": "section-header",
   "settings": [
-    { "type": "link_list", "id": "menu", "label": "Menü", "default": "main-menu", "info": "Untermenüs erscheinen als Dropdown. Drei Ebenen ergeben mehrere Spalten." },
-    { "type": "checkbox", "id": "transparent_home", "label": "Auf der Startseite transparent über dem Hero", "default": true },
-    { "type": "header", "content": "Konto" },
-    { "type": "select", "id": "login_return", "label": "Nach der Anmeldung weiter zu", "default": "account", "options": [
-      { "value": "account", "label": "Bestellübersicht im Kundenkonto" },
-      { "value": "storefront", "label": "Zurück zur Seite im Shop" }
+    { "type": "link_list", "id": "menu", "label": "Menü", "default": "main-menu", "info": "Empfohlen: Zeus, Pharaon, The Story, Contact. Untermenüs erscheinen als Dropdown." },
+    { "type": "select", "id": "layout", "label": "Anordnung", "default": "center", "options": [
+      { "value": "center", "label": "Links Menü, Logo mittig" },
+      { "value": "split", "label": "Menü links und rechts vom Logo" },
+      { "value": "left", "label": "Logo links, Menü daneben" }
     ] },
-    { "type": "text", "id": "login_text", "label": "Text in der Anmelde-Leiste", "default": "Log in to view your orders and check out faster." }
+    { "type": "checkbox", "id": "transparent_home", "label": "Startseite: transparent über dem ersten Bereich", "default": true },
+    { "type": "checkbox", "id": "transparent_story", "label": "„The Story“-Seite: transparent über dem ersten Bereich", "default": true },
+    { "type": "checkbox", "id": "show_search", "label": "Suche anzeigen", "default": false },
+    { "type": "checkbox", "id": "show_account", "label": "Kundenkonto anzeigen", "default": false },
+    { "type": "header", "content": "Mobiles Menü" },
+    { "type": "checkbox", "id": "menu_numerals", "label": "Römische Ziffern vor den Menüpunkten", "default": true },
+    { "type": "text", "id": "mobile_note", "label": "Kurzer Text unten im Menü", "default": "Extraits de Parfum" }
   ],
   "enabled_on": { "groups": ["header"] }
 }

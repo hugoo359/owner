@@ -1,0 +1,11 @@
+{%- comment -%}
+  Sanduhr-Zeichen (eigenes Ersatz-Asset). Mit animate: true rieselt Sand von oben nach unten.
+  Parameter: size (px), animate (bool), class
+{%- endcomment -%}
+{%- assign size = size | default: 28 -%}
+<svg class="emblem{% if animate %} emblem--animate{% endif %} {{ class }}" width="{{ size }}" height="{{ size | times: 1.5 | round }}" viewBox="0 0 40 60" fill="none" aria-hidden="true" focusable="false">
+  <path class="emblem-frame" d="M6 2h28M6 58h28M9 2c0 13 9 19 11 28C18 39 9 45 9 58M31 2c0 13-9 19-11 28 2 9 11 15 11 28" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+  <path class="emblem-sand-top" d="M12.5 12h15c-1.6 5-5.4 9.2-7.5 14.6C17.9 21.2 14.1 17 12.5 12z" fill="currentColor"/>
+  <path class="emblem-stream" d="M20 30v20" stroke="currentColor" stroke-width="1" stroke-dasharray="1.5 2.5"/>
+  <path class="emblem-sand-bottom" d="M11.4 55.4c1.6-5.6 4.6-8.6 8.6-9.6 4 1 7 4 8.6 9.6z" fill="currentColor"/>
+</svg>

@@ -1,0 +1,161 @@
+{
+  "general": {
+    "skip_to_content": "Zum Inhalt springen",
+    "page": "Seite {{ page }}",
+    "home": "Startseite",
+    "menu": "Menü",
+    "open_menu": "Menü öffnen",
+    "close_menu": "Menü schließen",
+    "close": "Schließen",
+    "search": "Suche",
+    "search_placeholder": "Suchen …",
+    "account": "Konto",
+    "log_in": "Anmelden",
+    "my_account": "Mein Konto",
+    "load_error": "Inhalt konnte nicht geladen werden. Bitte versuche es erneut.",
+    "previous": "Zurück",
+    "next": "Weiter",
+    "scroll_down": "Nach unten scrollen",
+    "read_more": "Weiterlesen",
+    "pagination_label": "Seitennavigation",
+    "breadcrumb": "Brotkrumen-Navigation",
+    "continue_shopping": "Weiter einkaufen",
+    "not_found_title": "Seite nicht gefunden",
+    "not_found_text": "Diese Seite gibt es nicht oder sie wurde verschoben.",
+    "editor_hint": "Hinweis im Theme-Editor: {{ text }}"
+  },
+  "header": {
+    "cart": "Warenkorb",
+    "cart_count": "Warenkorb ({{ count }})",
+    "open_cart": "Warenkorb öffnen",
+    "open_search": "Suche öffnen",
+    "main_menu": "Hauptmenü"
+  },
+  "product": {
+    "add_to_cart": "In den Warenkorb",
+    "sold_out": "Ausverkauft",
+    "coming_soon": "Bald erhältlich",
+    "unavailable": "Nicht verfügbar",
+    "in_stock": "Verfügbar",
+    "added": "Hinzugefügt",
+    "quantity": "Menge",
+    "decrease": "Menge verringern",
+    "increase": "Menge erhöhen",
+    "tax_included": "Inkl. MwSt.",
+    "shipping_at_checkout": "Versand wird an der Kasse berechnet.",
+    "regular_price": "Normaler Preis",
+    "sale_price": "Angebotspreis",
+    "from_price": "Ab {{ price }}",
+    "discover": "Entdecken",
+    "shop_now": "Jetzt kaufen",
+    "view": "{{ title }} ansehen",
+    "media_label": "Bild {{ index }} von {{ count }}",
+    "previous_image": "Vorheriges Bild",
+    "next_image": "Nächstes Bild",
+    "gallery": "Produktgalerie",
+    "notify_title": "Als Erste:r erfahren",
+    "notify_text": "Hinterlasse deine E-Mail-Adresse – wir melden uns, sobald {{ title }} wieder verfügbar ist.",
+    "notify_text_soon": "Hinterlasse deine E-Mail-Adresse – wir melden uns, sobald {{ title }} erscheint.",
+    "notify_button": "Benachrichtigen",
+    "notify_success": "Danke. Wir melden uns bei dir.",
+    "notes_top": "Kopf",
+    "notes_heart": "Herz",
+    "notes_base": "Basis",
+    "notes_empty": "Trage die Noten in den Block-Einstellungen ein oder nutze die Produkt-Metafelder custom.top_notes, custom.heart_notes und custom.base_notes.",
+    "description_empty": "Hier erscheint die Produktbeschreibung aus Shopify."
+  },
+  "cart": {
+    "title": "Warenkorb",
+    "empty": "Dein Warenkorb ist leer.",
+    "continue": "Weiter einkaufen",
+    "subtotal": "Zwischensumme",
+    "shipping": "Versand",
+    "shipping_free": "Kostenlos",
+    "taxes_shipping_at_checkout": "Steuern und Versand werden an der Kasse berechnet.",
+    "checkout": "Zur Kasse",
+    "remove": "Entfernen",
+    "remove_item": "{{ title }} entfernen",
+    "quantity": "Menge",
+    "update": "Aktualisieren",
+    "free_shipping_remaining": "Noch {{ amount }} bis zum kostenlosen Versand.",
+    "free_shipping_unlocked": "Deine Bestellung wird kostenlos versendet.",
+    "upsell_title": "Die Sammlung vervollständigen",
+    "add": "Hinzufügen",
+    "adding": "Wird hinzugefügt …",
+    "error": "Etwas ist schiefgelaufen. Bitte lade die Seite neu.",
+    "note": "Bestellnotiz",
+    "discounts": "Rabatte"
+  },
+  "newsletter": {
+    "email": "E-Mail-Adresse",
+    "placeholder": "Deine E-Mail-Adresse",
+    "subscribe": "Anmelden",
+    "success": "Danke. Du stehst auf der Liste.",
+    "error": "Bitte gib eine gültige E-Mail-Adresse ein."
+  },
+  "contact": {
+    "name": "Name",
+    "email": "E-Mail",
+    "phone": "Telefon",
+    "subject": "Thema",
+    "message": "Nachricht",
+    "send": "Nachricht senden",
+    "success": "Danke. Deine Nachricht wurde gesendet.",
+    "error": "Bitte prüfe die markierten Felder.",
+    "required": "Pflichtfeld"
+  },
+  "footer": {
+    "copyright": "© {{ year }} {{ shop }}",
+    "cookie_settings": "Cookie-Einstellungen",
+    "cookie_unavailable": "Die Cookie-Einstellungen sind gerade nicht verfügbar.",
+    "payment_methods": "Zahlungsarten",
+    "social": "Folge uns"
+  },
+  "countdown": {
+    "days": "Tage",
+    "hours": "Stunden",
+    "minutes": "Minuten",
+    "seconds": "Sekunden"
+  },
+  "customer": {
+    "log_in": "Anmelden",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "forgot": "Passwort vergessen?",
+    "create_account": "Konto erstellen",
+    "reset_title": "Passwort zurücksetzen",
+    "reset_sent": "Wir haben dir eine E-Mail mit einem Link zum Zurücksetzen geschickt.",
+    "send_link": "Link senden",
+    "guest": "Als Gast fortfahren"
+  },
+  "search": {
+    "title": "Suche",
+    "submit": "Suchen",
+    "results": {
+      "one": "{{ count }} Ergebnis für „{{ terms }}“",
+      "other": "{{ count }} Ergebnisse für „{{ terms }}“"
+    },
+    "no_results": "Keine Ergebnisse gefunden.",
+    "view_all": "Alle Ergebnisse ansehen"
+  },
+  "collection": {
+    "empty": "Diese Kollektion ist leer.",
+    "products": {
+      "one": "{{ count }} Duft",
+      "other": "{{ count }} Düfte"
+    }
+  },
+  "password": {
+    "enter": "Mit Passwort betreten",
+    "enter_button": "Betreten",
+    "notify_success": "Danke. Wir sagen dir Bescheid, sobald wir öffnen.",
+    "notify_button": "Benachrichtigen"
+  },
+  "gift_card": {
+    "title": "Dein Geschenkgutschein",
+    "invalid": "Dieser Gutschein ist nicht mehr gültig.",
+    "remaining": "Restguthaben: {{ balance }}",
+    "valid_until": "Gültig bis {{ date }}",
+    "redeem": "Jetzt einlösen"
+  }
+}

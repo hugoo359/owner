@@ -1,223 +1,124 @@
 {
   "sections": {
     "hero": {
-      "type": "hero-slideshow",
+      "type": "hero",
       "blocks": {
-        "slide-1": {
-          "type": "slide",
-          "settings": {}
+        "button-zeus": {
+          "type": "button",
+          "settings": { "label": "Discover Zeus", "link": "/products/zeus", "style": "solid" }
         },
-        "slide-2": {
-          "type": "slide",
-          "settings": {}
-        },
-        "slide-3": {
-          "type": "slide",
-          "settings": {}
-        },
-        "slide-4": {
-          "type": "slide",
-          "settings": {}
-        },
-        "slide-5": {
-          "type": "slide",
-          "settings": {}
+        "button-pharaon": {
+          "type": "button",
+          "settings": { "label": "Discover Pharaon", "link": "/products/pharaon", "style": "line" }
         }
       },
-      "block_order": [
-        "slide-1",
-        "slide-2",
-        "slide-3",
-        "slide-4",
-        "slide-5"
-      ],
+      "block_order": ["button-zeus", "button-pharaon"],
       "settings": {
+        "color_scheme": "dark",
         "height": "full",
-        "interval": 5
+        "align": "center",
+        "fallback_art": "dunes",
+        "overlay": 30,
+        "show_emblem": true,
+        "eyebrow": "Extraits de Parfum",
+        "heading": "History, <em>distilled</em>",
+        "text": "<p>Each fragrance begins with a figure who bent history to their will.</p>",
+        "show_scroll": true
       }
     },
-    "tiles": {
-      "type": "collection-tiles",
+    "marquee": {
+      "type": "marquee",
       "blocks": {
-        "tile-1": {
-          "type": "tile",
-          "settings": {
-            "title": "Basics"
-          }
+        "item-1": { "type": "item", "settings": { "text": "Zeus" } },
+        "item-2": { "type": "item", "settings": { "text": "Pharaon" } },
+        "item-3": { "type": "item", "settings": { "text": "Extrait de Parfum" } }
+      },
+      "block_order": ["item-1", "item-2", "item-3"],
+      "settings": { "color_scheme": "dark", "size": "lg", "speed": 45, "reverse": false }
+    },
+    "collection": {
+      "type": "fragrance-collection",
+      "blocks": {
+        "zeus": {
+          "type": "product",
+          "settings": { "handle": "zeus", "placeholder_title": "Zeus", "era": "", "tagline": "", "fallback_art": "zeus" }
         },
-        "tile-2": {
-          "type": "tile",
-          "settings": {
-            "title": "Women"
-          }
-        },
-        "tile-3": {
-          "type": "tile",
-          "settings": {
-            "title": "Sports"
-          }
+        "pharaon": {
+          "type": "product",
+          "settings": { "handle": "pharaon", "placeholder_title": "Pharaon", "era": "", "tagline": "", "fallback_art": "pharaon" }
         }
       },
-      "block_order": [
-        "tile-1",
-        "tile-2",
-        "tile-3"
-      ],
+      "block_order": ["zeus", "pharaon"],
       "settings": {
-        "height": 360
+        "color_scheme": "dark",
+        "eyebrow": "The Collection",
+        "heading": "Two figures. One hourglass.",
+        "head_align": "center",
+        "columns": 2,
+        "show_numerals": true,
+        "quick_add": true,
+        "exclude_current": true,
+        "button_label": ""
       }
     },
-    "carousel": {
-      "type": "product-carousel",
+    "story": {
+      "type": "image-with-text",
       "settings": {
-        "heading": "NEW: DROP 01",
-        "link_label": "View all",
-        "limit": 10,
-        "per_view": 5,
-        "badge": "all",
-        "badge_label": "New",
-        "subtitle": "options",
-        "padding_top": 64,
-        "padding_bottom": 24
+        "color_scheme": "light",
+        "layout": "left",
+        "ratio": "portrait",
+        "fallback_art": "relic",
+        "numeral": "",
+        "eyebrow": "The Hourglass",
+        "heading": "An hourglass that <em>keeps more than time</em>",
+        "text": "<p>Tell the story of your house here: where the idea began, what the glass holds and why each fragrance carries a name from history.</p>",
+        "button_label": "Read the story",
+        "button_link": "/pages/the-story",
+        "button_style": "line"
       }
     },
-    "popular": {
-      "type": "featured-tabs",
-      "blocks": {
-        "card-1": {
-          "type": "card",
-          "settings": {
-            "tab": "1",
-            "title": "New: Essentials",
-            "text": "Our everyday basics. Heavyweight fabric, clean cut."
-          }
-        },
-        "card-2": {
-          "type": "card",
-          "settings": {
-            "tab": "1",
-            "title": "Wide Leg Pants",
-            "text": "Relaxed fit that still holds its shape. From the gym straight to the city."
-          }
-        },
-        "card-3": {
-          "type": "card",
-          "settings": {
-            "tab": "1",
-            "title": "New: Heavy Cotton",
-            "text": "Thick cotton that still looks good after many washes."
-          }
-        },
-        "card-4": {
-          "type": "card",
-          "settings": {
-            "tab": "1",
-            "title": "Bestsellers",
-            "text": "The pieces that sell out fastest. Get them while they last."
-          }
-        },
-        "card-5": {
-          "type": "card",
-          "settings": {
-            "tab": "2",
-            "title": "New: Essentials",
-            "text": "Hoodies and joggers in new colors. Oversized and heavyweight."
-          }
-        },
-        "card-6": {
-          "type": "card",
-          "settings": {
-            "tab": "2",
-            "title": "Track Pants",
-            "text": "Lightweight, durable and with an adjustable waistband for every day."
-          }
-        },
-        "card-7": {
-          "type": "card",
-          "settings": {
-            "tab": "2",
-            "title": "New: Heavy Cotton",
-            "text": "T-shirts with a sturdy collar and a boxy fit."
-          }
-        },
-        "card-8": {
-          "type": "card",
-          "settings": {
-            "tab": "2",
-            "title": "Bestsellers",
-            "text": "Our best-selling men's pieces at a glance."
-          }
-        }
-      },
-      "block_order": [
-        "card-1",
-        "card-2",
-        "card-3",
-        "card-4",
-        "card-5",
-        "card-6",
-        "card-7",
-        "card-8"
-      ],
+    "manifesto": {
+      "type": "manifesto",
       "settings": {
-        "heading": "TRENDING NOW",
-        "tab_1": "Women",
-        "tab_2": "Men",
-        "columns": 4,
-        "padding_top": 64,
-        "padding_bottom": 80
+        "color_scheme": "dark",
+        "align": "center",
+        "show_emblem": true,
+        "eyebrow": "",
+        "text": "<p>A fragrance should outlast the hour it was worn in. We compose for memory, never for the season.</p>",
+        "scroll_highlight": true,
+        "attribution": "",
+        "button_label": ""
       }
     },
-    "brand": {
-      "type": "brand-story",
-      "blocks": {
-        "t1": {
-          "type": "text",
-          "settings": {
-            "text": "<p>We are <strong>NoneofUs</strong> – a streetwear brand built on passion, persistence, and the desire to create something real.</p><p>We didn't come from fashion houses, but from garages, small warehouses, and nights full of ideas.</p><p>What began as a dream has grown into a movement.</p>"
-          }
-        },
-        "t2": {
-          "type": "text",
-          "settings": {
-            "text": "<p><strong>NoneofUs</strong> represents unity, authenticity, and quality.</p><p>We design clothing that not only looks good, but feels right – responsibly made, durable, and made to last.</p>"
-          }
-        },
-        "t3": {
-          "type": "text",
-          "settings": {
-            "text": "<p>We believe everyone has a story worth telling.</p><p>No matter where you come from, what you wear, or how you think – <strong>you belong.</strong></p>"
-          }
-        },
-        "t4": {
-          "type": "text",
-          "settings": {
-            "text": "<p><strong>NoneofUs – not one above.</strong></p>"
-          }
-        }
-      },
-      "block_order": [
-        "t1",
-        "t2",
-        "t3",
-        "t4"
-      ],
+    "drop": {
+      "type": "drop-signup",
       "settings": {
-        "heading": "NONEOFUS - STREETWEAR",
-        "font": "michroma",
-        "bg": "#eeece8",
-        "ink": "#1a1a1a",
-        "show_social": true,
-        "padding_top": 88,
-        "padding_bottom": 32
+        "color_scheme": "sand",
+        "layout": "right",
+        "fallback_art": "veil",
+        "eyebrow": "The next figure",
+        "heading": "The hourglass <em>is turning</em>",
+        "text": "<p>Releases are made in small batches. Join the list to hear about the next one before anyone else.</p>",
+        "countdown_date": "",
+        "countdown_label": "Release in",
+        "tags": "newsletter, next-drop",
+        "button_label": "Notify me",
+        "note": "We only write when there is something to tell."
+      }
+    },
+    "contact": {
+      "type": "contact-form",
+      "settings": {
+        "color_scheme": "light",
+        "eyebrow": "Contact",
+        "heading": "Write to the house",
+        "text": "<p>For orders, press enquiries or wholesale, send us a message and we will get back to you.</p>",
+        "show_email": true,
+        "email": "",
+        "subjects": "Order, Press, Wholesale, Other",
+        "show_phone": false
       }
     }
   },
-  "order": [
-    "hero",
-    "tiles",
-    "carousel",
-    "popular",
-    "brand"
-  ]
+  "order": ["hero", "marquee", "collection", "story", "manifesto", "drop", "contact"]
 }
