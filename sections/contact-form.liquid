@@ -46,8 +46,8 @@
             <div class="select">
               <select id="{{ form_id }}-subject" name="contact[subject]">
                 {%- for sub in subjects -%}
-                  {%- assign sub = sub | strip -%}
-                  <option value="{{ sub | escape }}">{{ sub }}</option>
+                  {%- assign subject_label = sub | strip -%}
+                  {%- if subject_label != blank -%}<option value="{{ subject_label | escape }}">{{ subject_label }}</option>{%- endif -%}
                 {%- endfor -%}
               </select>
               {% render 'icon', icon: 'chevron-down' %}

@@ -35,7 +35,8 @@
               if list == blank
                 assign list = block.settings.notes
               endif
-              assign w = forloop.index | times: 100 | divided_by: forloop.length | at_least: 45
+              assign w = forloop.length | minus: forloop.index | times: 18
+              assign w = 100 | minus: w
             -%}
             {%- if list != blank -%}
               <li class="tier" style="--w: {{ w }}%; --i: {{ forloop.index0 }}" data-reveal {{ block.shopify_attributes }}>

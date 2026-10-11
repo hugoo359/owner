@@ -27,8 +27,8 @@
     <clipPath id="bulbs">
       <path d="M418 300 C418 520 588 640 592 750 C588 860 418 980 418 1200 L782 1200 C782 980 612 860 608 750 C612 640 782 520 782 300 Z"/>
     </clipPath>
-    <filter id="blur30"><feGaussianBlur stdDeviation="30"/></filter>
-    <filter id="blur4"><feGaussianBlur stdDeviation="4"/></filter>
+    <filter id="blur30" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="30"/></filter>
+    <filter id="blur4" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4"/></filter>
     <filter id="grain" x="0" y="0" width="100%" height="100%">
       <feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" stitchTiles="stitch"/>
       <feColorMatrix values="0 0 0 0 1  0 0 0 0 .92  0 0 0 0 .8  0 0 0 .07 0"/>

@@ -8,7 +8,7 @@
         <div class="marquee-group">
           {%- for k in (1..3) -%}
             {%- for block in items -%}
-              <span class="marquee-item"{% if i == 1 and k == 1 %} {{ block.shopify_attributes }}{% endif %}>{{ block.settings.text }}</span>
+              <span class="{% cycle 'marquee-item', 'marquee-item marquee-item--outline' %}"{% if i == 1 and k == 1 %} {{ block.shopify_attributes }}{% endif %}>{{ block.settings.text }}</span>
               <span class="marquee-sep">{% render 'emblem', size: 12 %}</span>
             {%- endfor -%}
           {%- endfor -%}

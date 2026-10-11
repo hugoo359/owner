@@ -2,7 +2,7 @@
 {%- if link.links.size > 0 -%}
   <li class="has-drop">
     <a href="{{ link.url }}" aria-haspopup="true"{% if link.active %} aria-current="page"{% endif %}>{{ link.title }}</a>
-    <div class="drop">
+    <div class="hdr-drop">
       <ul>
         {%- for child in link.links -%}
           <li><a href="{{ child.url }}"{% if child.current %} aria-current="page"{% endif %}>{{ child.title }}</a></li>

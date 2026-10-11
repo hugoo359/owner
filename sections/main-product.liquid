@@ -66,7 +66,7 @@
               {%- endunless -%}
 
             {%- when 'quantity' -%}
-              <div class="pdp-qty" {{ block.shopify_attributes }}>
+              <div class="pdp-qty" data-qty-wrap{% unless status == 'available' %} hidden{% endunless %} {{ block.shopify_attributes }}>
                 <label class="opt-legend" for="{{ form_id }}-qty">{{ 'product.quantity' | t }}</label>
                 <div class="qty qty--lg" data-qty-input>
                   <button type="button" data-step="-1" aria-label="{{ 'product.decrease' | t }}">{% render 'icon', icon: 'minus' %}</button>
@@ -135,12 +135,14 @@
                 assign base = product.metafields.custom.base_notes.value | join: ' · ' | default: block.settings.base
               -%}
               {%- if top != blank or heart != blank or base != blank -%}
-                <dl class="pdp-notes" {{ block.shopify_attributes }}>
+                <div class="pdp-notes" {{ block.shopify_attributes }}>
                   {%- if block.settings.heading != blank -%}<p class="eyebrow">{{ block.settings.heading }}</p>{%- endif -%}
-                  {%- if top != blank -%}<div><dt>{{ 'product.notes_top' | t }}</dt><dd>{{ top }}</dd></div>{%- endif -%}
-                  {%- if heart != blank -%}<div><dt>{{ 'product.notes_heart' | t }}</dt><dd>{{ heart }}</dd></div>{%- endif -%}
-                  {%- if base != blank -%}<div><dt>{{ 'product.notes_base' | t }}</dt><dd>{{ base }}</dd></div>{%- endif -%}
-                </dl>
+                  <dl>
+                    {%- if top != blank -%}<div><dt>{{ 'product.notes_top' | t }}</dt><dd>{{ top }}</dd></div>{%- endif -%}
+                    {%- if heart != blank -%}<div><dt>{{ 'product.notes_heart' | t }}</dt><dd>{{ heart }}</dd></div>{%- endif -%}
+                    {%- if base != blank -%}<div><dt>{{ 'product.notes_base' | t }}</dt><dd>{{ base }}</dd></div>{%- endif -%}
+                  </dl>
+                </div>
               {%- elsif request.design_mode -%}
                 <p class="editor-hint" {{ block.shopify_attributes }}>{{ 'product.notes_empty' | t }}</p>
               {%- endif -%}

@@ -619,6 +619,7 @@
         if (b) b.hidden = st !== 'soon';
       }
       if (dynamic) dynamic.hidden = !buyable;
+      $$('[data-qty-wrap]', sec).forEach(el => { el.hidden = !buyable; });
       if (msg) { msg.hidden = true; msg.textContent = ''; }
       markAvailability();
     }
@@ -654,15 +655,20 @@
       }
     });
 
-    /* Kauf-Leiste einblenden, wenn der Button aus dem Bild ist */
-    if (sticky && atc && 'IntersectionObserver' in window) {
-      const o = new IntersectionObserver(([en]) => {
-        const show = !en.isIntersecting && en.boundingClientRect.top < 0;
+    /* Kauf-Leiste einblenden, sobald der Button nach oben aus dem Bild gescrollt ist */
+    if (sticky && atc) {
+      let raf = 0, shown = false;
+      const check = () => {
+        raf = 0;
+        const show = atc.getBoundingClientRect().bottom < 0;
+        if (show === shown) return;
+        shown = show;
         sticky.classList.toggle('is-visible', show);
         sticky.setAttribute('aria-hidden', !show);
         if (stickyBtn) stickyBtn.tabIndex = show ? 0 : -1;
-      });
-      o.observe(atc);
+      };
+      window.addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(check); }, { passive: true });
+      check();
     }
     update(false);
   }
