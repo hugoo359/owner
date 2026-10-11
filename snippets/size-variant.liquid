@@ -1,0 +1,37 @@
+{%- comment -%}
+  Gibt die ID der Variante in der gewünschten Größe aus (z. B. „100 ml“), sonst nichts.
+  Verfügbare Varianten werden bevorzugt. Produkte ohne Größen-Option zählen, wenn ihr Titel
+  die Größe enthält (z. B. „Oud Noir 100 ml“).
+  Parameter: product, size (klein geschrieben, ohne Leerzeichen, z. B. „100ml“)
+{%- endcomment -%}
+{%- liquid
+  assign idx = -1
+  for option in product.options_with_values
+    assign n = option.name | downcase
+    if n contains 'größe' or n contains 'grösse' or n contains 'groesse' or n contains 'size' or n contains 'inhalt' or n contains 'füllmenge' or n contains 'volum'
+      assign idx = forloop.index0
+      break
+    endif
+  endfor
+  assign found = ''
+  if idx > -1
+    for v in product.variants
+      assign vs = v.options[idx] | downcase | remove: ' '
+      if vs == size
+        if found == ''
+          assign found = v.id
+        endif
+        if v.available
+          assign found = v.id
+          break
+        endif
+      endif
+    endfor
+  else
+    assign t = product.title | append: ' ' | append: product.selected_or_first_available_variant.title | downcase | remove: ' '
+    if t contains size
+      assign found = product.selected_or_first_available_variant.id
+    endif
+  endif
+  echo found
+-%}

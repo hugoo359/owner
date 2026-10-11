@@ -1,4 +1,4 @@
 {
-  "sections": { "main": { "type": "main-collection", "settings": { "per_page": 24 } } },
+  "sections": { "main": { "type": "main-collection", "settings": { "per_page": 24, "only_size": "100 ml" } } },
   "order": ["main"]
 }

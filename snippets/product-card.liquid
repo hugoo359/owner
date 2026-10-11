@@ -1,3 +1,8 @@
+{%- comment -%}
+  Produktkarte für Kollektion, Suche und Empfehlungen.
+  Parameter: product, optional only_variant (nur diese Variante zeigen, z. B. 100 ml) und
+  only_label (angezeigte Größe, wenn das Produkt keine Größen-Option hat)
+{%- endcomment -%}
 {%- liquid
   assign size_option = nil
   assign size_idx = 0
@@ -39,6 +44,38 @@
       endif
     endfor
   endif
+
+  # Was die Karte zeigt: ganzes Produkt oder nur eine Variante (z. B. nur 100 ml)
+  assign cv = only_variant
+  assign card_url = product.url
+  assign card_media = product.featured_media
+  assign card_price = product.price
+  assign card_compare = product.compare_at_price
+  assign price_from = product.price_varies
+  assign card_avail = product.available
+  if cv
+    assign card_url = cv.url
+    if cv.featured_media
+      assign card_media = cv.featured_media
+    endif
+    assign card_price = cv.price
+    assign card_compare = cv.compare_at_price
+    assign price_from = false
+    assign card_avail = cv.available
+    assign unit_variant = cv
+    assign cv_label = only_label
+    if size_option
+      assign cv_label = cv.options[size_idx]
+    endif
+    assign f_sizes = ''
+    if cv.available
+      assign f_sizes = '|' | append: cv_label
+    endif
+  endif
+  assign hover_media = product.media[1]
+  if hover_media and card_media and hover_media.id == card_media.id
+    assign hover_media = product.media[0]
+  endif
 -%}
 {%- capture unit_out -%}{% render 'unit-price', variant: unit_variant %}{%- endcapture -%}
 {%- capture f_families -%}{% render 'scent-families', product: product %}{%- endcapture -%}
@@ -47,22 +84,24 @@
   data-f-families="{{ f_families | strip | downcase | prepend: '|' | append: '|' | escape }}"
   data-f-colors="{{ f_colors | downcase | append: '|' | escape }}"
   data-f-sizes="{{ f_sizes | downcase | append: '|' | escape }}"
-  data-f-avail="{{ product.available }}">
+  data-f-avail="{{ card_avail }}">
   <div class="card-media">
-    <a href="{{ product.url }}" class="media{% if product.media.size > 1 %} has-hover{% endif %}" tabindex="-1" aria-hidden="true">
-      {%- if product.featured_media -%}
-        {{ product.featured_media | image_url: width: 900 | image_tag: loading: 'lazy', sizes: '(min-width: 1100px) 25vw, 50vw', widths: '300, 450, 600, 900', class: 'main-img', alt: product.title }}
+    <a href="{{ card_url }}" class="media{% if product.media.size > 1 %} has-hover{% endif %}" tabindex="-1" aria-hidden="true">
+      {%- if card_media -%}
+        {{ card_media | image_url: width: 900 | image_tag: loading: 'lazy', sizes: '(min-width: 1100px) 25vw, 50vw', widths: '300, 450, 600, 900', class: 'main-img', alt: product.title }}
         {%- if product.media.size > 1 -%}
-          {{ product.media[1] | image_url: width: 900 | image_tag: loading: 'lazy', sizes: '(min-width: 1100px) 25vw, 50vw', widths: '300, 450, 600, 900', class: 'hover-img', alt: '' }}
+          {{ hover_media | image_url: width: 900 | image_tag: loading: 'lazy', sizes: '(min-width: 1100px) 25vw, 50vw', widths: '300, 450, 600, 900', class: 'hover-img', alt: '' }}
         {%- endif -%}
       {%- else -%}
         {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
       {%- endif -%}
     </a>
 
-    {%- if settings.quick_add and product.available -%}
+    {%- if settings.quick_add and card_avail -%}
       <div class="qa" aria-label="Schnell hinzufügen">
-        {%- if size_option -%}
+        {%- if cv -%}
+          <button type="button" class="qa-single" data-qa-variant="{{ cv.id }}">+ {{ cv_label }} in den Warenkorb</button>
+        {%- elsif size_option -%}
           <span class="qa-label">Größe wählen</span>
           <div class="qa-sizes">
             {%- for value in size_option.values -%}
@@ -85,10 +124,16 @@
     {%- endif -%}
   </div>
 
-  <a href="{{ product.url }}" class="card-info">
+  <a href="{{ card_url }}" class="card-info">
     <h3>{{ product.title }}</h3>
     <div class="sz">
-      {%- if size_option -%}
+      {%- if cv -%}
+        {%- if cv.available -%}
+          {%- if cv_label != blank -%}{% render 'icon', icon: 'cart-sm' %}<span>{{ cv_label }}</span>{%- endif -%}
+        {%- else -%}
+          <span>{{ settings.sold_out_text | default: "Ausverkauft" | upcase }}</span>
+        {%- endif -%}
+      {%- elsif size_option -%}
         {%- capture sizes_out -%}
           {%- for value in size_option.values -%}
             {%- assign vname = value.name | default: value -%}
@@ -104,9 +149,9 @@
       {%- endif -%}
     </div>
     <div class="price">
-      {%- if product.price_varies -%}ab {% endif -%}
-      {{ product.price | money_with_currency }}
-      {%- if product.compare_at_price > product.price %} <s>{{ product.compare_at_price | money_with_currency }}</s>{% endif -%}
+      {%- if price_from -%}ab {% endif -%}
+      {{ card_price | money_with_currency }}
+      {%- if card_compare > card_price %} <s>{{ card_compare | money_with_currency }}</s>{% endif -%}
       {%- if unit_out != blank -%}<span class="unit">{{ unit_out }}</span>{%- endif -%}
     </div>
   </a>

@@ -11,6 +11,10 @@
     # Schnellfilter-Fallback: Wenn in „Search & Discovery“ keine Filter für Kategorie,
     # Duftfamilie, Farbe, Größe oder Verfügbarkeit eingerichtet sind, baut das Theme diese
     # Zeilen selbst aus den Produkten der Kollektion und filtert direkt im Browser.
+    # Nur eine Größe (z. B. „100 ml“): Düfte ohne diese Größe werden ausgeblendet,
+    # jede Karte zeigt nur diese Variante.
+    assign only_size = section.settings.only_size | downcase | remove: ' '
+
     assign has_cat = false
     assign has_family = false
     assign has_color = false
@@ -38,6 +42,14 @@
     assign qf_sizes = ''
     if section.settings.auto_filters
       for product in collection.products
+        if only_size != blank
+          capture pick_id
+            render 'size-variant', product: product, size: only_size
+          endcapture
+          if pick_id == blank
+            continue
+          endif
+        endif
         capture fams
           render 'scent-families', product: product
         endcapture
@@ -117,6 +129,7 @@
           </div>
         </div>
       {%- elsif fl contains 'größe' or fl contains 'grösse' or fl contains 'groesse' or fl contains 'size' or fl contains 'inhalt' or fl contains 'füllmenge' or fl contains 'volum' -%}
+        {%- if only_size != blank -%}{%- continue -%}{%- endif -%}
         {%- capture size_row -%}
           <div class="frow">
             <span class="flabel">{{ filter.label }}</span>
@@ -168,7 +181,7 @@
         </div>
       </div>
     {%- endif -%}
-    {%- if section.settings.auto_filters and has_size == false and qf_sizes.size > 0 -%}
+    {%- if section.settings.auto_filters and has_size == false and qf_sizes.size > 0 and only_size == blank -%}
       {%- capture size_row -%}
         <div class="frow">
           <span class="flabel">{{ section.settings.t_size }}</span>
@@ -209,18 +222,36 @@
   </div>
 
   <div class="grid" id="ProductGrid" data-grid style="--cols: {{ section.settings.cols_default }}">
+    {%- assign shown = 0 -%}
     {%- for product in collection.products -%}
-      {% render 'product-card', product: product %}
+      {%- if only_size != blank -%}
+        {%- capture pick_id -%}{% render 'size-variant', product: product, size: only_size %}{%- endcapture -%}
+        {%- if pick_id == blank -%}{%- continue -%}{%- endif -%}
+        {%- assign pick = nil -%}
+        {%- for v in product.variants -%}
+          {%- assign vid = v.id | append: '' -%}
+          {%- if vid == pick_id -%}{%- assign pick = v -%}{%- break -%}{%- endif -%}
+        {%- endfor -%}
+        {%- assign shown = shown | plus: 1 -%}
+        {% render 'product-card', product: product, only_variant: pick, only_label: section.settings.only_size %}
+      {%- else -%}
+        {% render 'product-card', product: product %}
+      {%- endif -%}
     {%- else -%}
       <div class="empty">{{ section.settings.t_empty }} <a href="{{ collection.url }}">{{ section.settings.t_reset }}</a></div>
     {%- endfor -%}
+    {%- if only_size != blank and shown == 0 and collection.products.size > 0 and paginate.next == blank -%}
+      <div class="empty">{{ section.settings.t_empty }}</div>
+    {%- endif -%}
     <div class="empty" data-qf-empty hidden>{{ section.settings.t_empty }} <button type="button" class="link-u" data-qf-reset>{{ section.settings.t_reset }}</button></div>
   </div>
 
   {%- if paginate.next -%}
     <div class="loadmore" id="LoadMore">
       <button type="button" data-load-more="{{ paginate.next.url }}" data-label="{{ section.settings.t_more | escape }}">{{ section.settings.t_more }}</button>
-      <p>{{ paginate.current_offset | plus: collection.products.size }} / {{ collection.products_count }} {{ section.settings.t_products }}</p>
+      {%- if only_size == blank -%}
+        <p>{{ paginate.current_offset | plus: collection.products.size }} / {{ collection.products_count }} {{ section.settings.t_products }}</p>
+      {%- endif -%}
     </div>
   {%- endif -%}
 </div>
@@ -232,6 +263,7 @@
   "settings": [
     { "type": "range", "id": "per_page", "label": "Produkte pro Seite", "min": 8, "max": 48, "step": 4, "default": 24 },
     { "type": "link_list", "id": "category_menu", "label": "Kategorie-Menü (Pillen oben)", "info": "Optional. Ansonsten erscheinen Filter aus der App Search & Discovery automatisch als Pillen, Farben als Kreise und Größen (ml) als Kästchen." },
+    { "type": "text", "id": "only_size", "label": "Nur Düfte in dieser Größe zeigen", "default": "100 ml", "info": "Z. B. „100 ml“. Jede Karte zeigt dann nur diese Größe mit Preis und Grundpreis, Düfte ohne diese Größe werden ausgeblendet. Leer lassen = alle Größen." },
     { "type": "select", "id": "cols_default", "label": "Spalten (Desktop, Standard)", "default": "4", "options": [ { "value": "2", "label": "2" }, { "value": "4", "label": "4" }, { "value": "6", "label": "6" } ] },
     { "type": "header", "content": "Texte" },
     { "type": "text", "id": "t_home", "label": "Startseite", "default": "Startseite" },
