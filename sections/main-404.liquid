@@ -1,7 +1,7 @@
 <div class="wrap page-wrap center">
-  <h1 class="ctitle">Page not found</h1>
-  <p>This page doesn't exist or has been moved.</p>
-  <a class="atc inline" href="{{ routes.all_products_collection_url }}">Continue shopping</a>
+  <h1 class="ctitle">{{ 'not_found.title' | t }}</h1>
+  <p>{{ 'not_found.text' | t }}</p>
+  <a class="atc inline" href="{{ routes.all_products_collection_url }}">{{ 'not_found.continue' | t }}</a>
 </div>
 {% schema %}
 { "name": "404" }

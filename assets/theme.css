@@ -816,7 +816,7 @@ html.leaving .section-footer,html.leaving .newsletter{opacity:0;transition:opaci
 .sp-rtext{letter-spacing:.01em}
 
 /* =========================================================
-   6PM-UPDATE: Schnellfilter, Galerie zum Wischen, Größenwahl
+   UPDATE: Schnellfilter, Galerie zum Wischen, Größenwahl
    ========================================================= */
 /* Kollektion: Schnellfilter (Fallback) */
 .qf-hide{display:none!important}
@@ -855,7 +855,7 @@ button.sw{padding:0;cursor:pointer}
 .pswatches a.on::after{content:"";position:absolute;inset:-3px;border-radius:50%;border:1.5px solid var(--ink)}
 .pswatches a.is-sold{opacity:.45}
 
-/* Produktseite: Größen wie bei 6pm (doppelter Rahmen statt schwarzer Fläche) */
+/* Produktseite: Größen mit doppeltem Rahmen statt schwarzer Fläche */
 .psizes button{position:relative;background:var(--bg)}
 .psizes button.on{background:var(--bg);color:var(--ink);font-weight:600;box-shadow:inset 0 0 0 2px var(--ink),inset 0 0 0 4px var(--bg),inset 0 0 0 5px var(--ink);z-index:1}
 .psizes button:hover:not(:disabled):not(.on){background:var(--soft)}
@@ -914,7 +914,7 @@ button.sw{padding:0;cursor:pointer}
   .sgf-size{font-size:52px}
 }
 
-/* „Farbe: Name“ zusammen wie bei 6pm */
+/* „Farbe: Name“ in einer Zeile */
 .plabel:not(.up){justify-content:flex-start;gap:4px}
 .plabel:not(.up) span{color:var(--ink)}
 @media (max-width:700px){
@@ -957,7 +957,7 @@ button.sw{padding:0;cursor:pointer}
 }
 
 /* =========================================================
-   KOLLEKTION 1:1 WIE 6PM (ausgemessen bei 1902px Breite)
+   KOLLEKTIONSSEITE: Filterzeilen, Raster, Abstände
    ========================================================= */
 .crumbs{margin-top:27px;font-size:9.5px;letter-spacing:.03em;gap:7px}
 .crumbs a{color:#222}
@@ -991,3 +991,110 @@ button.sw{padding:0;cursor:pointer}
   .flabel{font-size:9px}
   .grid{gap:26px 10px;margin-top:36px}
 }
+
+/* =========================================================
+   ZUSÄTZLICHE BAUSTEINE (Banner, Text, Bild+Text, Video, FAQ,
+   Kontakt, Laufband, Produkt-Raster, Kollektionsliste)
+   ========================================================= */
+.banner,.vhero{position:relative;overflow:hidden;color:var(--bn-ink,#fff);background:#cfd6db}
+.banner{height:var(--bn-h,80vh);min-height:420px}
+.vhero{height:var(--vh-h,90vh);min-height:420px}
+.banner-media,.vhero-media{position:absolute;inset:0;display:block}
+.banner-img,.vhero-video,.banner-media .placeholder-svg,.vhero-media .placeholder-svg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.banner-img--mob{display:none}
+.vhero-embed{border:0;width:100vw;height:56.25vw;min-height:100%;min-width:177.78vh;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none}
+.banner-media::after,.vhero-media::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,var(--bn-o,.2));pointer-events:none}
+.banner-content{position:absolute;z-index:1;left:var(--g);right:var(--g);bottom:56px;max-width:620px}
+.banner-inner{display:flex;flex-direction:column;align-items:flex-start;gap:14px}
+.banner--bottom-center .banner-content,.banner-content--center{left:50%;right:auto;transform:translateX(-50%);text-align:center;width:min(620px,calc(100% - 2*var(--g)))}
+.banner--bottom-center .banner-inner,.banner--center .banner-inner,.banner-content--center .banner-inner{align-items:center}
+.banner--center .banner-content{left:50%;right:auto;top:50%;bottom:auto;transform:translate(-50%,-50%);text-align:center;width:min(620px,calc(100% - 2*var(--g)))}
+.banner-content--center{top:50%;bottom:auto;transform:translate(-50%,-50%)}
+.banner--top-left .banner-content{top:calc(var(--nav) + 40px);bottom:auto}
+.banner-kicker,.rt-kicker{margin:0;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase}
+.banner-title{margin:0;font-size:clamp(28px,4.2vw,56px);font-weight:900;font-style:italic;line-height:.95;letter-spacing:-.02em;text-transform:uppercase}
+.banner-text{font-size:14px;line-height:1.5;max-width:46ch}
+.banner-text p{margin:0}
+.banner-btn{display:inline-flex;align-items:center;height:44px;padding:0 30px;background:var(--ink);color:#fff;font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;transition:transform .35s var(--smooth),background .25s}
+.banner-btn--light{background:#fff;color:#111}
+.banner-btn:hover{transform:translateY(-2px)}
+
+.richtext{background:var(--rt-bg,#fff);color:var(--rt-ink,#111)}
+.richtext-inner{max-width:760px;margin:0 auto;padding:0 var(--g);display:flex;flex-direction:column;gap:16px;align-items:flex-start}
+.richtext--center .richtext-inner{align-items:center;text-align:center}
+.rt-title{margin:0;font-weight:800;letter-spacing:.01em;text-transform:uppercase;line-height:1.1}
+.rt-title--s{font-size:18px}.rt-title--m{font-size:clamp(22px,2.6vw,32px)}.rt-title--l{font-size:clamp(30px,4.4vw,58px);font-weight:900;font-style:italic;letter-spacing:-.02em}
+.rt-text{font-size:14px;line-height:1.65;max-width:62ch}
+.rt-text p:last-child{margin-bottom:0}
+.richtext .atc.inline,.iwt .atc.inline{margin-top:6px}
+.rt-btn-outline{display:inline-flex;align-items:center;margin-top:6px;color:var(--rt-ink,#111);border-color:currentColor;background:transparent}
+
+.iwt{display:grid;grid-template-columns:1fr 1fr;background:var(--iwt-bg,#f0f0f0);color:var(--iwt-ink,#111)}
+.iwt--right .iwt-media{order:2}
+.iwt-media{position:relative;aspect-ratio:4/5;overflow:hidden}
+.iwt-media img,.iwt-media .placeholder-svg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.iwt-text{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:16px;padding:48px clamp(24px,6vw,96px)}
+
+.faq{max-width:900px;margin:0 auto}
+.faq-title{margin:0 0 12px;font-size:22px;font-weight:800;letter-spacing:.01em;text-transform:uppercase;text-align:center}
+.faq-intro{text-align:center;font-size:13px;color:#444;margin-bottom:12px}
+.faq-group{margin:40px 0 4px;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.faq-list summary{height:auto;min-height:56px;padding:12px 0;text-transform:none;font-size:14px;font-weight:600;letter-spacing:0}
+.faq-list .body{padding-left:0;font-size:13px}
+
+.contact{max-width:720px;margin:0 auto}
+.contact-title{text-align:center}
+.contact-text{text-align:center;font-size:13px;color:#444;margin-bottom:12px}
+.form-box textarea{border:1px solid #cfcfcf;padding:12px;background:var(--bg);width:100%;font:inherit;resize:vertical}
+.form-box input:focus,.form-box select:focus,.form-box textarea:focus{outline:none;border-color:var(--ink)}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+.field-row>div{display:grid;gap:8px}
+.form-ok{display:flex;gap:10px;align-items:center;padding:14px 16px;background:var(--okbg);color:var(--ok);font-size:13px;font-weight:500;margin:0 0 8px}
+.form-err{padding:14px 16px;background:#fbeaea;color:#a12a2a;font-size:13px;margin:0 0 8px}
+.form-err ul{margin:6px 0 0;padding-left:18px}
+
+.marquee{background:var(--mq-bg,#111);color:var(--mq-ink,#fff);overflow:hidden;padding:13px 0;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.mq-track{display:flex;width:max-content;animation:mqScroll var(--mq-speed,30s) linear infinite}
+.marquee:hover .mq-track{animation-play-state:paused}
+.mq-group{display:flex;align-items:center;flex:none}
+.mq-item,.mq-sep{padding:0 18px;white-space:nowrap}
+.mq-sep{opacity:.6;padding:0}
+@keyframes mqScroll{to{transform:translateX(-50%)}}
+
+.fc .grid{margin:0 0 24px}
+.fc-more{text-align:center;margin-bottom:24px}
+.fc-more .btn-outline{display:inline-flex;align-items:center}
+
+.cl-grid{display:grid;grid-template-columns:repeat(var(--cols,4),minmax(0,1fr));gap:12px;padding:0 var(--g)}
+.cl-card{position:relative;display:block;overflow:hidden;color:#fff;background:#cfd6db}
+.cl-media{aspect-ratio:3/4;position:relative}
+.cl-media img,.cl-media .placeholder-svg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 1.2s var(--smooth)}
+.cl-card:hover .cl-media img{transform:scale(1.05)}
+.cl-card::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.35),transparent 50%);pointer-events:none}
+.cl-label{position:absolute;z-index:1;left:20px;bottom:18px;font-size:17px;font-weight:800;text-transform:uppercase;letter-spacing:.01em}
+
+/* Kundenkonto & Gutschein */
+.address-card{padding:18px 0;border-bottom:1px solid var(--line);font-size:13px;line-height:1.6}
+.address-actions{display:flex;gap:18px;align-items:center;margin-top:8px}
+.address-actions form{margin:0}
+.address-edit{margin-top:16px}
+.address-edit .btn-outline{margin-top:4px}
+.addr-cols{display:grid;grid-template-columns:1fr 1fr;gap:24px;font-size:13px;line-height:1.6}
+.form-box .check label{margin:0;text-transform:none;font-weight:500;font-size:12px;letter-spacing:0}
+.gift-copy{display:inline-flex;align-items:center}
+
+@media (max-width:900px){
+  .iwt{grid-template-columns:1fr}
+  .iwt--right .iwt-media{order:0}
+  .iwt-text{padding:36px var(--g) 44px}
+  .cl-grid{grid-template-columns:repeat(min(var(--cols,4),2),minmax(0,1fr))}
+}
+@media (max-width:700px){
+  .banner{height:var(--bn-hm,75vh)}
+  .banner-media.has-mob .banner-img--desk{display:none}
+  .banner-media.has-mob .banner-img--mob{display:block}
+  .banner--bottom-left .banner-content,.banner--bottom-center .banner-content{bottom:36px}
+  .field-row,.addr-cols{grid-template-columns:1fr}
+  .cl-label{left:14px;bottom:12px;font-size:14px}
+}
+@media (prefers-reduced-motion:reduce){.rm-respect .mq-track{animation:none}}

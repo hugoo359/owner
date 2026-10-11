@@ -1,11 +1,11 @@
 <div class="wrap form-page">
-  <h1 class="ctitle">Create account</h1>
+  <h1 class="ctitle">{{ 'customer.register.title' | t }}</h1>
   {%- form 'create_customer', class: 'form-box' -%}
     {{ form.errors | default_errors }}
-    <label for="RegFirst">First name</label><input type="text" name="customer[first_name]" id="RegFirst" autocomplete="given-name">
-    <label for="RegLast">Last name</label><input type="text" name="customer[last_name]" id="RegLast" autocomplete="family-name">
-    <label for="RegEmail">Email</label><input type="email" name="customer[email]" id="RegEmail" autocomplete="email" required>
-    <label for="RegPassword">Password</label><input type="password" name="customer[password]" id="RegPassword" autocomplete="new-password" required>
-    <button type="submit" class="atc">CREATE ACCOUNT</button>
+    <label for="RegFirst">{{ 'customer.first_name' | t }}</label><input type="text" name="customer[first_name]" id="RegFirst" autocomplete="given-name">
+    <label for="RegLast">{{ 'customer.last_name' | t }}</label><input type="text" name="customer[last_name]" id="RegLast" autocomplete="family-name">
+    <label for="RegEmail">{{ 'customer.email' | t }}</label><input type="email" name="customer[email]" id="RegEmail" autocomplete="email" autocorrect="off" autocapitalize="off" required>
+    <label for="RegPassword">{{ 'customer.password' | t }}</label><input type="password" name="customer[password]" id="RegPassword" autocomplete="new-password" required>
+    <button type="submit" class="atc">{{ 'customer.register.submit' | t }}</button>
   {%- endform -%}
 </div>

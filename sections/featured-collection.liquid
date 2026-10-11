@@ -1,0 +1,47 @@
+{%- liquid
+  assign coll = section.settings.collection
+  if coll == blank
+    assign coll = collections.all
+  endif
+-%}
+<section class="home-sec fc" style="--pt: {{ section.settings.padding_top }}px; --pb: {{ section.settings.padding_bottom }}px">
+  <div class="section-head">
+    {%- if section.settings.heading != blank -%}<h2 class="sh-title split-title" data-split>{{ section.settings.heading }}</h2>{%- endif -%}
+    {%- if section.settings.link_label != blank -%}<a class="sh-link link-u" href="{{ coll.url }}">{{ section.settings.link_label }}</a>{%- endif -%}
+  </div>
+  <div class="wrap">
+    <div class="grid fc-grid" style="--cols: {{ section.settings.columns }}">
+      {%- for product in coll.products limit: section.settings.limit -%}
+        {% render 'product-card', product: product %}
+      {%- else -%}
+        {%- for i in (1..section.settings.columns) -%}
+          <div class="card" data-reveal>
+            <div class="card-media"><div class="media">{{ 'product-apparel-1' | placeholder_svg_tag: 'placeholder-svg' }}</div></div>
+            <div class="card-info"><h3>Produktname</h3><div class="price">{{ 4900 | money_with_currency }}</div></div>
+          </div>
+        {%- endfor -%}
+      {%- endfor -%}
+    </div>
+    {%- if section.settings.button_label != blank -%}
+      <div class="fc-more"><a class="btn-outline" href="{{ coll.url }}">{{ section.settings.button_label }}</a></div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Produkt-Raster",
+  "tag": "div",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Überschrift", "default": "BESTSELLER" },
+    { "type": "collection", "id": "collection", "label": "Kollektion", "info": "Leer = alle Produkte" },
+    { "type": "range", "id": "limit", "label": "Anzahl Produkte", "min": 2, "max": 24, "step": 1, "default": 8 },
+    { "type": "range", "id": "columns", "label": "Spalten (Desktop)", "min": 2, "max": 6, "step": 1, "default": 4 },
+    { "type": "text", "id": "link_label", "label": "Link neben der Überschrift", "default": "Alle ansehen" },
+    { "type": "text", "id": "button_label", "label": "Button unter dem Raster" },
+    { "type": "range", "id": "padding_top", "label": "Abstand oben", "min": 0, "max": 140, "step": 4, "unit": "px", "default": 64 },
+    { "type": "range", "id": "padding_bottom", "label": "Abstand unten", "min": 0, "max": 140, "step": 4, "unit": "px", "default": 24 }
+  ],
+  "presets": [ { "name": "Produkt-Raster" } ]
+}
+{% endschema %}

@@ -48,7 +48,7 @@
         "tile-2": {
           "type": "tile",
           "settings": {
-            "title": "Women"
+            "title": "Damen"
           }
         },
         "tile-3": {
@@ -70,12 +70,12 @@
     "carousel": {
       "type": "product-carousel",
       "settings": {
-        "heading": "NEW: DROP 01",
-        "link_label": "View all",
+        "heading": "NEU: DROP 01",
+        "link_label": "Alle ansehen",
         "limit": 10,
         "per_view": 5,
         "badge": "all",
-        "badge_label": "New",
+        "badge_label": "Neu",
         "subtitle": "options",
         "padding_top": 64,
         "padding_bottom": 24
@@ -88,8 +88,8 @@
           "type": "card",
           "settings": {
             "tab": "1",
-            "title": "New: Essentials",
-            "text": "Our everyday basics. Heavyweight fabric, clean cut."
+            "title": "Neu: Essentials",
+            "text": "Unsere Basics für jeden Tag. Schwerer Stoff, cleaner Schnitt."
           }
         },
         "card-2": {
@@ -97,31 +97,31 @@
           "settings": {
             "tab": "1",
             "title": "Wide Leg Pants",
-            "text": "Relaxed fit that still holds its shape. From the gym straight to the city."
+            "text": "Lockere Passform, die trotzdem in Form bleibt. Vom Gym direkt in die Stadt."
           }
         },
         "card-3": {
           "type": "card",
           "settings": {
             "tab": "1",
-            "title": "New: Heavy Cotton",
-            "text": "Thick cotton that still looks good after many washes."
+            "title": "Neu: Heavy Cotton",
+            "text": "Dicke Baumwolle, die auch nach vielen Wäschen noch gut aussieht."
           }
         },
         "card-4": {
           "type": "card",
           "settings": {
             "tab": "1",
-            "title": "Bestsellers",
-            "text": "The pieces that sell out fastest. Get them while they last."
+            "title": "Bestseller",
+            "text": "Die Teile, die am schnellsten ausverkauft sind. Sichere sie dir, solange es sie gibt."
           }
         },
         "card-5": {
           "type": "card",
           "settings": {
             "tab": "2",
-            "title": "New: Essentials",
-            "text": "Hoodies and joggers in new colors. Oversized and heavyweight."
+            "title": "Neu: Essentials",
+            "text": "Hoodies und Jogger in neuen Farben. Oversized und schwer."
           }
         },
         "card-6": {
@@ -129,23 +129,23 @@
           "settings": {
             "tab": "2",
             "title": "Track Pants",
-            "text": "Lightweight, durable and with an adjustable waistband for every day."
+            "text": "Leicht, robust und mit verstellbarem Bund für jeden Tag."
           }
         },
         "card-7": {
           "type": "card",
           "settings": {
             "tab": "2",
-            "title": "New: Heavy Cotton",
-            "text": "T-shirts with a sturdy collar and a boxy fit."
+            "title": "Neu: Heavy Cotton",
+            "text": "T-Shirts mit stabilem Kragen und kastiger Passform."
           }
         },
         "card-8": {
           "type": "card",
           "settings": {
             "tab": "2",
-            "title": "Bestsellers",
-            "text": "Our best-selling men's pieces at a glance."
+            "title": "Bestseller",
+            "text": "Unsere meistverkauften Herren-Teile auf einen Blick."
           }
         }
       },
@@ -160,9 +160,9 @@
         "card-8"
       ],
       "settings": {
-        "heading": "TRENDING NOW",
-        "tab_1": "Women",
-        "tab_2": "Men",
+        "heading": "JETZT IM TREND",
+        "tab_1": "Damen",
+        "tab_2": "Herren",
         "columns": 4,
         "padding_top": 64,
         "padding_bottom": 80
@@ -211,11 +211,46 @@
         "padding_top": 88,
         "padding_bottom": 32
       }
+    },
+    "usp": {
+      "type": "marquee",
+      "blocks": {
+        "m1": {
+          "type": "item",
+          "settings": {
+            "text": "Kostenloser Versand ab 125 €"
+          }
+        },
+        "m2": {
+          "type": "item",
+          "settings": {
+            "text": "14 Tage kostenloser Umtausch"
+          }
+        },
+        "m3": {
+          "type": "item",
+          "settings": {
+            "text": "Versand in 2–4 Werktagen"
+          }
+        }
+      },
+      "block_order": [
+        "m1",
+        "m2",
+        "m3"
+      ],
+      "settings": {
+        "bg": "#111111",
+        "ink": "#ffffff",
+        "separator": "✦",
+        "speed": 30
+      }
     }
   },
   "order": [
     "hero",
     "tiles",
+    "usp",
     "carousel",
     "popular",
     "brand"

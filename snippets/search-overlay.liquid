@@ -3,8 +3,8 @@
   <div class="search-panel">
     <form action="{{ routes.search_url }}" method="get" role="search" class="search-row">
       {% render 'icon', icon: 'search-sm' %}
-      <input type="search" name="q" id="SearchInput" placeholder="Search..." aria-label="Search" autocomplete="off">
-      <button type="button" data-close="search" aria-label="Close search">{% render 'icon', icon: 'close' %}</button>
+      <input type="search" name="q" id="SearchInput" placeholder="{{ 'search.placeholder' | t }}" aria-label="{{ 'search.label' | t }}" autocomplete="off">
+      <button type="button" data-close="search" aria-label="{{ 'search.close' | t }}">{% render 'icon', icon: 'close' %}</button>
     </form>
     <div class="search-results" id="SearchResults" hidden></div>
   </div>

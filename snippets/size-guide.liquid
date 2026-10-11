@@ -6,71 +6,71 @@
   <div class="backdrop" data-close="sizeguide"></div>
   <div class="sg-modal" role="dialog" aria-modal="true" aria-labelledby="SgTitle">
     <div class="sg-head">
-      <h2 id="SgTitle">FIND YOUR SIZE</h2>
-      <button type="button" class="sg-x" data-close="sizeguide" aria-label="Close">{% render 'icon', icon: 'close' %}</button>
+      <h2 id="SgTitle">{{ 'size_finder.title' | t }}</h2>
+      <button type="button" class="sg-x" data-close="sizeguide" aria-label="{{ 'general.close' | t }}">{% render 'icon', icon: 'close' %}</button>
     </div>
 
     <div class="sgf">
       <form class="sgf-form" data-sgf-form novalidate>
         <fieldset class="sgf-block">
-          <legend class="sgf-step"><span>1</span>I'm shopping for</legend>
-          <div class="sgf-gender" role="radiogroup" aria-label="Men or women">
+          <legend class="sgf-step"><span>1</span>{{ 'size_finder.step_gender' | t }}</legend>
+          <div class="sgf-gender" role="radiogroup" aria-label="{{ 'size_finder.gender_label' | t }}">
             <button type="button" role="radio" aria-checked="false" data-sgf-gender="men">
               <svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="11" cy="15" r="6.5"/><path d="M15.6 10.4L22 4M16.5 4H22v5.5"/></svg>
-              <span>Men</span>
+              <span>{{ 'size_finder.men' | t }}</span>
             </button>
             <button type="button" role="radio" aria-checked="false" data-sgf-gender="women">
               <svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="13" cy="9.5" r="6.5"/><path d="M13 16v8M9 20.5h8"/></svg>
-              <span>Women</span>
+              <span>{{ 'size_finder.women' | t }}</span>
             </button>
           </div>
         </fieldset>
 
         <fieldset class="sgf-block">
-          <legend class="sgf-step"><span>2</span>Your height</legend>
+          <legend class="sgf-step"><span>2</span>{{ 'size_finder.step_height' | t }}</legend>
           <div class="sgf-field">
-            <input type="number" id="SgfHeight" inputmode="numeric" min="140" max="215" step="1" placeholder="178" data-sgf-in="h" aria-label="Height in centimetres">
+            <input type="number" id="SgfHeight" inputmode="numeric" min="140" max="215" step="1" placeholder="178" data-sgf-in="h" aria-label="{{ 'size_finder.height_label' | t }}">
             <span>cm</span>
           </div>
-          <input type="range" class="sgf-range" min="140" max="215" step="1" value="178" data-sgf-range="h" aria-label="Height slider">
+          <input type="range" class="sgf-range" min="140" max="215" step="1" value="178" data-sgf-range="h" aria-label="{{ 'size_finder.height_slider' | t }}">
         </fieldset>
 
         <fieldset class="sgf-block">
-          <legend class="sgf-step"><span>3</span>Your weight</legend>
+          <legend class="sgf-step"><span>3</span>{{ 'size_finder.step_weight' | t }}</legend>
           <div class="sgf-field">
-            <input type="number" id="SgfWeight" inputmode="numeric" min="35" max="180" step="1" placeholder="75" data-sgf-in="w" aria-label="Weight in kilograms">
+            <input type="number" id="SgfWeight" inputmode="numeric" min="35" max="180" step="1" placeholder="75" data-sgf-in="w" aria-label="{{ 'size_finder.weight_label' | t }}">
             <span>kg</span>
           </div>
-          <input type="range" class="sgf-range" min="35" max="180" step="1" value="75" data-sgf-range="w" aria-label="Weight slider">
+          <input type="range" class="sgf-range" min="35" max="180" step="1" value="75" data-sgf-range="w" aria-label="{{ 'size_finder.weight_slider' | t }}">
         </fieldset>
 
         <fieldset class="sgf-block">
-          <legend class="sgf-step"><span>4</span>Preferred fit</legend>
-          <div class="sg-fit" role="radiogroup" aria-label="Preferred fit">
-            <button type="button" role="radio" aria-checked="false" data-sgf-fit="-1">Tighter</button>
-            <button type="button" role="radio" aria-checked="true" data-sgf-fit="0" class="on">Regular</button>
-            <button type="button" role="radio" aria-checked="false" data-sgf-fit="1">Looser</button>
+          <legend class="sgf-step"><span>4</span>{{ 'size_finder.step_fit' | t }}</legend>
+          <div class="sg-fit" role="radiogroup" aria-label="{{ 'size_finder.step_fit' | t }}">
+            <button type="button" role="radio" aria-checked="false" data-sgf-fit="-1">{{ 'size_finder.fit_tighter' | t }}</button>
+            <button type="button" role="radio" aria-checked="true" data-sgf-fit="0" class="on">{{ 'size_finder.fit_regular' | t }}</button>
+            <button type="button" role="radio" aria-checked="false" data-sgf-fit="1">{{ 'size_finder.fit_looser' | t }}</button>
           </div>
         </fieldset>
 
         <p class="sgf-err" data-sgf-err role="alert"></p>
-        <button type="submit" class="atc sgf-go"><span class="atc-label">Calculate my size</span></button>
+        <button type="submit" class="atc sgf-go"><span class="atc-label">{{ 'size_finder.calculate' | t }}</span></button>
       </form>
 
       <div class="sgf-result" data-sgf-result aria-live="polite">
         <div class="sgf-empty" data-sgf-empty>
           <svg width="54" height="54" viewBox="0 0 54 54" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M27 12a4 4 0 1 1 4 4c-2 0-4 1.5-4 3.5V22M27 22L6 36.5c-1.6 1.1-.8 3.5 1.1 3.5h39.8c1.9 0 2.7-2.4 1.1-3.5L27 22z"/></svg>
-          <p>Tell us a little about yourself and we'll calculate the size that fits you best.</p>
+          <p>{{ 'size_finder.intro' | t }}</p>
         </div>
         <div class="sgf-out" data-sgf-out hidden>
-          <span class="sgf-kicker">We recommend size</span>
+          <span class="sgf-kicker">{{ 'size_finder.we_recommend' | t }}</span>
           <strong class="sgf-size" data-sgf-size>M</strong>
           <p class="sgf-why" data-sgf-why></p>
           <div class="sgf-scale" data-sgf-scale aria-hidden="true"></div>
           <p class="sgf-alt" data-sgf-alt hidden></p>
-          <button type="button" class="atc sgf-apply" data-sgf-apply><span class="atc-label" data-sgf-apply-label>Select size M</span></button>
-          <button type="button" class="link-u sgf-edit" data-sgf-edit>Edit my details</button>
-          <p class="sg-note">This recommendation is an estimate based on average body proportions. If in doubt, check the size information in the product description.</p>
+          <button type="button" class="atc sgf-apply" data-sgf-apply><span class="atc-label" data-sgf-apply-label></span></button>
+          <button type="button" class="link-u sgf-edit" data-sgf-edit>{{ 'size_finder.edit' | t }}</button>
+          <p class="sg-note">{{ 'size_finder.note' | t }}</p>
         </div>
       </div>
     </div>

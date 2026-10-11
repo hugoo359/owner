@@ -6,22 +6,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="{{ settings.color_background }}">
   <link rel="canonical" href="{{ canonical_url }}">
+  <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
   {%- if settings.favicon != blank -%}
     <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 64, height: 64 }}">
+    <link rel="apple-touch-icon" href="{{ settings.favicon | image_url: width: 180, height: 180 }}">
   {%- endif -%}
   <title>
     {{ page_title }}
     {%- if current_tags %} – {{ current_tags | join: ', ' }}{% endif -%}
-    {%- if current_page != 1 %} – Page {{ current_page }}{% endif -%}
+    {%- if current_page != 1 %} – {{ 'general.page' | t: page: current_page }}{% endif -%}
     {%- unless page_title contains shop.name %} | {{ shop.name }}{% endunless -%}
   </title>
   {%- if page_description -%}
     <meta name="description" content="{{ page_description | escape }}">
   {%- endif -%}
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;1,900&display=swap">
+  {% render 'meta-tags' %}
+  {% render 'fonts' %}
 
   <script>
     document.documentElement.classList.add('js'{% if settings.anim_reveal %}, 'js-anim'{% endif %}{% if settings.respect_reduced_motion %}, 'rm-respect'{% endif %});
@@ -40,6 +40,7 @@
 
   <script>
     window.theme = {
+      locale: {{ request.locale.iso_code | json }},
       moneyFormat: {{ shop.money_with_currency_format | json }},
       routes: {
         root: {{ routes.root_url | json }},
@@ -54,13 +55,38 @@
         respectReducedMotion: {{ settings.respect_reduced_motion | json }}
       },
       strings: {
-        added: "Added",
-        addToCart: "Add to cart",
-        soldOut: "Sold out",
-        unavailable: "Unavailable",
-        chooseSize: "Please select a size.",
-        inStock: {{ 'In stock.' | json }},
-        noResults: "No results"
+        added: {{ 'product.added' | t | json }},
+        addToCart: {{ 'product.add_to_cart' | t | json }},
+        soldOut: {{ 'product.sold_out' | t | json }},
+        unavailable: {{ 'product.unavailable' | t | json }},
+        chooseSize: {{ 'product.choose_size' | t | json }},
+        error: {{ 'general.error' | t | json }},
+        cookieUnavailable: {{ 'general.cookie_unavailable' | t | json }},
+        adding: {{ 'cart.adding' | t | json }},
+        addError: {{ 'cart.add_error' | t | json }},
+        loadMoreError: {{ 'collection.load_more_error' | t | json }},
+        copied: {{ 'gift_card.copied' | t | json }},
+        sf: {
+          men: {{ 'size_finder.men' | t | json }},
+          women: {{ 'size_finder.women' | t | json }},
+          fit: {
+            '-1': {{ 'size_finder.fit_tighter_lower' | t | json }},
+            '0': {{ 'size_finder.fit_regular_lower' | t | json }},
+            '1': {{ 'size_finder.fit_looser_lower' | t | json }}
+          },
+          weRecommend: {{ 'size_finder.we_recommend_size' | t | json }},
+          selectSize: {{ 'size_finder.select_size' | t | json }},
+          sizeSoldOut: {{ 'size_finder.size_sold_out' | t | json }},
+          basedOn: {{ 'size_finder.based_on' | t | json }},
+          runsLarge: {{ 'size_finder.runs_large' | t | json }},
+          runsSmall: {{ 'size_finder.runs_small' | t | json }},
+          betweenLooser: {{ 'size_finder.between_looser' | t | json }},
+          betweenCloser: {{ 'size_finder.between_closer' | t | json }},
+          errGender: {{ 'size_finder.error_gender' | t | json }},
+          errHeight: {{ 'size_finder.error_height' | t | json }},
+          errWeight: {{ 'size_finder.error_weight' | t | json }},
+          errCheck: {{ 'size_finder.error_check' | t | json }}
+        }
       }
     };
   </script>
@@ -69,8 +95,8 @@
   {{ content_for_header }}
 </head>
 
-<body class="template-{{ template.name }}">
-  <a class="skip-link" href="#MainContent">Skip to content</a>
+<body class="template-{{ template.name }}{% if template.suffix != blank %} template-{{ template.name }}--{{ template.suffix }}{% endif %}">
+  <a class="skip-link" href="#MainContent">{{ 'general.skip_to_content' | t }}</a>
 
   {% sections 'header-group' %}
 

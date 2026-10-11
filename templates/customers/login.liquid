@@ -1,28 +1,28 @@
 <div class="wrap form-page">
-  <h1 class="ctitle">Log in</h1>
+  <h1 class="ctitle">{{ 'customer.login.title' | t }}</h1>
   {%- form 'customer_login', class: 'form-box' -%}
     {{ form.errors | default_errors }}
-    <label for="LoginEmail">Email</label>
-    <input type="email" name="customer[email]" id="LoginEmail" autocomplete="email" required>
+    <label for="LoginEmail">{{ 'customer.email' | t }}</label>
+    <input type="email" name="customer[email]" id="LoginEmail" autocomplete="email" autocorrect="off" autocapitalize="off" required>
     {%- if form.password_needed -%}
-      <label for="LoginPassword">Password</label>
+      <label for="LoginPassword">{{ 'customer.password' | t }}</label>
       <input type="password" name="customer[password]" id="LoginPassword" autocomplete="current-password" required>
-      <a class="link-u" href="#recover" data-recover-toggle>Forgot your password?</a>
+      <a class="link-u" href="#recover" data-recover-toggle>{{ 'customer.login.forgot' | t }}</a>
     {%- endif -%}
-    <button type="submit" class="atc">LOG IN</button>
-    <a class="link-u" href="{{ routes.account_register_url }}">Create account</a>
+    <button type="submit" class="atc">{{ 'customer.login.submit' | t }}</button>
+    <a class="link-u" href="{{ routes.account_register_url }}">{{ 'customer.login.create' | t }}</a>
   {%- endform -%}
   <div id="recover" class="form-box recover">
-    <h2 class="sub-title">Reset your password</h2>
+    <h2 class="sub-title">{{ 'customer.recover.title' | t }}</h2>
     {%- form 'recover_customer_password' -%}
       {{ form.errors | default_errors }}
-      {%- if form.posted_successfully? -%}<p>We've sent you an email with a link to reset your password.</p>{%- endif -%}
-      <label for="RecoverEmail">Email</label>
-      <input type="email" name="email" id="RecoverEmail" autocomplete="email" required>
-      <button type="submit" class="btn-outline">SEND LINK</button>
+      {%- if form.posted_successfully? -%}<p>{{ 'customer.recover.success' | t }}</p>{%- endif -%}
+      <label for="RecoverEmail">{{ 'customer.email' | t }}</label>
+      <input type="email" name="email" id="RecoverEmail" autocomplete="email" autocorrect="off" autocapitalize="off" required>
+      <button type="submit" class="btn-outline">{{ 'customer.recover.submit' | t }}</button>
     {%- endform -%}
   </div>
   {%- if shop.checkout.guest_login -%}
-    {%- form 'guest_login' -%}<button type="submit" class="btn-outline">CONTINUE AS GUEST</button>{%- endform -%}
+    {%- form 'guest_login' -%}<button type="submit" class="btn-outline">{{ 'customer.login.guest' | t }}</button>{%- endform -%}
   {%- endif -%}
 </div>

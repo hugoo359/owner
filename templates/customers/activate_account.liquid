@@ -1,10 +1,10 @@
 <div class="wrap form-page">
-  <h1 class="ctitle">Activate account</h1>
+  <h1 class="ctitle">{{ 'customer.activate.title' | t }}</h1>
   {%- form 'activate_customer_password', class: 'form-box' -%}
     {{ form.errors | default_errors }}
-    <label for="ActPw">Password</label><input type="password" name="customer[password]" id="ActPw" autocomplete="new-password" required>
-    <label for="ActPw2">Confirm password</label><input type="password" name="customer[password_confirmation]" id="ActPw2" autocomplete="new-password" required>
-    <button type="submit" class="atc">ACTIVATE</button>
-    <button type="submit" name="decline" class="btn-outline">DECLINE</button>
+    <label for="ActPw">{{ 'customer.password' | t }}</label><input type="password" name="customer[password]" id="ActPw" autocomplete="new-password" required>
+    <label for="ActPw2">{{ 'customer.password_confirm' | t }}</label><input type="password" name="customer[password_confirmation]" id="ActPw2" autocomplete="new-password" required>
+    <button type="submit" class="atc">{{ 'customer.activate.submit' | t }}</button>
+    <button type="submit" name="decline" class="btn-outline">{{ 'customer.activate.decline' | t }}</button>
   {%- endform -%}
 </div>

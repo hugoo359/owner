@@ -4,26 +4,35 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Gift card – {{ shop.name }}</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;1,900&display=swap">
+  <meta name="robots" content="noindex">
+  <title>{{ 'gift_card.title' | t }} – {{ shop.name }}</title>
+  {% render 'fonts' %}
   {{ 'theme.css' | asset_url | stylesheet_tag }}
-  <style>:root{--bg:{{ settings.color_background }};--ink:{{ settings.color_text }};--accent:{{ settings.color_accent }};--logo-w:{{ settings.logo_width }}px}</style>
+  <style>:root{--bg:{{ settings.color_background }};--ink:{{ settings.color_text }};--accent:{{ settings.color_accent }};--ok:{{ settings.color_success }};--logo-w:{{ settings.logo_width }}px}</style>
+  <script>window.theme = { strings: { copied: {{ 'gift_card.copied' | t | json }} } };</script>
+  <script src="{{ 'theme.js' | asset_url }}" defer="defer"></script>
   {{ content_for_header }}
 </head>
 <body>
   <main class="wrap page-wrap center gift">
     <div class="logo-link">{% render 'logo' %}</div>
-    <h1 class="ctitle">Your gift card</h1>
+    <h1 class="ctitle">{{ 'gift_card.title' | t }}</h1>
     <p class="gift-value">{{ gift_card.initial_value | money_with_currency }}</p>
     {%- if gift_card.enabled == false or gift_card.expired -%}
-      <p>This gift card is no longer valid.</p>
+      <p>{{ 'gift_card.invalid' | t }}</p>
     {%- endif -%}
     <p class="gift-code">{{ gift_card.code | format_code }}</p>
+    <button type="button" class="btn-outline gift-copy" data-copy="{{ gift_card.code }}">{{ 'gift_card.copy' | t }}</button>
     {%- if gift_card.balance != gift_card.initial_value -%}
-      <p>Remaining balance: {{ gift_card.balance | money_with_currency }}</p>
+      {%- assign balance = gift_card.balance | money_with_currency -%}
+      <p>{{ 'gift_card.balance' | t: amount: balance }}</p>
     {%- endif -%}
-    {%- if gift_card.expires_on -%}<p class="vat">Valid until {{ gift_card.expires_on | date: '%b %d, %Y' }}</p>{%- endif -%}
-    <a class="atc inline" href="{{ shop.url }}">Redeem now</a>
+    {%- if gift_card.expires_on -%}
+      {%- assign expiry = gift_card.expires_on | date: format: 'short' -%}
+      <p class="vat">{{ 'gift_card.valid_until' | t: date: expiry }}</p>
+    {%- endif -%}
+    <a class="atc inline" href="{{ shop.url }}">{{ 'gift_card.redeem' | t }}</a>
+    <div class="toast" id="Toast" role="status" hidden></div>
   </main>
 </body>
 </html>

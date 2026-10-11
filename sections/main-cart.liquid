@@ -1,7 +1,7 @@
 <div class="wrap cart-page">
-  <h1 class="ctitle">Cart</h1>
+  <h1 class="ctitle">{{ 'cart.page_title' | t }}</h1>
   {%- if cart.item_count == 0 -%}
-    <div class="cart-empty">Your cart is empty.<br><a href="{{ routes.all_products_collection_url }}">Shop now</a></div>
+    <div class="cart-empty">{{ 'cart.empty' | t }}<br><a href="{{ routes.all_products_collection_url }}">{{ 'general.shop_now' | t }}</a></div>
   {%- else -%}
     <form action="{{ routes.cart_url }}" method="post" class="cart-form">
       {%- for item in cart.items -%}
@@ -12,20 +12,20 @@
             <div class="pr">{{ item.final_price | money_with_currency }}</div>
             {%- unless item.product.has_only_default_variant -%}<div class="size">{{ item.variant.title }}</div>{%- endunless -%}
             <div class="qty-row">
-              <label class="visually-hidden" for="Qty-{{ forloop.index }}">Quantity</label>
+              <label class="visually-hidden" for="Qty-{{ forloop.index }}">{{ 'cart.quantity' | t }}</label>
               <input class="qty-input" type="number" min="0" name="updates[]" id="Qty-{{ forloop.index }}" value="{{ item.quantity }}">
-              <a class="link-u" href="{{ item.url_to_remove }}">Remove</a>
+              <a class="link-u" href="{{ item.url_to_remove }}">{{ 'cart.remove' | t }}</a>
             </div>
           </div>
           <div class="line-total">{{ item.final_line_price | money_with_currency }}</div>
         </div>
       {%- endfor -%}
       <div class="cart-sum">
-        <div class="sumrow b"><span>Subtotal</span><span>{{ cart.total_price | money_with_currency }}</span></div>
-        <p class="vat">{{ settings.tax_text }} · Shipping calculated at checkout.</p>
+        <div class="sumrow b"><span>{{ 'cart.subtotal' | t }}</span><span>{{ cart.total_price | money_with_currency }}</span></div>
+        <p class="vat">{{ settings.tax_text }} · {{ 'cart.taxes_note' | t }}</p>
         <div class="cart-actions">
-          <button type="submit" name="update" class="btn-outline">Update</button>
-          <button type="submit" name="checkout" class="checkout">CHECKOUT</button>
+          <button type="submit" name="update" class="btn-outline">{{ 'cart.update' | t }}</button>
+          <button type="submit" name="checkout" class="checkout">{{ 'cart.checkout' | t }}</button>
         </div>
       </div>
     </form>

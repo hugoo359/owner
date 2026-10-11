@@ -1,0 +1,279 @@
+{
+  "general": {
+    "skip_to_content": "Skip to content",
+    "page": "Page {{ page }}",
+    "close": "Close",
+    "previous": "Previous",
+    "next": "Next",
+    "slide": "Slide {{ number }}",
+    "view_all": "View all",
+    "discover": "Discover",
+    "shop_now": "Shop now",
+    "error": "Something went wrong. Please reload the page.",
+    "cookie_unavailable": "Cookie settings are currently unavailable.",
+    "loading": "Loading …",
+    "breadcrumb": "Breadcrumb"
+  },
+  "header": {
+    "open_menu": "Open menu",
+    "close_menu": "Close menu",
+    "menu": "Menu",
+    "open_search": "Open search",
+    "open_cart": "Open cart",
+    "account": "Account",
+    "my_account": "My account",
+    "log_in": "Log in"
+  },
+  "account_drawer": {
+    "title_in": "MY ACCOUNT",
+    "title_out": "LOG IN",
+    "hello": "Hi {{ name }}!",
+    "hello_fallback": "there",
+    "latest_order": "Latest order",
+    "orders": "Orders",
+    "profile": "Profile & addresses",
+    "log_out": "Log out",
+    "or": "or",
+    "login_email": "Log in with email",
+    "register": "No account yet? Create one",
+    "perk_1": "Track your orders anytime",
+    "perk_2": "Check out faster with saved details",
+    "perk_3": "Early access to new drops"
+  },
+  "search": {
+    "title": "Search",
+    "placeholder": "Search …",
+    "label": "Search",
+    "close": "Close search",
+    "submit": "SEARCH",
+    "results_count": {
+      "one": "{{ count }} result for “{{ terms }}”",
+      "other": "{{ count }} results for “{{ terms }}”"
+    },
+    "preview_count": {
+      "one": "{{ count }} result",
+      "other": "{{ count }} results"
+    },
+    "no_results_for": "No results for “{{ terms }}”",
+    "no_results": "No results found.",
+    "view_all": "View all results"
+  },
+  "cart": {
+    "title": "CART",
+    "page_title": "Cart",
+    "close": "Close cart",
+    "empty": "Your cart is empty.",
+    "free_shipping_remaining_html": "You're <b>{{ amount }}</b> away from free shipping",
+    "free_shipping_unlocked": "You've unlocked free shipping!",
+    "decrease": "Decrease quantity",
+    "increase": "Increase quantity",
+    "quantity": "Quantity",
+    "remove": "Remove",
+    "pairs_well": "PAIRS WELL WITH",
+    "suggestion": "Suggestion {{ number }}",
+    "add": "Add to cart",
+    "adding": "Adding …",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "shipping_free": "Free",
+    "shipping_at_checkout": "Calculated at checkout",
+    "taxes_note": "Shipping calculated at checkout.",
+    "checkout": "CHECKOUT",
+    "update": "Update",
+    "add_error": "Could not be added to cart."
+  },
+  "product": {
+    "add_to_cart": "Add to cart",
+    "add_short": "+ Add to cart",
+    "added": "Added",
+    "sold_out": "Sold out",
+    "unavailable": "Unavailable",
+    "choose_size": "Please select a size.",
+    "select_size": "Select size",
+    "quick_add": "Quick add",
+    "find_your_size": "Find your size",
+    "image": "Image {{ number }}",
+    "color": "Color",
+    "from": "from",
+    "and": "and",
+    "verified": "verified",
+    "rating": "{{ rating }} out of 5 stars",
+    "new": "New"
+  },
+  "size_finder": {
+    "title": "FIND YOUR SIZE",
+    "step_gender": "I'm shopping for",
+    "gender_label": "Men or women",
+    "men": "Men",
+    "women": "Women",
+    "step_height": "Your height",
+    "height_label": "Height in centimetres",
+    "height_slider": "Height slider",
+    "step_weight": "Your weight",
+    "weight_label": "Weight in kilograms",
+    "weight_slider": "Weight slider",
+    "step_fit": "Preferred fit",
+    "fit_tighter": "Tighter",
+    "fit_regular": "Regular",
+    "fit_looser": "Looser",
+    "fit_tighter_lower": "tighter",
+    "fit_regular_lower": "regular",
+    "fit_looser_lower": "looser",
+    "calculate": "Calculate my size",
+    "intro": "Tell us a little about yourself and we'll calculate the size that fits you best.",
+    "we_recommend": "We recommend size",
+    "we_recommend_size": "We recommend size [size]",
+    "select_size": "Select size [size]",
+    "size_sold_out": "Size [size] is sold out",
+    "based_on": "Based on: [gender] · [height] cm · [weight] kg · [fit] fit.",
+    "runs_large": "This item runs large – we have taken that into account.",
+    "runs_small": "This item runs small – we have taken that into account.",
+    "between_looser": "You are between two sizes. For a looser fit choose [size].",
+    "between_closer": "You are between two sizes. For a closer fit choose [size].",
+    "edit": "Edit my details",
+    "note": "This recommendation is an estimate based on average body proportions. If in doubt, check the size information in the product description.",
+    "error_gender": "Please choose men or women.",
+    "error_height": "Please enter your height between 140 and 215 cm.",
+    "error_weight": "Please enter your weight between 35 and 180 kg.",
+    "error_check": "Please check your height and weight."
+  },
+  "collection": {
+    "columns": "{{ count }} columns",
+    "load_more_error": "More products could not be loaded.",
+    "products_count": {
+      "one": "{{ count }} product",
+      "other": "{{ count }} products"
+    },
+    "all_collections": "Collections"
+  },
+  "footer": {
+    "socials": "Socials",
+    "payments": "Secure payments",
+    "cookie_settings": "Cookie settings"
+  },
+  "newsletter": {
+    "placeholder": "YOUR EMAIL ADDRESS",
+    "label": "Email address",
+    "subscribe": "SUBSCRIBE",
+    "error": "Please enter a valid email address."
+  },
+  "contact": {
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "order": "Order number (optional)",
+    "message": "Message",
+    "send": "SEND MESSAGE",
+    "success": "Thanks for your message! We'll get back to you as soon as possible.",
+    "error": "Please check your entries."
+  },
+  "password": {
+    "thanks": "Thanks! We'll let you know as soon as we launch.",
+    "notify": "NOTIFY ME",
+    "enter_with_password": "Enter using password",
+    "password": "Password",
+    "enter": "ENTER"
+  },
+  "not_found": {
+    "title": "Page not found",
+    "text": "This page doesn't exist or has been moved.",
+    "continue": "Continue shopping"
+  },
+  "blog": {
+    "back": "Back to {{ title }}",
+    "read_more": "Read more"
+  },
+  "customer": {
+    "email": "Email",
+    "password": "Password",
+    "password_confirm": "Confirm password",
+    "first_name": "First name",
+    "last_name": "Last name",
+    "login": {
+      "title": "Log in",
+      "forgot": "Forgot your password?",
+      "submit": "LOG IN",
+      "create": "Create account",
+      "guest": "CONTINUE AS GUEST"
+    },
+    "recover": {
+      "title": "Reset your password",
+      "success": "We've sent you an email with a link to reset your password.",
+      "submit": "SEND LINK"
+    },
+    "register": {
+      "title": "Create account",
+      "submit": "CREATE ACCOUNT"
+    },
+    "activate": {
+      "title": "Activate account",
+      "submit": "ACTIVATE",
+      "decline": "DECLINE"
+    },
+    "reset": {
+      "title": "New password",
+      "submit": "SAVE PASSWORD"
+    },
+    "account": {
+      "title": "My account",
+      "hello": "Hi {{ name }}",
+      "log_out": "Log out",
+      "orders": "Orders",
+      "order": "Order",
+      "date": "Date",
+      "status": "Status",
+      "total": "Total",
+      "no_orders": "You haven't placed any orders yet.",
+      "address": "Address",
+      "manage_addresses": "Manage addresses ({{ count }})"
+    },
+    "addresses": {
+      "title": "Addresses",
+      "default": "Default address",
+      "edit": "Edit",
+      "delete": "Delete",
+      "delete_confirm": "Do you really want to delete this address?",
+      "new": "New address",
+      "company": "Company",
+      "address1": "Street address",
+      "address2": "Apartment, suite, etc.",
+      "zip": "ZIP / Postal code",
+      "city": "City",
+      "country": "Country",
+      "province": "State / Region",
+      "phone": "Phone",
+      "set_default": "Set as default address",
+      "save": "SAVE ADDRESS",
+      "cancel": "Cancel"
+    },
+    "order": {
+      "title": "Order {{ name }}",
+      "product": "Product",
+      "price": "Price",
+      "quantity": "Quantity",
+      "total": "Total",
+      "subtotal": "Subtotal",
+      "shipping": "Shipping ({{ title }})",
+      "tax": "Tax",
+      "discount": "Discount",
+      "shipping_address": "Shipping address",
+      "billing_address": "Billing address",
+      "payment_status": "Payment status",
+      "fulfillment_status": "Fulfillment status",
+      "tracking": "Track shipment"
+    }
+  },
+  "gift_card": {
+    "title": "Your gift card",
+    "invalid": "This gift card is no longer valid.",
+    "balance": "Remaining balance: {{ amount }}",
+    "valid_until": "Valid until {{ date }}",
+    "redeem": "Redeem now",
+    "copy": "Copy code",
+    "copied": "Copied!"
+  },
+  "date_formats": {
+    "short": "%b %d, %Y",
+    "long": "%b %d, %Y %H:%M"
+  }
+}

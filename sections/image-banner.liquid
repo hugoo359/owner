@@ -1,0 +1,65 @@
+{%- comment -%} Großes Bild mit Überschrift, Text und Button. Eigenes Bild für Handys möglich. {%- endcomment -%}
+<style>
+  #Banner-{{ section.id }}{--bn-h: {{ section.settings.height }}vh; --bn-hm: {{ section.settings.height_mobile }}vh; --bn-o: {{ section.settings.overlay | divided_by: 100.0 }}; --bn-ink: {{ section.settings.text_color }}}
+</style>
+<section id="Banner-{{ section.id }}" class="banner banner--{{ section.settings.position }}" style="margin-top: {{ section.settings.margin_top }}px; margin-bottom: {{ section.settings.margin_bottom }}px">
+  {%- capture media -%}
+    {%- if section.settings.image != blank -%}
+      {{ section.settings.image | image_url: width: 2400 | image_tag: class: 'banner-img banner-img--desk', sizes: '100vw', widths: '750, 1100, 1500, 1900, 2400', loading: 'lazy', alt: section.settings.image.alt }}
+    {%- else -%}
+      {{ 'lifestyle-2' | placeholder_svg_tag: 'placeholder-svg banner-img banner-img--desk' }}
+    {%- endif -%}
+    {%- if section.settings.image_mobile != blank -%}
+      {{ section.settings.image_mobile | image_url: width: 1200 | image_tag: class: 'banner-img banner-img--mob', sizes: '100vw', widths: '600, 900, 1200', loading: 'lazy', alt: section.settings.image_mobile.alt }}
+    {%- endif -%}
+  {%- endcapture -%}
+  {%- if section.settings.link != blank and section.settings.button_label == blank -%}
+    <a class="banner-media{% if section.settings.image_mobile != blank %} has-mob{% endif %}" href="{{ section.settings.link }}">{{ media }}</a>
+  {%- else -%}
+    <div class="banner-media{% if section.settings.image_mobile != blank %} has-mob{% endif %}">{{ media }}</div>
+  {%- endif -%}
+  {%- if section.settings.heading != blank or section.settings.text != blank or section.settings.button_label != blank -%}
+    <div class="banner-content"><div class="banner-inner" data-reveal>
+      {%- if section.settings.kicker != blank -%}<p class="banner-kicker">{{ section.settings.kicker }}</p>{%- endif -%}
+      {%- if section.settings.heading != blank -%}<h2 class="banner-title">{{ section.settings.heading }}</h2>{%- endif -%}
+      {%- if section.settings.text != blank -%}<div class="banner-text">{{ section.settings.text }}</div>{%- endif -%}
+      {%- if section.settings.button_label != blank -%}
+        <a class="banner-btn{% if section.settings.button_style == 'light' %} banner-btn--light{% endif %}" href="{{ section.settings.link | default: routes.all_products_collection_url }}">{{ section.settings.button_label }}</a>
+      {%- endif -%}
+    </div></div>
+  {%- endif -%}
+</section>
+
+{% schema %}
+{
+  "name": "Bild-Banner",
+  "tag": "div",
+  "class": "section-banner",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Bild", "info": "Querformat, mindestens 2000 px breit" },
+    { "type": "image_picker", "id": "image_mobile", "label": "Bild für Handys (optional)", "info": "Hochformat, z. B. 1080 × 1350 px" },
+    { "type": "text", "id": "kicker", "label": "Kleine Zeile über der Überschrift" },
+    { "type": "text", "id": "heading", "label": "Überschrift", "default": "NEUE KOLLEKTION" },
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Die neuen Essentials sind da.</p>" },
+    { "type": "text", "id": "button_label", "label": "Button-Text", "default": "Jetzt shoppen" },
+    { "type": "url", "id": "link", "label": "Link", "info": "Ohne Button-Text ist das ganze Bild klickbar." },
+    { "type": "select", "id": "button_style", "label": "Button", "default": "light", "options": [
+      { "value": "light", "label": "Weiß" },
+      { "value": "dark", "label": "Schwarz" }
+    ] },
+    { "type": "select", "id": "position", "label": "Textposition", "default": "bottom-left", "options": [
+      { "value": "bottom-left", "label": "Unten links" },
+      { "value": "bottom-center", "label": "Unten mittig" },
+      { "value": "center", "label": "Mitte" },
+      { "value": "top-left", "label": "Oben links" }
+    ] },
+    { "type": "color", "id": "text_color", "label": "Textfarbe", "default": "#ffffff" },
+    { "type": "range", "id": "overlay", "label": "Abdunkeln", "min": 0, "max": 80, "step": 5, "unit": "%", "default": 20 },
+    { "type": "range", "id": "height", "label": "Höhe (Desktop)", "min": 40, "max": 100, "step": 5, "unit": "vh", "default": 80 },
+    { "type": "range", "id": "height_mobile", "label": "Höhe (Handy)", "min": 40, "max": 100, "step": 5, "unit": "vh", "default": 75 },
+    { "type": "range", "id": "margin_top", "label": "Abstand oben", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 0 },
+    { "type": "range", "id": "margin_bottom", "label": "Abstand unten", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 0 }
+  ],
+  "presets": [ { "name": "Bild-Banner" } ]
+}
+{% endschema %}

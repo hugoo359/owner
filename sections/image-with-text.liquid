@@ -1,0 +1,38 @@
+<section class="iwt iwt--{{ section.settings.layout }}" style="--iwt-bg: {{ section.settings.bg }}; --iwt-ink: {{ section.settings.ink }}">
+  <div class="iwt-media" data-reveal>
+    {%- if section.settings.image != blank -%}
+      {{ section.settings.image | image_url: width: 1600 | image_tag: sizes: '(min-width: 900px) 50vw, 100vw', widths: '600, 900, 1200, 1600', loading: 'lazy', alt: section.settings.image.alt }}
+    {%- else -%}
+      {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+    {%- endif -%}
+  </div>
+  <div class="iwt-text" data-reveal>
+    {%- if section.settings.kicker != blank -%}<p class="rt-kicker">{{ section.settings.kicker }}</p>{%- endif -%}
+    {%- if section.settings.heading != blank -%}<h2 class="rt-title rt-title--m">{{ section.settings.heading }}</h2>{%- endif -%}
+    {%- if section.settings.text != blank -%}<div class="rt-text rte">{{ section.settings.text }}</div>{%- endif -%}
+    {%- if section.settings.button_label != blank -%}
+      <a class="atc inline" href="{{ section.settings.link | default: routes.all_products_collection_url }}">{{ section.settings.button_label }}</a>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Bild mit Text",
+  "tag": "div",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Bild" },
+    { "type": "select", "id": "layout", "label": "Bild", "default": "left", "options": [
+      { "value": "left", "label": "Links" }, { "value": "right", "label": "Rechts" }
+    ] },
+    { "type": "text", "id": "kicker", "label": "Kleine Zeile", "default": "QUALITÄT" },
+    { "type": "text", "id": "heading", "label": "Überschrift", "default": "HEAVYWEIGHT COTTON" },
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Schwerer Stoff, der in Form bleibt. Entworfen für jeden Tag und gemacht, um lange getragen zu werden.</p>" },
+    { "type": "text", "id": "button_label", "label": "Button-Text", "default": "Entdecken" },
+    { "type": "url", "id": "link", "label": "Link" },
+    { "type": "color", "id": "bg", "label": "Hintergrund", "default": "#f0f0f0" },
+    { "type": "color", "id": "ink", "label": "Textfarbe", "default": "#111111" }
+  ],
+  "presets": [ { "name": "Bild mit Text" } ]
+}
+{% endschema %}

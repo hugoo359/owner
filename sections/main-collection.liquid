@@ -1,6 +1,6 @@
 {%- paginate collection.products by section.settings.per_page -%}
 <div class="wrap collection-wrap">
-  <nav class="crumbs" aria-label="Breadcrumb">
+  <nav class="crumbs" aria-label="{{ 'general.breadcrumb' | t }}">
     <a href="{{ routes.root_url }}">{{ section.settings.t_home }}</a><span>/</span>
     <a href="{{ routes.all_products_collection_url }}">{{ section.settings.t_shop }}</a><span>/</span>
     <span>{{ collection.title }}</span>
@@ -167,13 +167,13 @@
           <button type="button" class="toggle" data-qf-stock aria-pressed="false"><i></i>{{ section.settings.t_stock }}</button>
         {%- endif -%}
         <div class="dens" data-density data-default="{{ section.settings.cols_default }}">
-          <button type="button" data-cols="2" aria-label="2 columns">
+          <button type="button" data-cols="2" aria-label="{{ 'collection.columns' | t: count: 2 }}">
             <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor" aria-hidden="true"><rect x="0" y="0" width="8" height="8"/><rect x="10" y="0" width="8" height="8"/><rect x="0" y="10" width="8" height="8"/><rect x="10" y="10" width="8" height="8"/></svg>
           </button>
-          <button type="button" data-cols="4" aria-label="4 columns">
+          <button type="button" data-cols="4" aria-label="{{ 'collection.columns' | t: count: 4 }}">
             <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor" aria-hidden="true">{%- for r in (0..2) -%}{%- for c in (0..2) -%}<rect x="{{ c | times: 6.5 | plus: 0.5 }}" y="{{ r | times: 6.5 | plus: 0.5 }}" width="4" height="4"/>{%- endfor -%}{%- endfor -%}</svg>
           </button>
-          <button type="button" data-cols="6" aria-label="6 columns">
+          <button type="button" data-cols="6" aria-label="{{ 'collection.columns' | t: count: 6 }}">
             <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor" aria-hidden="true">{%- for r in (0..3) -%}{%- for c in (0..3) -%}<rect x="{{ c | times: 5 }}" y="{{ r | times: 5 }}" width="3" height="3"/>{%- endfor -%}{%- endfor -%}</svg>
           </button>
         </div>

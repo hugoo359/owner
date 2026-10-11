@@ -1,0 +1,38 @@
+<section class="wrap contact" style="padding-bottom: {{ section.settings.padding_bottom }}px">
+  {%- if section.settings.heading != blank -%}<h2 class="sub-title contact-title">{{ section.settings.heading }}</h2>{%- endif -%}
+  {%- if section.settings.text != blank -%}<div class="rte contact-text">{{ section.settings.text }}</div>{%- endif -%}
+  {%- form 'contact', id: 'ContactForm', class: 'form-box contact-form' -%}
+    {%- if form.posted_successfully? -%}
+      <p class="form-ok" role="status">{% render 'icon', icon: 'check' %}{{ 'contact.success' | t }}</p>
+    {%- elsif form.errors -%}
+      <div class="form-err" role="alert">{{ 'contact.error' | t }} {{ form.errors | default_errors }}</div>
+    {%- endif -%}
+    <div class="field-row">
+      <div><label for="ContactName">{{ 'contact.name' | t }}</label><input type="text" id="ContactName" name="contact[{{ 'contact.name' | t }}]" value="{{ form.name }}" autocomplete="name"></div>
+      <div><label for="ContactEmail">{{ 'contact.email' | t }} *</label><input type="email" id="ContactEmail" name="contact[email]" value="{{ form.email }}" autocomplete="email" autocorrect="off" autocapitalize="off" required></div>
+    </div>
+    <div class="field-row">
+      <div><label for="ContactPhone">{{ 'contact.phone' | t }}</label><input type="tel" id="ContactPhone" name="contact[{{ 'contact.phone' | t }}]" value="{{ form.phone }}" autocomplete="tel"></div>
+      {%- if section.settings.show_order -%}
+        <div><label for="ContactOrder">{{ 'contact.order' | t }}</label><input type="text" id="ContactOrder" name="contact[{{ 'contact.order' | t }}]"></div>
+      {%- endif -%}
+    </div>
+    <label for="ContactBody">{{ 'contact.message' | t }}</label>
+    <textarea id="ContactBody" name="contact[body]" rows="7">{{ form.body }}</textarea>
+    <button type="submit" class="atc">{{ 'contact.send' | t }}</button>
+  {%- endform -%}
+</section>
+
+{% schema %}
+{
+  "name": "Kontaktformular",
+  "tag": "div",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Überschrift", "default": "SCHREIB UNS" },
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Du hast eine Frage zu deiner Bestellung oder zu unseren Produkten? Wir antworten in der Regel innerhalb von 24 Stunden.</p>" },
+    { "type": "checkbox", "id": "show_order", "label": "Feld für Bestellnummer", "default": true },
+    { "type": "range", "id": "padding_bottom", "label": "Abstand unten", "min": 0, "max": 140, "step": 4, "unit": "px", "default": 80 }
+  ],
+  "presets": [ { "name": "Kontaktformular" } ]
+}
+{% endschema %}
